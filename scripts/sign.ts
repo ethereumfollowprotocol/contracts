@@ -23,7 +23,7 @@ async function signMessage(message = 'Hello, World!') {
   // sign the hashed message
   const signature = await wallet.signMessage(message)
   // also manually calculate the hashMessage used internally within signMessage
-  const signatureHash = hashMessage(message)
+  //   const signatureHash = hashMessage(message)
   //   console.log('Signature Hash    :', signatureHash)
   console.log('Signature         :', signature)
 
