@@ -36,16 +36,66 @@ async function signMessage(message = 'Hello, World!') {
   const recoveredAddress = ethers.utils.verifyMessage(message, signature)
   console.log('EIP-191 Recovered Address :', recoveredAddress)
   console.log('EIP-191 Expected Address  :', wallet.address)
+  console.log()
 
   // raw ECDSA signing
-  const signingKey = wallet._signingKey()
-  const keccakMessage = keccak256(toUtf8Bytes(message))
-  const rawSignature: ethers.Signature = signingKey.signDigest(keccakMessage)
-  const rawSignatureStr: string = joinSignature(rawSignature)
-  console.log('Raw Signature         :', rawSignatureStr)
-  const rawRecoveredAddress = recoverAddress(keccakMessage, rawSignatureStr)
-  console.log('Raw Recovered Address :', rawRecoveredAddress)
-  console.log('Expected Address      :', wallet.address)
+  const signRaw = (message: string) => {
+    const signingKey = wallet._signingKey()
+    const keccakMessage = keccak256(toUtf8Bytes(message))
+    const rawSignature: ethers.Signature = signingKey.signDigest(keccakMessage)
+    const rawSignatureStr: string = joinSignature(rawSignature)
+    return rawSignatureStr
+  }
+
+  const recoverAddressRaw = (message: string, rawSignatureStr: string) => {
+    const keccakMessage = keccak256(toUtf8Bytes(message))
+    const rawRecoveredAddress = recoverAddress(keccakMessage, rawSignatureStr)
+    return rawRecoveredAddress
+  }
+
+  const rawSignatureStr = signRaw(message)
+  console.log('Raw Signature             :', rawSignatureStr)
+  const rawRecoveredAddress = recoverAddressRaw(message, rawSignatureStr)
+  console.log('Raw Recovered Address     :', rawRecoveredAddress)
+  console.log('Expected Address          :', wallet.address)
+  console.log()
+
+  // EFP SCHEMA
+  //         // Create a unique message for validation using the following structure:
+  //   // - Start with a 0x19 byte ensuring the data isn't considered valid RLP.
+  //   // - Follow with version 0x00 and a 3-byte "EFP" prefix.
+  //   // - Attach the token ID (32 bytes)
+  //   // - then "manager" (7 bytes)
+  //   // - and the claimed manager's address (20 bytes).
+  //   // The resulting 64-byte message is optimized for efficient gas usage during signature verification.
+
+  //   bytes memory message = abi.encodePacked(
+  //     "\x19\x00EFP",
+  //     bytes32(tokenId),
+  //     "manager",
+  //     bytes20(manager)
+  // );
+
+  function makeEFPMessage(tokenId: number, address: `0x${string}`): Uint8Array {
+    const messageBytes: Uint8Array = concat([
+      toUtf8Bytes('\x19\x00EFP'),
+      ethers.utils.hexZeroPad(ethers.utils.hexlify(tokenId), 32),
+      toUtf8Bytes('manager'),
+      ethers.utils.hexZeroPad(address, 20),
+    ])
+    return messageBytes
+  }
+
+  const tokenId = 0
+  const managerAddress = '0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496'
+  const efpMessageBytes: Uint8Array = makeEFPMessage(tokenId, managerAddress)
+  console.log('EFP Message               :', ethers.utils.hexlify(efpMessageBytes))
+  const efpMessageHashed = keccak256(efpMessageBytes)
+  const efpSignature = joinSignature(wallet._signingKey().signDigest(efpMessageHashed))
+  console.log('EFP Signature             :', efpSignature)
+  const efpRecoveredAddress = recoverAddress(efpMessageHashed, efpSignature)
+  console.log('EFP Recovered Address     :', efpRecoveredAddress)
+  console.log()
 }
 
 // If there is a command line argument, use it as the message
