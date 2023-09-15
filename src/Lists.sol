@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 
 /**
@@ -36,12 +37,20 @@ contract Lists {
     /// @dev Emitted when a record is marked as deleted.
     event RecordDeleted(uint tokenId, bytes32 recordHash);
 
+    IListRegistry public listRegistry;
+
+    constructor(IListRegistry listRegistry_) {
+        // stubbed for now
+        listRegistry = listRegistry_;
+    }
+
     /**
      * Restricts access to the owner of the specified token.
      * @param tokenId The ID of the token whose owner is to be checked.
      */
-    modifier onlyTokenOwner(uint256 tokenId) {
+    modifier onlyTokenOwner(uint tokenId) {
         // stubbed for now
+        require(listRegistry.getManager(tokenId) == msg.sender, "Only EFP List Manager can call this function");
         _;
     }
 
@@ -52,7 +61,7 @@ contract Lists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function appendRecord(uint256 tokenId, uint8 version, uint8 recordType, bytes memory data) public onlyTokenOwner(tokenId) {
+    function appendRecord(uint tokenId, uint8 version, uint8 recordType, bytes memory data) public onlyTokenOwner(tokenId) {
         bytes32 hash = keccak256(abi.encode(version, recordType, data));
         require(recordIndexByTokenId[tokenId][hash] == 0, "Record already exists!");
 
@@ -64,9 +73,10 @@ contract Lists {
 
     /**
      * @notice Marks a record as deleted. This is a soft delete; the record remains but is flagged.
+     * @param tokenId The token ID of the list for which to delete record.
      * @param recordHash The hash identifier of the record to delete.
      */
-    function deleteRecord(uint256 tokenId, bytes32 recordHash) public onlyTokenOwner(tokenId) {
+    function deleteRecord(uint tokenId, bytes32 recordHash) public onlyTokenOwner(tokenId) {
         require(recordIndexByTokenId[tokenId][recordHash] > 0 && !recordsByTokenId[tokenId][recordIndexByTokenId[tokenId][recordHash] - 1].deleted, "Record not found or already deleted");
 
         uint indexToDelete = recordIndexByTokenId[tokenId][recordHash] - 1;
@@ -80,7 +90,7 @@ contract Lists {
      * @param tokenId The ID of the token whose record count is desired.
      * @return Total number of records for the specified tokenId.
      */
-    function getRecordCount(uint256 tokenId) public view returns (uint) {
+    function getRecordCount(uint tokenId) public view returns (uint) {
         return recordsByTokenId[tokenId].length;
     }
 
@@ -90,7 +100,7 @@ contract Lists {
      * @param index The position of the desired record in the list.
      * @return The record at the specified position for the specified tokenId.
      */
-    function getRecord(uint256 tokenId, uint index) public view returns (ListRecord memory) {
+    function getRecord(uint tokenId, uint index) public view returns (ListRecord memory) {
         require(index < recordsByTokenId[tokenId].length, "Index out of bounds");
         return recordsByTokenId[tokenId][index].record;
     }
@@ -100,7 +110,7 @@ contract Lists {
      * @param tokenId The ID of the token whose records are desired.
      * @return An array of all records for the specified tokenId.
      */
-    function getRecords(uint256 tokenId) public view returns (ListRecord[] memory) {
+    function getRecords(uint tokenId) public view returns (ListRecord[] memory) {
         return getRecordsInRange(tokenId, 0, recordsByTokenId[tokenId].length - 1);
     }
 
@@ -111,7 +121,7 @@ contract Lists {
      * @param toIndex The end position for the range.
      * @return An array of records within the specified range for the specified tokenId.
      */
-    function getRecordsInRange(uint256 tokenId, uint fromIndex, uint toIndex) public view returns (ListRecord[] memory) {
+    function getRecordsInRange(uint tokenId, uint fromIndex, uint toIndex) public view returns (ListRecord[] memory) {
         require(fromIndex <= toIndex, "Invalid range");
         require(toIndex < recordsByTokenId[tokenId].length, "Index out of bounds");
 

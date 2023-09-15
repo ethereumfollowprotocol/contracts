@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 import "lib/ERC721A/contracts/ERC721A.sol";
+import {IListRegistry} from "./IListRegistry.sol";
 import {ListStorageLocation} from "./ListStorageLocation.sol";
 
 /**
@@ -31,7 +32,7 @@ struct ListUser {
  * @title ListRegistry
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
-contract ListRegistry is ERC721A {
+contract ListRegistry is IListRegistry, ERC721A {
 
     uint8 constant VERSION = 1;
 

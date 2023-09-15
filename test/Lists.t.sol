@@ -2,19 +2,25 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../src/Lists.sol";
+import {Lists} from "../src/Lists.sol";
+import {ListRecord} from "../src/ListRecord.sol";
+import {ListRegistry} from "../src/ListRegistry.sol";
 
 contract ListsTest is Test {
+    ListRegistry public listRegistry;
     Lists public lists;
     uint8 constant VERSION = 1;
     uint8 constant RAW_ADDRESS = 1;
-    uint256 constant TOKEN_ID = 12345; // Assuming a sample tokenId for testing
+    uint constant TOKEN_ID = 0;
 
     function setUp() public {
-        lists = new Lists();
+        listRegistry = new ListRegistry();
+        lists = new Lists(listRegistry);
     }
 
     function testAppendRecord() public {
+        listRegistry.mint();
+
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
@@ -28,6 +34,8 @@ contract ListsTest is Test {
     }
 
     function testDeleteRecord() public {
+        listRegistry.mint();
+
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
         bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
 
@@ -42,6 +50,8 @@ contract ListsTest is Test {
     }
 
     function testGetRecordsInRange() public {
+        listRegistry.mint();
+
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));

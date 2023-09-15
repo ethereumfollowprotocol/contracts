@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ListRecord} from "./ListRecord.sol";
+import {ListRecord} from "../ListRecord.sol";
 
 /**
  * @title DeletableListEntry
