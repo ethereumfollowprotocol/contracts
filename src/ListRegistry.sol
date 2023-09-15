@@ -58,7 +58,7 @@ contract ListRegistry is IListRegistry, ERC721A {
     }
 
     /// @notice Restrict access to the owner of a specific token.
-    modifier onlyTokenOwner(uint tokenId) {
+    modifier onlyListManager(uint tokenId) {
         require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the owner");
         _;
     }
@@ -81,7 +81,7 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param tokenId The ID of the token.
      * @param contractAddress The contract address to be associated with the token.
      */
-    function setListStorageLocationL1(uint tokenId, address contractAddress) external onlyTokenOwner(tokenId) {
+    function setListStorageLocationL1(uint tokenId, address contractAddress) external onlyListManager(tokenId) {
         // abi.encodePacked will give a 20 byte representation of the address
         tokenIdToListStorageLocation[tokenId] = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(contractAddress));
     }

@@ -41,7 +41,7 @@ contract BaseLists {
      * Restricts access to the owner of the specified token.
      * @param tokenId The ID of the token whose owner is to be checked.
      */
-    modifier onlyTokenOwner(uint tokenId) virtual {
+    modifier onlyListManager(uint tokenId) virtual {
         _; // default implementation does nothing
     }
 
@@ -52,7 +52,7 @@ contract BaseLists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function appendRecord(uint tokenId, uint8 version, uint8 recordType, bytes memory data) public onlyTokenOwner(tokenId) {
+    function appendRecord(uint tokenId, uint8 version, uint8 recordType, bytes memory data) public onlyListManager(tokenId) {
         bytes32 hash = keccak256(abi.encode(version, recordType, data));
         require(recordIndexByTokenId[tokenId][hash] == 0, "Record already exists!");
 
@@ -67,7 +67,7 @@ contract BaseLists {
      * @param tokenId The token ID of the list for which to delete record.
      * @param recordHash The hash identifier of the record to delete.
      */
-    function deleteRecord(uint tokenId, bytes32 recordHash) public onlyTokenOwner(tokenId) {
+    function deleteRecord(uint tokenId, bytes32 recordHash) public onlyListManager(tokenId) {
         require(recordIndexByTokenId[tokenId][recordHash] > 0 && !recordsByTokenId[tokenId][recordIndexByTokenId[tokenId][recordHash] - 1].deleted, "Record not found or already deleted");
 
         uint indexToDelete = recordIndexByTokenId[tokenId][recordHash] - 1;

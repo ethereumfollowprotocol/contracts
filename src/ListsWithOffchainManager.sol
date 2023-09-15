@@ -6,19 +6,32 @@ import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 
 /**
+ * @title ListManager
+ * @notice Represents a manager associated with a token.
+ */
+struct ListManager {
+    /// @dev True if this struct has been set, used to distinguish from default zero struct.
+    bool isSet;
+
+    /// @dev Ethereum address of the manager.
+    address managerAddress;
+}
+
+/**
  * @title Lists
  * @notice This contract manages a list of records for each EFP List NFT,
  * providing functionalities to append, delete, and retrieve records. It
  * supports soft deletions, meaning the records are marked as deleted but not
  * actually removed from storage.
  */
-contract Lists is BaseLists {
+contract ListsWithOffchainManager is BaseLists {
 
-    IListRegistry public listRegistry;
+    address public signer;
 
-    constructor(IListRegistry listRegistry_) {
-        // stubbed for now
-        listRegistry = listRegistry_;
+    mapping(uint tokenId => ListManager) public managers;
+
+    constructor(address signer_) {
+        signer = signer_;
     }
 
     /**
@@ -26,8 +39,8 @@ contract Lists is BaseLists {
      * @param tokenId The ID of the token whose manager is to be checked.
      */
     modifier onlyListManager(uint tokenId) override {
-        // stubbed for now
-        require(listRegistry.getManager(tokenId) == msg.sender, "Only EFP List Manager can call this function");
+        ListManager memory manager = managers[tokenId];
+        require(manager.isSet && manager.managerAddress == msg.sender, "Only EFP List Manager can call this function");
         _;
     }
 }

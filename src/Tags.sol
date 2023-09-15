@@ -34,7 +34,7 @@ contract Tags is ITags, Lists {
      * @param recordHash The unique identifier of the record.
      * @param tag The tag to be added.
      */
-    function addTagToRecord(uint tokenId, bytes32 recordHash, string calldata tag) external onlyTokenOwner(tokenId) {
+    function addTagToRecord(uint tokenId, bytes32 recordHash, string calldata tag) external onlyListManager(tokenId) {
         require(!recordTagsByTokenId[tokenId][recordHash][tag], "Tag already exists for the record");
         recordTagsByTokenId[tokenId][recordHash][tag] = true;
         emit TagAdded(tokenId, recordHash, tag);
@@ -46,7 +46,7 @@ contract Tags is ITags, Lists {
      * @param recordHash The unique identifier of the record.
      * @param tags An array of tags to be added.
      */
-    function addTagsToRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external onlyTokenOwner(tokenId) {
+    function addTagsToRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external onlyListManager(tokenId) {
         for (uint i = 0; i < tags.length; i++) {
             // Ensure that the tag doesn't already exist for the record.
             require(!recordTagsByTokenId[tokenId][recordHash][tags[i]], "Tag already exists for the record");
@@ -69,7 +69,7 @@ contract Tags is ITags, Lists {
      * @param recordHash The unique identifier of the record.
      * @param tag The tag to be removed.
      */
-    function removeTagFromRecord(uint tokenId, bytes32 recordHash, string calldata tag) external onlyTokenOwner(tokenId) {
+    function removeTagFromRecord(uint tokenId, bytes32 recordHash, string calldata tag) external onlyListManager(tokenId) {
         require(recordTagsByTokenId[tokenId][recordHash][tag], "Tag doesn't exist for the record");
         recordTagsByTokenId[tokenId][recordHash][tag] = false;
         emit TagRemoved(tokenId, recordHash, tag);
@@ -81,7 +81,7 @@ contract Tags is ITags, Lists {
      * @param recordHash The unique identifier of the record.
      * @param tags An array of tags to be removed.
      */
-    function removeTagsFromRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external onlyTokenOwner(tokenId) {
+    function removeTagsFromRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external onlyListManager(tokenId) {
         for (uint i = 0; i < tags.length; i++) {
             // Ensure that the tag exists for the record before removing.
             require(recordTagsByTokenId[tokenId][recordHash][tags[i]], "Tag doesn't exist for the record");
