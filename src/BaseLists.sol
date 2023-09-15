@@ -68,11 +68,12 @@ contract BaseLists {
      * @param recordHash The hash identifier of the record to delete.
      */
     function deleteRecord(uint tokenId, bytes32 recordHash) public onlyListManager(tokenId) {
-        require(recordIndexByTokenId[tokenId][recordHash] > 0 && !recordsByTokenId[tokenId][recordIndexByTokenId[tokenId][recordHash] - 1].deleted, "Record not found or already deleted");
+        mapping(bytes32 => uint) storage recordIndices = recordIndexByTokenId[tokenId];
+        require(recordIndices[recordHash] > 0 && !recordsByTokenId[tokenId][recordIndices[recordHash] - 1].deleted, "Record not found or already deleted");
 
-        uint indexToDelete = recordIndexByTokenId[tokenId][recordHash] - 1;
+        uint indexToDelete = recordIndices[recordHash] - 1;
         recordsByTokenId[tokenId][indexToDelete].deleted = true;
-        delete recordIndexByTokenId[tokenId][recordHash];
+        delete recordIndices[recordHash];
         emit RecordDeleted(tokenId, recordHash);
     }
 
