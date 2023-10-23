@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {IListRegistry} from "./IListRegistry.sol";
+import {ListOperation} from "./ListOperation.sol";
 import {ListRecord} from "./ListRecord.sol";
 
 /**
@@ -14,15 +15,6 @@ struct DeletableListEntry {
 
     /// @dev The actual list record data.
     ListRecord record;
-}
-
-/**
- * @title ListOperation
- * @notice Represents an operation to be performed on a list.
- */
-struct ListOperation {
-    uint8 operationType;
-    bytes data;
 }
 
 /**
@@ -53,7 +45,11 @@ contract BaseLists {
     ///////////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////////
+
+    /// @dev Operation type for appending a record.
     uint8 public constant OPERATION_APPEND = 1;
+
+    /// @dev Operation type for deleting a record.
     uint8 public constant OPERATION_DELETE = 2;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -170,7 +166,7 @@ contract BaseLists {
      * @param tokenId The token ID of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function _modifyRecord(uint tokenId, ListOperation calldata operation) internal {
+    function _modifyRecord(uint tokenId, ListOperation calldata operation) virtual internal {
         if (operation.operationType == OPERATION_APPEND) {
             ListRecord memory record = abi.decode(operation.data, (ListRecord));
             _appendRecord(tokenId, record.version, record.recordType, record.data);

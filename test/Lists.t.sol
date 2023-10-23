@@ -2,8 +2,9 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {DeletableListEntry, ListOperation} from "../src/BaseLists.sol";
+import {DeletableListEntry} from "../src/BaseLists.sol";
 import {Lists} from "../src/Lists.sol";
+import {ListOperation} from "../src/ListOperation.sol";
 import {ListRecord} from "../src/ListRecord.sol";
 import {ListRegistry} from "../src/ListRegistry.sol";
 

@@ -33,19 +33,19 @@ interface ITags {
 
     /**
      * @notice Removes a tag from a record.
-     * @param tokenId The token ID of the list for which remove tag from a record.
+     * @param tokenId The token ID of the list for which to delete tag from a record.
      * @param recordHash The unique identifier of the record.
-     * @param tag The tag to be removed.
+     * @param tag The tag to be deleted.
      */
-    function removeTagFromRecord(uint tokenId, bytes32 recordHash, string calldata tag) external;
+    function deleteTagFromRecord(uint tokenId, bytes32 recordHash, string calldata tag) external;
 
     /**
      * @notice Removes a set of tags from a record.
-     * @param tokenId The token ID of the list for which remove tags from a record.
+     * @param tokenId The token ID of the list for which to delete tags from a record.
      * @param recordHash The unique identifier of the record.
-     * @param tags An array of tags to be removed.
+     * @param tags An array of tags to be deleted.
      */
-    function removeTagsFromRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external;
+    function deleteTagsFromRecord(uint tokenId, bytes32 recordHash, string[] calldata tags) external;
 
     /**
      * @notice Checks if a record has a specific tag.
