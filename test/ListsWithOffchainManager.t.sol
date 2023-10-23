@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
+import {DeletableListEntry} from "../src/BaseLists.sol";
 import {ListsWithOffchainManager} from "../src/ListsWithOffchainManager.sol";
 import {ListRecord} from "../src/ListRecord.sol";
 
@@ -43,10 +44,11 @@ contract ListsWithOffchainManagerTest is Test {
 
         assertEq(listsWithOffchainManager.getRecordCount(TOKEN_ID), 1);
 
-        ListRecord memory record = listsWithOffchainManager.getRecord(TOKEN_ID, 0);
-        assertEq(record.version, VERSION);
-        assertEq(record.recordType, RAW_ADDRESS);
-        assertBytesEqual(record.data, bytes("0xAbc123"));
+        DeletableListEntry memory entry = listsWithOffchainManager.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
     }
 
     function testDeleteRecord() public {
@@ -59,10 +61,11 @@ contract ListsWithOffchainManagerTest is Test {
 
         assertEq(listsWithOffchainManager.getRecordCount(TOKEN_ID), 1);
 
-        ListRecord memory record = listsWithOffchainManager.getRecord(TOKEN_ID, 0);
-        assertEq(record.version, VERSION);
-        assertEq(record.recordType, RAW_ADDRESS);
-        assertBytesEqual(record.data, bytes("0xAbc123"));
+        DeletableListEntry memory entry = listsWithOffchainManager.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
     }
 
     function testGetRecordsInRange() public {
@@ -72,11 +75,11 @@ contract ListsWithOffchainManagerTest is Test {
         listsWithOffchainManager.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
         listsWithOffchainManager.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
 
-        ListRecord[] memory records = listsWithOffchainManager.getRecordsInRange(TOKEN_ID, 1, 2);
+        DeletableListEntry[] memory entries = listsWithOffchainManager.getRecordsInRange(TOKEN_ID, 1, 2);
 
-        assertEq(records.length, 2);
-        assertBytesEqual(records[0].data, bytes("0xDef456"));
-        assertBytesEqual(records[1].data, bytes("0xGhi789"));
+        assertEq(entries.length, 2);
+        assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
+        assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
     }
 
     // Helper function to compare bytes

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
+import {DeletableListEntry} from "../src/BaseLists.sol";
 import {Lists} from "../src/Lists.sol";
 import {ListRecord} from "../src/ListRecord.sol";
 import {ListRegistry} from "../src/ListRegistry.sol";
@@ -27,10 +28,37 @@ contract ListsTest is Test {
 
         assertEq(lists.getRecordCount(TOKEN_ID), 1);
 
-        ListRecord memory record = lists.getRecord(TOKEN_ID, 0);
-        assertEq(record.version, VERSION);
-        assertEq(record.recordType, RAW_ADDRESS);
-        assertBytesEqual(record.data, bytes("0xAbc123"));
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+    }
+
+    function testAppendRecords() public {
+        listRegistry.mint();
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 0);
+
+        ListRecord[] memory records = new ListRecord[](2);
+        records[0] = ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        records[1] = ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456"));
+
+        lists.appendRecords(TOKEN_ID, records);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 2);
+
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+
+        entry = lists.getRecord(TOKEN_ID, 1);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xDef456"));
     }
 
     function testDeleteRecord() public {
@@ -43,10 +71,45 @@ contract ListsTest is Test {
 
         assertEq(lists.getRecordCount(TOKEN_ID), 1);
 
-        ListRecord memory record = lists.getRecord(TOKEN_ID, 0);
-        assertEq(record.version, VERSION);
-        assertEq(record.recordType, RAW_ADDRESS);
-        assertBytesEqual(record.data, bytes("0xAbc123"));
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, true);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+    }
+
+    function testDeleteRecords() public {
+        listRegistry.mint();
+
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
+
+        bytes32[] memory hashes = new bytes32[](2);
+        hashes[0] = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        hashes[1] = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+
+        lists.deleteRecords(TOKEN_ID, hashes);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 3);
+
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, true);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+
+        entry = lists.getRecord(TOKEN_ID, 1);
+        assertEq(entry.deleted, true);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xDef456"));
+
+        entry = lists.getRecord(TOKEN_ID, 2);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xGhi789"));
     }
 
     function testGetRecordsInRange() public {
@@ -56,11 +119,13 @@ contract ListsTest is Test {
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
 
-        ListRecord[] memory records = lists.getRecordsInRange(TOKEN_ID, 1, 2);
+        DeletableListEntry[] memory entries = lists.getRecordsInRange(TOKEN_ID, 1, 2);
 
-        assertEq(records.length, 2);
-        assertBytesEqual(records[0].data, bytes("0xDef456"));
-        assertBytesEqual(records[1].data, bytes("0xGhi789"));
+        assertEq(entries.length, 2);
+        assertEq(entries[0].deleted, false);
+        assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
+        assertEq(entries[1].deleted, false);
+        assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
     }
 
     // Helper function to compare bytes
