@@ -130,7 +130,7 @@ contract BaseLists {
      */
     function _deleteRecord(uint tokenId, bytes32 recordHash) internal {
         mapping(bytes32 => uint) storage recordIndices = recordIndexByTokenId[tokenId];
-        require(recordIndices[recordHash] > 0 && !recordsByTokenId[tokenId][recordIndices[recordHash] - 1].deleted, "Record not found or already deleted");
+        require(recordIndices[recordHash] > 0, "Record not found");
 
         uint indexToDelete = recordIndices[recordHash] - 1;
         recordsByTokenId[tokenId][indexToDelete].deleted = true;
