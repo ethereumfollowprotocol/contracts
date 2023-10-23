@@ -37,6 +37,7 @@ contract ListRegistry is IListRegistry, ERC721A {
     uint8 constant VERSION = 1;
 
     uint8 constant LIST_LOCATION_L1 = 1;
+    uint8 constant LIST_LOCATION_L2_WITH_NONCE = 2;
 
     mapping(uint => ListStorageLocation) private tokenIdToListStorageLocation;
 
@@ -77,13 +78,24 @@ contract ListRegistry is IListRegistry, ERC721A {
     }
 
     /**
-     * @notice Associates a token with a list location.
+     * @notice Associates a token with a list storage location on L1.
      * @param tokenId The ID of the token.
      * @param contractAddress The contract address to be associated with the token.
      */
     function setListStorageLocationL1(uint tokenId, address contractAddress) external onlyListManager(tokenId) {
         // abi.encodePacked will give a 20 byte representation of the address
         tokenIdToListStorageLocation[tokenId] = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(contractAddress));
+    }
+
+    /**
+     * @notice Associates a token with a list storage location on L2 with a nonce.
+     * @param tokenId The ID of the token.
+     * @param chainId The chain ID of the L2 chain.
+     * @param contractAddress The contract address to be associated with the token.
+     * @param nonce The nonce to be associated with the token.
+     */
+    function setListStorageLocationL2WithNonce(uint tokenId, uint chainId, address contractAddress, uint nonce) external onlyListManager(tokenId) {
+        tokenIdToListStorageLocation[tokenId] = ListStorageLocation(VERSION, LIST_LOCATION_L2_WITH_NONCE, abi.encodePacked(chainId, contractAddress, nonce));
     }
 
     ///////////////////////////////////////////////////////////////////////////
