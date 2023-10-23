@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {DeletableListEntry} from "../src/BaseLists.sol";
+import {DeletableListEntry, ListOperation} from "../src/BaseLists.sol";
 import {Lists} from "../src/Lists.sol";
 import {ListRecord} from "../src/ListRecord.sol";
 import {ListRegistry} from "../src/ListRegistry.sol";
@@ -20,6 +20,10 @@ contract ListsTest is Test {
         listRegistry.mint();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Append
+    ///////////////////////////////////////////////////////////////////////////
+
     function test_CanAppendRecord() public {
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
@@ -34,7 +38,7 @@ contract ListsTest is Test {
         assertBytesEqual(entry.record.data, bytes("0xAbc123"));
     }
 
-    function test_CannotAppendSameRecordTwice() public {
+    function test_RevertIf_AppendSameRecordTwice() public {
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
@@ -76,6 +80,10 @@ contract ListsTest is Test {
         assertBytesEqual(entry.record.data, bytes("0xDef456"));
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Delete
+    ///////////////////////////////////////////////////////////////////////////
+
     function test_CanDeleteRecord() public {
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
         bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
@@ -91,7 +99,15 @@ contract ListsTest is Test {
         assertBytesEqual(entry.record.data, bytes("0xAbc123"));
     }
 
-    function test_CannotDeleteSameRecordTwice() public {
+    function test_RevertIf_DeleteMissingRecord() public {
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+
+        vm.expectRevert("Record not found");
+        lists.deleteRecord(TOKEN_ID, hash);
+    }
+
+    function test_RevertIf_DeleteSameRecordTwice() public {
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
         bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
 
@@ -104,14 +120,6 @@ contract ListsTest is Test {
         assertEq(entry.record.version, VERSION);
         assertEq(entry.record.recordType, RAW_ADDRESS);
         assertBytesEqual(entry.record.data, bytes("0xAbc123"));
-
-        vm.expectRevert("Record not found");
-        lists.deleteRecord(TOKEN_ID, hash);
-    }
-
-    function test_CannotDeleteMissingRecord() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
 
         vm.expectRevert("Record not found");
         lists.deleteRecord(TOKEN_ID, hash);
@@ -180,6 +188,10 @@ contract ListsTest is Test {
         assertBytesEqual(entry.record.data, bytes("0xGhi789"));
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Get
+    ///////////////////////////////////////////////////////////////////////////
+
     function test_CanGetRecordsInRange() public {
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
         lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
@@ -209,6 +221,114 @@ contract ListsTest is Test {
         assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
         assertEq(entries[1].deleted, false);
         assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Modify
+    ///////////////////////////////////////////////////////////////////////////
+
+    function test_CanModifyRecord_Append() public {
+        assertEq(lists.getRecordCount(TOKEN_ID), 0);
+
+        ListOperation memory op = ListOperation({
+            operationType: lists.OPERATION_APPEND(),
+            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123")))
+        });
+
+        lists.modifyRecord(TOKEN_ID, op);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 1);
+
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, false);
+        assertEq(entry.record.version, VERSION);
+        assertEq(entry.record.recordType, RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+    }
+
+    function test_CanModifyRecord_Delete() public {
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+
+        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+
+        ListOperation memory op = ListOperation({
+            operationType: lists.OPERATION_DELETE(),
+            data: abi.encode(hash)
+        });
+
+        lists.modifyRecord(TOKEN_ID, op);
+
+        DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
+        assertEq(entry.deleted, true);
+    }
+
+    function test_CanModifyRecords_AppendMultiple() public {
+        ListOperation[] memory ops = new ListOperation[](2);
+
+        ops[0] = ListOperation({
+            operationType: lists.OPERATION_APPEND(),
+            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123")))
+        });
+
+        ops[1] = ListOperation({
+            operationType: lists.OPERATION_APPEND(),
+            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456")))
+        });
+
+        lists.modifyRecords(TOKEN_ID, ops);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 2);
+    }
+
+    function test_CanModifyRecords_DeleteMultiple() public {
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
+
+        bytes32 hash1 = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        bytes32 hash2 = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+
+        ListOperation[] memory ops = new ListOperation[](2);
+
+        ops[0] = ListOperation({
+            operationType: lists.OPERATION_DELETE(),
+            data: abi.encode(hash1)
+        });
+
+        ops[1] = ListOperation({
+            operationType: lists.OPERATION_DELETE(),
+            data: abi.encode(hash2)
+        });
+
+        lists.modifyRecords(TOKEN_ID, ops);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 2);
+        assertEq(lists.getRecord(TOKEN_ID, 0).deleted, true);
+        assertEq(lists.getRecord(TOKEN_ID, 1).deleted, true);
+    }
+
+    function test_CanModifyRecords_AppendAndDelete() public {
+        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+
+        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+
+        ListOperation[] memory ops = new ListOperation[](2);
+
+        ops[0] = ListOperation({
+            operationType: lists.OPERATION_DELETE(),
+            data: abi.encode(hash)
+        });
+
+        ops[1] = ListOperation({
+            operationType: lists.OPERATION_APPEND(),
+            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456")))
+        });
+
+        lists.modifyRecords(TOKEN_ID, ops);
+
+        assertEq(lists.getRecordCount(TOKEN_ID), 2);
+        assertEq(lists.getRecord(TOKEN_ID, 0).deleted, true);
+        assertEq(lists.getRecord(TOKEN_ID, 1).deleted, false);
+        assertBytesEqual(lists.getRecord(TOKEN_ID, 1).record.data, bytes("0xDef456"));
     }
 
     // Helper function to compare bytes
