@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ArrayLists} from "./ArrayLists.sol";
+import {LogLists} from "./LogLists.sol";
 import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 
 /**
- * @title NonceLists
+ * @title NonceLogLists
  * @notice Manages records for each EFP List NFT, providing functionalities for record
  * manipulation. Employs a soft deletion mechanism, flagging records as deleted without removing them from storage.
  */
-contract NonceLists is ArrayLists {
+contract NonceLogLists is LogLists {
 
     /// @notice A mapping from a nonce to its associated manager.
     mapping(uint nonce => address) public managers;
