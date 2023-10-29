@@ -74,7 +74,9 @@ contract ArrayLists is ABaseLists {
         require(recordIndices[recordHash] > 0, "Record not found");
 
         uint indexToDelete = recordIndices[recordHash] - 1;
+        // mark the record as deleted
         recordsByNonce[nonce][indexToDelete].deleted = true;
+        // remove the index
         delete recordIndices[recordHash];
         emit RecordDeleted(nonce, recordHash);
     }

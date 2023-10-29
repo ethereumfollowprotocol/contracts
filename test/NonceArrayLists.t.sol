@@ -78,6 +78,33 @@ contract NonceArrayListsTest is Test {
         assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
+    function test_CanClaimThenAppendRecordThenDeleteRecordThenAppendRecordAgain() public {
+        nonceArrayLists.claimListManager(NONCE);
+
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        assertEq(nonceArrayLists.getRecordCount(NONCE), 1);
+
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
+
+        nonceArrayLists.deleteRecord(NONCE, hash);
+        assertEq(nonceArrayLists.getRecordCount(NONCE), 1);
+
+        DeletableListEntry memory entry0 = nonceArrayLists.getRecord(NONCE, 0);
+        assertEq(entry0.deleted, true);
+        assertEq(entry0.record.version, VERSION);
+        assertEq(entry0.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry0.record.data, abi.encodePacked(ADDRESS_1));
+
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        assertEq(nonceArrayLists.getRecordCount(NONCE), 2);
+
+        DeletableListEntry memory entry1 = nonceArrayLists.getRecord(NONCE, 1);
+        assertEq(entry1.deleted, false);
+        assertEq(entry1.record.version, VERSION);
+        assertEq(entry1.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry1.record.data, abi.encodePacked(ADDRESS_1));
+    }
+
     function test_CanClaimThenGetRecordsInRange() public {
         nonceArrayLists.claimListManager(NONCE);
 
