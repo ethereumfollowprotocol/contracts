@@ -49,7 +49,7 @@ contract ListsWithOffchainManager is ArrayLists {
 
     /**
      * @notice A modifier that ensures only the manager of a specific token can access the decorated function.
-     * @param nonce The ID of the token being checked.
+     * @param nonce The nonce being checked.
      * @dev Throws an error if the caller isn't the manager of the provided token ID.
      */
     modifier onlyListManager(uint nonce) override {
@@ -60,7 +60,7 @@ contract ListsWithOffchainManager is ArrayLists {
 
     /**
      * @notice Validates the provided offchain signature to verify the manager's authority over a token.
-     * @param nonce The ID of the token whose manager's authority needs validation.
+     * @param nonce The nonce whose manager's authority needs validation.
      * @param manager The Ethereum address of the manager claiming authority over the token.
      * @param signature The offchain signature provided for validation.
      * @return Returns 'true' if the provided signature is valid for the claimed manager, otherwise returns 'false'.
@@ -95,7 +95,7 @@ contract ListsWithOffchainManager is ArrayLists {
 
     /**
      * @notice Allows a manager to claim authority over a token using an offchain signature.
-     * @param nonce The ID of the token the manager is claiming authority over.
+     * @param nonce The nonce for which the manager is claiming authority over.
      * @param signature The offchain signature provided to prove the manager's claim.
      * @dev This function first verifies the offchain signature for the manager's authority
      * using the `proveListManagerWithOffchainSignature` function. If the verification succeeds,

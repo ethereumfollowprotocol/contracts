@@ -10,7 +10,10 @@ contract NonceLogListsTest is Test {
     NonceLogLists public nonceLogLists;
     uint constant NONCE = 123456789;
     uint8 constant VERSION = 1;
-    uint8 constant RAW_ADDRESS = 1;
+    uint8 constant LIST_RECORD_TYPE_RAW_ADDRESS = 1;
+    address ADDRESS_1 = 0x0000000000000000000000000000000000AbC123;
+    address ADDRESS_2 = 0x0000000000000000000000000000000000DeF456;
+    address ADDRESS_3 = 0x0000000000000000000000000000000000789AbC;
 
     function setUp() public {
         nonceLogLists = new NonceLogLists();
@@ -39,19 +42,19 @@ contract NonceLogListsTest is Test {
 
     function test_CanClaimThenAppendRecord() public {
         nonceLogLists.claimListManager(NONCE);
-        nonceLogLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        nonceLogLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
     }
 
     function test_RevertIf_NotListManager() public {
         vm.expectRevert("Not manager");
-        nonceLogLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        nonceLogLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
     }
 
     function test_CanClaimThenDeleteRecord() public {
         nonceLogLists.claimListManager(NONCE);
 
-        nonceLogLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        nonceLogLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         nonceLogLists.deleteRecord(NONCE, hash);
     }

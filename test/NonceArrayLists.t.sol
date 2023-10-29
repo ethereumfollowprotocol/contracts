@@ -10,7 +10,10 @@ contract NonceArrayListsTest is Test {
     NonceArrayLists public nonceArrayLists;
     uint constant NONCE = 123456789;
     uint8 constant VERSION = 1;
-    uint8 constant RAW_ADDRESS = 1;
+    uint8 constant LIST_RECORD_TYPE_RAW_ADDRESS = 1;
+    address ADDRESS_1 = 0x0000000000000000000000000000000000AbC123;
+    address ADDRESS_2 = 0x0000000000000000000000000000000000DeF456;
+    address ADDRESS_3 = 0x0000000000000000000000000000000000789AbC;
 
     function setUp() public {
         nonceArrayLists = new NonceArrayLists();
@@ -42,27 +45,27 @@ contract NonceArrayListsTest is Test {
 
         assertEq(nonceArrayLists.getRecordCount(NONCE), 0);
 
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
 
         assertEq(nonceArrayLists.getRecordCount(NONCE), 1);
 
         DeletableListEntry memory entry = nonceArrayLists.getRecord(NONCE, 0);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
     function test_RevertIf_NotListManager() public {
         vm.expectRevert("Not manager");
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
     }
 
-    function test_CanClaimThenDeleteRecord() public {
+    function test_CanClaimThenAppendRecordThenDeleteRecord() public {
         nonceArrayLists.claimListManager(NONCE);
 
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         nonceArrayLists.deleteRecord(NONCE, hash);
 
@@ -71,22 +74,22 @@ contract NonceArrayListsTest is Test {
         DeletableListEntry memory entry = nonceArrayLists.getRecord(NONCE, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
     function test_CanClaimThenGetRecordsInRange() public {
         nonceArrayLists.claimListManager(NONCE);
 
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xDef456"));
-        nonceArrayLists.appendRecord(NONCE, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
+        nonceArrayLists.appendRecord(NONCE, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_3));
 
         DeletableListEntry[] memory entries = nonceArrayLists.getRecordsInRange(NONCE, 1, 2);
 
         assertEq(entries.length, 2);
-        assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
-        assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
+        assertBytesEqual(entries[0].record.data, abi.encodePacked(ADDRESS_2));
+        assertBytesEqual(entries[1].record.data, abi.encodePacked(ADDRESS_3));
     }
 
     // Helper function to compare bytes

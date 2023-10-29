@@ -25,7 +25,6 @@ contract Lists is ArrayLists {
      * @param nonce The nonce of the list whose manager is to be checked.
      */
     modifier onlyListManager(uint nonce) override {
-        // stubbed for now
         require(listRegistry.getManager(nonce) == msg.sender, "Only EFP List Manager can call this function");
         _;
     }

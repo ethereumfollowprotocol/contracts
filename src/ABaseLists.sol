@@ -38,7 +38,7 @@ abstract contract ABaseLists {
 
     /**
      * Restricts access to the owner of the specified token.
-     * @param nonce The ID of the token whose owner is to be checked.
+     * @param nonce The nonce for which to check the list manager.
      */
     modifier onlyListManager(uint nonce) virtual {
         _; // default implementation does nothing

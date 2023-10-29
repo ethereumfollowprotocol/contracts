@@ -12,7 +12,10 @@ contract ListsTest is Test {
     ListRegistry public listRegistry;
     Lists public lists;
     uint8 constant VERSION = 1;
-    uint8 constant RAW_ADDRESS = 1;
+    uint8 constant LIST_RECORD_TYPE_RAW_ADDRESS = 1;
+    address ADDRESS_1 = 0x0000000000000000000000000000000000AbC123;
+    address ADDRESS_2 = 0x0000000000000000000000000000000000DeF456;
+    address ADDRESS_3 = 0x0000000000000000000000000000000000789AbC;
     uint constant TOKEN_ID = 0;
 
     function setUp() public {
@@ -28,41 +31,41 @@ contract ListsTest is Test {
     function test_CanAppendRecord() public {
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
 
         assertEq(lists.getRecordCount(TOKEN_ID), 1);
 
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
     function test_RevertIf_AppendSameRecordTwice() public {
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
 
         assertEq(lists.getRecordCount(TOKEN_ID), 1);
 
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
         // append same record again
         vm.expectRevert("Record already exists!");
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
     }
 
     function test_CanAppendRecords() public {
         assertEq(lists.getRecordCount(TOKEN_ID), 0);
 
         ListRecord[] memory records = new ListRecord[](2);
-        records[0] = ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        records[1] = ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456"));
+        records[0] = ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        records[1] = ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
 
         lists.appendRecords(TOKEN_ID, records);
 
@@ -71,14 +74,14 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
         entry = lists.getRecord(TOKEN_ID, 1);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xDef456"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_2));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -86,8 +89,8 @@ contract ListsTest is Test {
     ///////////////////////////////////////////////////////////////////////////
 
     function test_CanDeleteRecord() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         lists.deleteRecord(TOKEN_ID, hash);
 
@@ -96,21 +99,21 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
     function test_RevertIf_DeleteMissingRecord() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)));
 
         vm.expectRevert("Record not found");
         lists.deleteRecord(TOKEN_ID, hash);
     }
 
     function test_RevertIf_DeleteSameRecordTwice() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         lists.deleteRecord(TOKEN_ID, hash);
 
@@ -119,16 +122,16 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
         vm.expectRevert("Record not found");
         lists.deleteRecord(TOKEN_ID, hash);
     }
 
     function test_CanDeleteRecordThenAppendAgain() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         lists.deleteRecord(TOKEN_ID, hash);
 
@@ -137,34 +140,34 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
 
         assertEq(lists.getRecordCount(TOKEN_ID), 2);
 
         entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
         entry = lists.getRecord(TOKEN_ID, 1);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xDef456"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_2));
     }
 
     function test_CanDeleteRecords() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_3));
 
         bytes32[] memory hashes = new bytes32[](2);
-        hashes[0] = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
-        hashes[1] = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+        hashes[0] = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
+        hashes[1] = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)));
 
         lists.deleteRecords(TOKEN_ID, hashes);
 
@@ -173,20 +176,20 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
 
         entry = lists.getRecord(TOKEN_ID, 1);
         assertEq(entry.deleted, true);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xDef456"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_2));
 
         entry = lists.getRecord(TOKEN_ID, 2);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xGhi789"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_3));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -194,34 +197,34 @@ contract ListsTest is Test {
     ///////////////////////////////////////////////////////////////////////////
 
     function test_CanGetRecordsInRange() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_3));
 
         DeletableListEntry[] memory entries = lists.getRecordsInRange(TOKEN_ID, 1, 2);
 
         assertEq(entries.length, 2);
         assertEq(entries[0].deleted, false);
-        assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
+        assertBytesEqual(entries[0].record.data, abi.encodePacked(ADDRESS_2));
         assertEq(entries[1].deleted, false);
-        assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
+        assertBytesEqual(entries[1].record.data, abi.encodePacked(ADDRESS_3));
     }
 
     function test_CanGetRecordsInRangeIncludingDeletions() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xGhi789"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_3));
         // delete one of the records
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)));
         lists.deleteRecord(TOKEN_ID, hash);
 
         DeletableListEntry[] memory entries = lists.getRecordsInRange(TOKEN_ID, 1, 2);
 
         assertEq(entries.length, 2);
         assertEq(entries[0].deleted, true);
-        assertBytesEqual(entries[0].record.data, bytes("0xDef456"));
+        assertBytesEqual(entries[0].record.data, abi.encodePacked(ADDRESS_2));
         assertEq(entries[1].deleted, false);
-        assertBytesEqual(entries[1].record.data, bytes("0xGhi789"));
+        assertBytesEqual(entries[1].record.data, abi.encodePacked(ADDRESS_3));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -233,7 +236,7 @@ contract ListsTest is Test {
 
         ListOperation memory op = ListOperation({
             operationType: lists.OPERATION_APPEND(),
-            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123")))
+            data: abi.encode(ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)))
         });
 
         lists.modifyRecord(TOKEN_ID, op);
@@ -243,14 +246,14 @@ contract ListsTest is Test {
         DeletableListEntry memory entry = lists.getRecord(TOKEN_ID, 0);
         assertEq(entry.deleted, false);
         assertEq(entry.record.version, VERSION);
-        assertEq(entry.record.recordType, RAW_ADDRESS);
-        assertBytesEqual(entry.record.data, bytes("0xAbc123"));
+        assertEq(entry.record.recordType, LIST_RECORD_TYPE_RAW_ADDRESS);
+        assertBytesEqual(entry.record.data, abi.encodePacked(ADDRESS_1));
     }
 
     function test_CanModifyRecord_Delete() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
 
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         ListOperation memory op = ListOperation({
             operationType: lists.OPERATION_DELETE(),
@@ -268,12 +271,12 @@ contract ListsTest is Test {
 
         ops[0] = ListOperation({
             operationType: lists.OPERATION_APPEND(),
-            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xAbc123")))
+            data: abi.encode(ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)))
         });
 
         ops[1] = ListOperation({
             operationType: lists.OPERATION_APPEND(),
-            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456")))
+            data: abi.encode(ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)))
         });
 
         lists.modifyRecords(TOKEN_ID, ops);
@@ -282,11 +285,11 @@ contract ListsTest is Test {
     }
 
     function test_CanModifyRecords_DeleteMultiple() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xDef456"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2));
 
-        bytes32 hash1 = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
-        bytes32 hash2 = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xDef456")));
+        bytes32 hash1 = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
+        bytes32 hash2 = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)));
 
         ListOperation[] memory ops = new ListOperation[](2);
 
@@ -308,9 +311,9 @@ contract ListsTest is Test {
     }
 
     function test_CanModifyRecords_AppendAndDelete() public {
-        lists.appendRecord(TOKEN_ID, VERSION, RAW_ADDRESS, bytes("0xAbc123"));
+        lists.appendRecord(TOKEN_ID, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1));
 
-        bytes32 hash = keccak256(abi.encode(VERSION, RAW_ADDRESS, bytes("0xAbc123")));
+        bytes32 hash = keccak256(abi.encode(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_1)));
 
         ListOperation[] memory ops = new ListOperation[](2);
 
@@ -321,7 +324,7 @@ contract ListsTest is Test {
 
         ops[1] = ListOperation({
             operationType: lists.OPERATION_APPEND(),
-            data: abi.encode(ListRecord(VERSION, RAW_ADDRESS, bytes("0xDef456")))
+            data: abi.encode(ListRecord(VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(ADDRESS_2)))
         });
 
         lists.modifyRecords(TOKEN_ID, ops);
@@ -329,7 +332,7 @@ contract ListsTest is Test {
         assertEq(lists.getRecordCount(TOKEN_ID), 2);
         assertEq(lists.getRecord(TOKEN_ID, 0).deleted, true);
         assertEq(lists.getRecord(TOKEN_ID, 1).deleted, false);
-        assertBytesEqual(lists.getRecord(TOKEN_ID, 1).record.data, bytes("0xDef456"));
+        assertBytesEqual(lists.getRecord(TOKEN_ID, 1).record.data, abi.encodePacked(ADDRESS_2));
     }
 
     // Helper function to compare bytes

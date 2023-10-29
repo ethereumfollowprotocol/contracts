@@ -7,31 +7,16 @@ import {ListOperation} from "./ListOperation.sol";
 import {ListRecord} from "./ListRecord.sol";
 
 /**
- * @title DeletableListEntry
- * @notice Represents a list record entry that can be marked as deleted.
- */
-struct DeletableListEntry {
-    /// @dev Indicator for whether the record has been deleted.
-    bool deleted;
-
-    /// @dev The actual list record data.
-    ListRecord record;
-}
-
-/**
- * @title ArrayLists
+ * @title MappingLists
  * @notice This contract manages a list of records for each EFP List NFT,
  * providing functionalities to append, delete, and retrieve records. It
  * supports soft deletions, meaning the records are marked as deleted but not
  * actually removed from storage.
  */
-contract ArrayLists is ABaseLists {
-    /// @dev Dynamic array storing records with deletion markers.
-    mapping(uint => DeletableListEntry[]) private recordsByNonce;
+contract MappingLists is ABaseLists {
 
-    /// @dev Maps the hash of a record to its position in the records array for efficient lookup.
-    /// Uses non-zero defaulting (i.e., actual position is stored + 1) to check for existence.
-    mapping(uint => mapping(bytes32 => uint)) private recordIndexByNonce;
+    /// @dev Maps the hash of a record to whether it is in the list
+    mapping(uint => mapping(bytes32 => bool)) private recordsByNonce;
 
     ///////////////////////////////////////////////////////////////////////////
     // Write APIs
@@ -51,11 +36,11 @@ contract ArrayLists is ABaseLists {
      */
     function _appendRecord(uint nonce, uint8 version, uint8 recordType, bytes memory data) internal override {
         bytes32 hash = keccak256(abi.encode(version, recordType, data));
-        require(recordIndexByNonce[nonce][hash] == 0, "Record already exists!");
+        mapping(bytes32 => bool) storage nonceRecords = recordsByNonce[nonce];
 
-        recordsByNonce[nonce].push(DeletableListEntry(false, ListRecord(version, recordType, data)));
-        // store the index so we can look it up later for deletion
-        recordIndexByNonce[nonce][hash] = recordsByNonce[nonce].length;
+        require(!nonceRecords[hash], "Record already exists");
+
+        nonceRecords[hash] = true;
         emit RecordAdded(nonce, hash);
     }
 
@@ -70,12 +55,12 @@ contract ArrayLists is ABaseLists {
      * @param recordHash The hash identifier of the record to delete.
      */
     function _deleteRecord(uint nonce, bytes32 recordHash) internal override {
-        mapping(bytes32 => uint) storage recordIndices = recordIndexByNonce[nonce];
-        require(recordIndices[recordHash] > 0, "Record not found");
+        mapping(bytes32 => bool) storage nonceRecords = recordsByNonce[nonce];
 
-        uint indexToDelete = recordIndices[recordHash] - 1;
-        recordsByNonce[nonce][indexToDelete].deleted = true;
-        delete recordIndices[recordHash];
+        require(nonceRecords[recordHash], "Record does not exist");
+
+        nonceRecords[recordHash] = false;
+
         emit RecordDeleted(nonce, recordHash);
     }
 
@@ -108,55 +93,10 @@ contract ArrayLists is ABaseLists {
     /**
      * @notice Returns the total count of records for a specific nonce, including those marked as deleted.
      *
-     * @param nonce The nonce of the list.
+     * @param nonce The ID of the token whose record count is desired.
      * @return Total number of records for the specified nonce.
      */
-    function getRecordCount(uint nonce) public view returns (uint) {
-        return recordsByNonce[nonce].length;
-    }
-
-    /**
-     * @notice Retrieves a specific record by its position for a specific nonce.
-     *
-     * @param nonce The nonce of the list.
-     * @param index The position of the desired record in the list.
-     * @return The record at the specified position for the specified nonce.
-     */
-    function getRecord(uint nonce, uint index) public view returns (DeletableListEntry memory) {
-        require(index < recordsByNonce[nonce].length, "Index out of bounds");
-        return recordsByNonce[nonce][index];
-    }
-
-    /**
-     * @notice Retrieves all the records for a specific nonce.
-     *
-     * @param nonce The nonce of the list.
-     * @return An array of all records for the specified nonce.
-     */
-    function getRecords(uint nonce) public view returns (DeletableListEntry[] memory) {
-        return getRecordsInRange(nonce, 0, recordsByNonce[nonce].length - 1);
-    }
-
-    /**
-     * @notice Retrieves records in a specified range of positions for a specific nonce.
-     *
-     * @param nonce The nonce of the list.
-     * @param fromIndex The start position for the range.
-     * @param toIndex The end position for the range.
-     * @return An array of records within the specified range for the specified nonce.
-     */
-    function getRecordsInRange(uint nonce, uint fromIndex, uint toIndex) public view returns (DeletableListEntry[] memory) {
-        require(fromIndex <= toIndex, "Invalid range");
-        require(toIndex < recordsByNonce[nonce].length, "Index out of bounds");
-
-        DeletableListEntry[] memory result = new DeletableListEntry[](toIndex - fromIndex + 1);
-        for (uint i = fromIndex; i <= toIndex; ) {
-            result[i - fromIndex] = recordsByNonce[nonce][i];
-
-            unchecked {
-                ++i;
-            }
-        }
-        return result;
+    function hasRecord(uint nonce, bytes32 recordHash) public view returns (bool) {
+        return recordsByNonce[nonce][recordHash];
     }
 }
