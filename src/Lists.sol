@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {BaseLists} from "./BaseLists.sol";
+import {ArrayLists} from "./ArrayLists.sol";
 import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 
@@ -12,22 +12,21 @@ import {ListRecord} from "./ListRecord.sol";
  * supports soft deletions, meaning the records are marked as deleted but not
  * actually removed from storage.
  */
-contract Lists is BaseLists {
+contract Lists is ArrayLists {
 
     IListRegistry public listRegistry;
 
     constructor(IListRegistry listRegistry_) {
-        // stubbed for now
         listRegistry = listRegistry_;
     }
 
     /**
      * Restricts access to the manager of the specified token.
-     * @param tokenId The ID of the token whose manager is to be checked.
+     * @param nonce The nonce of the list whose manager is to be checked.
      */
-    modifier onlyListManager(uint tokenId) override {
+    modifier onlyListManager(uint nonce) override {
         // stubbed for now
-        require(listRegistry.getManager(tokenId) == msg.sender, "Only EFP List Manager can call this function");
+        require(listRegistry.getManager(nonce) == msg.sender, "Only EFP List Manager can call this function");
         _;
     }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {BaseLists} from "./BaseLists.sol";
+import {ArrayLists} from "./ArrayLists.sol";
 import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 
@@ -10,15 +10,15 @@ import {ListRecord} from "./ListRecord.sol";
  * @notice Manages records for each EFP List NFT, providing functionalities for record
  * manipulation. Employs a soft deletion mechanism, flagging records as deleted without removing them from storage.
  */
-contract NonceLists is BaseLists {
+contract NonceLists is ArrayLists {
 
-    /// @notice A mapping from a token ID to its associated manager.
+    /// @notice A mapping from a nonce to its associated manager.
     mapping(uint nonce => address) public managers;
 
     /**
      * @notice A modifier that ensures only the manager of a specific token can access the decorated function.
      * @param nonce The nonce of the list.
-     * @dev Throws an error if the caller isn't the manager of the provided token ID.
+     * @dev Throws an error if the caller isn't the manager of the provided nonce.
      */
     modifier onlyListManager(uint nonce) override {
         require(managers[nonce] == msg.sender, "Not manager");

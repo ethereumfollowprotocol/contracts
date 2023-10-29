@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {DeletableListEntry} from "../src/BaseLists.sol";
+import {DeletableListEntry} from "../src/ArrayLists.sol";
 import {NonceLists} from "../src/NonceLists.sol";
 import {ListRecord} from "../src/ListRecord.sol";
 
