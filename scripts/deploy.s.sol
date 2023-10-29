@@ -37,21 +37,29 @@ contract EFPScript is Script {
         uint nonce = tokenId;
         nonceArrayLists.claimListManager(nonce);
 
-        for (uint i = 0; i <= followerCount; i++) {
-            nonceArrayLists.appendRecord(nonce, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(address(uint160(i))));
-        }
+        appendRecords(nonce, followerCount);
 
         // read back data
         uint numRecords = nonceArrayLists.getRecordCount(nonce);
         console.log("EFP List NFT #%d    nonce: %d    numRecords: %s", tokenId, nonce, numRecords);
         DeletableListEntry[] memory records = nonceArrayLists.getRecordsInRange(nonce, 0, numRecords - 1);
         for (uint i = 0; i < records.length; i++) {
-            console.log("  record #%d", i);
-            console.log("    deleted:    %s", records[i].deleted);
-            console.log("    version:    %d", records[i].record.version);
-            console.log("    recordType: %d", records[i].record.recordType);
-            console.log("    data:       %s", bytesToHexString(records[i].record.data));
+            logRecord(i, records[i]);
         }
+    }
+
+    function appendRecords(uint nonce, uint count) internal {
+        for (uint i = 0; i < count; i++) {
+            nonceArrayLists.appendRecord(nonce, VERSION, LIST_RECORD_TYPE_RAW_ADDRESS, abi.encodePacked(address(uint160(i))));
+        }
+    }
+
+    function logRecord(uint num, DeletableListEntry memory record) internal view {
+        console.log("  record #%d", num);
+        console.log("    deleted:    %s", record.deleted);
+        console.log("    version:    %d", record.record.version);
+        console.log("    recordType: %d", record.record.recordType);
+        console.log("    data:       %s", bytesToHexString(record.record.data));
     }
 
     function bytesToHexString(bytes memory data) public pure returns (string memory) {
