@@ -8,8 +8,8 @@ import {ListRecord} from "./ListRecord.sol";
 import {Lists} from "./Lists.sol";
 
 /**
- * @title TaggedList
- * @notice A TaggedList is a List that supports tagging a list record with a list of tags.
+ * @title Tags
+ * @notice A Tags is a List that supports tagging a list record with a list of tags.
  */
 contract Tags is ITags, Lists {
 

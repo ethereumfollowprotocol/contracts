@@ -81,8 +81,12 @@ abstract contract ABaseLists {
      * @param records The array of records to append.
      */
     function appendRecords(uint nonce, ListRecord[] calldata records) public onlyListManager(nonce) {
-        for (uint i = 0; i < records.length; i++) {
+        uint len = records.length;
+        for (uint i = 0; i < len; ) {
             _appendRecord(nonce, records[i].version, records[i].recordType, records[i].data);
+            unchecked {
+                ++i;
+            }
         }
     }
 
