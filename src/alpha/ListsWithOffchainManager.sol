@@ -6,8 +6,6 @@ import {IListRegistry} from "./IListRegistry.sol";
 import {ListRecord} from "./ListRecord.sol";
 import "../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 
-import "../../lib/forge-std/src/console.sol";
-
 /**
  * @title ListManager
  * @notice A structure representing the manager associated with a specific EFP List NFT.
