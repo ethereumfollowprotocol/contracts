@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {DeletableListEntry} from "../src/ArrayLists.sol";
-import {NonceArrayLists} from "../src/NonceArrayLists.sol";
-import {NonceLogLists} from "../src/NonceLogLists.sol";
-import {NonceMappingLists} from "../src/NonceMappingLists.sol";
-import {ListOperation} from "../src/ListOperation.sol";
-import {ListRecord} from "../src/ListRecord.sol";
+import {DeletableListEntry} from "../../src/alpha/ArrayLists.sol";
+import {NonceArrayLists} from "../../src/alpha/NonceArrayLists.sol";
+import {NonceLogLists} from "../../src/alpha/NonceLogLists.sol";
+import {NonceMappingLists} from "../../src/alpha/NonceMappingLists.sol";
+import {ListOperation} from "../../src/alpha/ListOperation.sol";
+import {ListRecord} from "../../src/alpha/ListRecord.sol";
 
 contract NonceLogListsTest is Test {
     NonceArrayLists public nonceArrayLists;

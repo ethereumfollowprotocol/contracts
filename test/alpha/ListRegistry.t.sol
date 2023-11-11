@@ -2,7 +2,8 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/ListRegistry.sol";
+import {ListRegistry} from "../../src/alpha/ListRegistry.sol";
+import {ListStorageLocation} from "../../src/alpha/ListStorageLocation.sol";
 
 
 contract ListRegistryTest is Test {

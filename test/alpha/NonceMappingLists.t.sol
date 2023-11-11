@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {NonceMappingLists} from "../src/NonceMappingLists.sol";
-import {ListRecord} from "../src/ListRecord.sol";
+import {NonceMappingLists} from "../../src/alpha/NonceMappingLists.sol";
+import {ListRecord} from "../../src/alpha/ListRecord.sol";
 
 contract NonceMappingListsTest is Test {
     NonceMappingLists public nonceMappingLists;

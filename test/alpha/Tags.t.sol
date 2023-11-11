@@ -2,8 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../src/Tags.sol";
-import {ListRegistry} from "../src/ListRegistry.sol";
+import {Tags} from "../../src/alpha/Tags.sol";
+import {ListRegistry} from "../../src/alpha/ListRegistry.sol";
+import {ListRecord} from "../../src/alpha/ListRecord.sol";
+import {ListOperation} from "../../src/alpha/ListOperation.sol";
 
 contract TagsTest is Test {
     ListRegistry public listRegistry;

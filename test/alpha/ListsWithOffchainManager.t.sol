@@ -2,9 +2,9 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {DeletableListEntry} from "../src/ArrayLists.sol";
-import {ListsWithOffchainManager} from "../src/ListsWithOffchainManager.sol";
-import {ListRecord} from "../src/ListRecord.sol";
+import {DeletableListEntry} from "../../src/alpha/ArrayLists.sol";
+import {ListsWithOffchainManager} from "../../src/alpha/ListsWithOffchainManager.sol";
+import {ListRecord} from "../../src/alpha/ListRecord.sol";
 
 contract ListsWithOffchainManagerTest is Test {
     ListsWithOffchainManager public listsWithOffchainManager;
