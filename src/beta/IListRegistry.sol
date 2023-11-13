@@ -34,27 +34,9 @@ interface IListRegistry {
     /**
      * @notice Associates a token with a list location.
      * @param tokenId The ID of the token.
-     * @param contractAddress The contract address to be associated with the token.
+     * @param listStorageLocation The new list storage location to be associated with the token.
      */
-    function setListStorageLocationL1(uint tokenId, address contractAddress) external;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Manager
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @notice Fetches the manager associated with a specific token.
-     * @param tokenId The ID of the token.
-     * @return The Ethereum address of the manager.
-     */
-    function getManager(uint tokenId) external view returns (address);
-
-    /**
-     * @notice Sets the manager for a specific token.
-     * @param tokenId The ID of the token.
-     * @param managerAddress The Ethereum address of the manager.
-     */
-    function setManager(uint tokenId, address managerAddress) external;
+    function setListStorageLocation(uint tokenId, ListStorageLocation calldata listStorageLocation) external;
 
     ///////////////////////////////////////////////////////////////////////////
     // User

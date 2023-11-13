@@ -2,11 +2,14 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {ListRegistry} from "../../src/alpha/ListRegistry.sol";
-import {ListStorageLocation} from "../../src/alpha/ListStorageLocation.sol";
+import {ListRegistry} from "../../src/beta/ListRegistry.sol";
+import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
 
 
 contract ListRegistryTest is Test {
+    uint8 constant VERSION = 1;
+    uint8 constant LIST_LOCATION_L1 = 1;
+    uint8 constant LIST_LOCATION_L2_WITH_NONCE = 2;
     ListRegistry public registry;
 
     function setUp() public {
@@ -45,7 +48,8 @@ contract ListRegistryTest is Test {
 
     function test_CanSetListStorageLocationL1() public {
         registry.mint();
-        registry.setListStorageLocationL1(0, address(this));
+        ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(this));
+        registry.setListStorageLocation(0, listStorageLocationToSet);
         // Assuming a way to get the list location in ListRegistry
         ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
         assertEq(listStorageLocation.version, 1);
@@ -60,7 +64,8 @@ contract ListRegistryTest is Test {
         uint chainId = 1234;
         address contractAddress = address(123);
         uint nonce = 123456789;
-        registry.setListStorageLocationL2WithNonce(0, chainId, contractAddress, nonce);
+        ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L2_WITH_NONCE, abi.encodePacked(chainId, contractAddress, nonce));
+        registry.setListStorageLocation(0, listStorageLocationToSet);
         // Assuming a way to get the list location in ListRegistry
         ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
         assertEq(listStorageLocation.version, 1);
@@ -71,25 +76,8 @@ contract ListRegistryTest is Test {
         assertEq(decodedNonce, nonce);
     }
 
-    function test_CanSetManager() public {
-        registry.mint();
-        registry.setManager(0, address(0xAbc));
-        assertEq(registry.getManager(0), address(0xAbc));
-    }
-
-    function test_CanGetManager() public {
-        registry.mint();
-        assertEq(registry.getManager(0), address(this));
-    }
-
-    function test_CanManagerFallbackToOwner() public {
-        registry.mint();
-        assertEq(registry.getManager(0), address(this));
-    }
-
     function test_CanSetUser() public {
         registry.mint();
-        registry.setManager(0, address(this));
         registry.setUser(0, address(0xDef));
         assertEq(registry.getUser(0), address(0xDef));
     }
