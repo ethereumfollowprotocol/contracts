@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-/**
- * @title ListRecord
- * @notice A ListRecord is a struct that represents a list record
- */
+/// @title ListRecord
+/// @notice A ListRecord is a struct that represents a list record.
 struct ListRecord {
-
-    /**
-     * @dev The version byte allows for:
-     * 1. Differentiating between record formats for upgradability.
-     * 2. Ensuring backward compatibility with older versions.
-     * 3. Identifying the record's schema or processing logic.
-     */
+    /// @notice The version byte of the list record.
+    /// @dev Used for differentiating between record formats for upgradability,
+    ///      ensuring backward compatibility, and identifying the record's schema.
     uint8 version;
 
-    /// @dev type of list record
+    /// @notice The type of the list record.
+    /// @dev Represents the specific category or format of the list record.
     uint8 recordType;
 
-    /// @dev data for the list record
+    /// @notice The data associated with the list record.
+    /// @dev Contains the actual content or information of the list record.
     bytes data;
 }
