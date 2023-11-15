@@ -171,7 +171,7 @@ contract Lists {
      * @param nonce The list's unique identifier.
      * @param ops An array of operations to be applied.
      */
-    function applyAllListOps(uint nonce, bytes[] calldata ops) public onlyListManager(nonce) {
+    function applyListOps(uint nonce, bytes[] calldata ops) public onlyListManager(nonce) {
         uint len = ops.length;
         for (uint i = 0; i < len; ) {
             _applyListOp(nonce, ops[i]);
