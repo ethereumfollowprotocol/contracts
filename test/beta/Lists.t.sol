@@ -2,14 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {ListOpStore} from "../../src/beta/ListOpStore.sol";
-import {ListOp} from "../../src/beta/ListOp.sol";
-import {ListRecord} from "../../src/beta/ListRecord.sol";
-import {ListRegistry} from "../../src/beta/ListRegistry.sol";
+import {Lists} from "../../src/beta/Lists.sol";
 
 contract ListsTest is Test {
-    ListRegistry public listRegistry;
-    ListOpStore public listOpStore;
+    Lists public lists;
     uint8 constant LIST_OP_VERSION = 1;
     uint8 constant LIST_OP_TYPE_ADD_RECORD = 1;
     uint8 constant LIST_RECORD_VERSION = 1;
@@ -20,32 +16,30 @@ contract ListsTest is Test {
     uint constant TOKEN_ID = 0;
 
     function setUp() public {
-        listRegistry = new ListRegistry();
-        listOpStore = new ListOpStore();
-        listRegistry.mint();
+        lists = new Lists();
     }
 
     function test_CanClaimListManager() public {
         vm.prank(ADDRESS_1);
-        listOpStore.claimListManager(TOKEN_ID);
+        lists.claimListManager(TOKEN_ID);
 
-        assertEq(listOpStore.getListManager(TOKEN_ID), ADDRESS_1, "Manager1 should be the manager of list 1");
+        assertEq(lists.getListManager(TOKEN_ID), ADDRESS_1, "Manager1 should be the manager of list 1");
     }
 
     function test_CanSetListManager() public {
         vm.prank(ADDRESS_1);
-        listOpStore.claimListManager(TOKEN_ID);
+        lists.claimListManager(TOKEN_ID);
 
         vm.prank(ADDRESS_1);
-        listOpStore.setListManager(TOKEN_ID, ADDRESS_2);
+        lists.setListManager(TOKEN_ID, ADDRESS_2);
 
-        assertEq(listOpStore.getListManager(TOKEN_ID), ADDRESS_2, "Manager2 should now be the manager of list 1");
+        assertEq(lists.getListManager(TOKEN_ID), ADDRESS_2, "Manager2 should now be the manager of list 1");
     }
 
     function test_CanApplyListOpToAddRecord() public {
-        assertEq(listOpStore.getListOpCount(TOKEN_ID), 0);
+        assertEq(lists.getListOpCount(TOKEN_ID), 0);
 
-        listOpStore.claimListManager(TOKEN_ID);
+        lists.claimListManager(TOKEN_ID);
 
         bytes memory listOp = abi.encodePacked(
             LIST_OP_VERSION,                 // Version for ListOp
@@ -55,10 +49,10 @@ contract ListsTest is Test {
             ADDRESS_1                        // Raw address (20 bytes)
         );
 
-        listOpStore.applyListOp(TOKEN_ID, listOp);
+        lists.applyListOp(TOKEN_ID, listOp);
 
-        assertEq(listOpStore.getListOpCount(TOKEN_ID), 1);
-        assertBytesEqual(listOpStore.getListOp(TOKEN_ID, 0), listOp);
+        assertEq(lists.getListOpCount(TOKEN_ID), 1);
+        assertBytesEqual(lists.getListOp(TOKEN_ID, 0), listOp);
     }
 
     // Helper function to compare bytes

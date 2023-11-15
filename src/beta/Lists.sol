@@ -2,11 +2,11 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title ListOpStore
+ * @title Lists
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract ListOpStore {
+contract Lists {
 
     ///////////////////////////////////////////////////////////////////////////
     // Events
