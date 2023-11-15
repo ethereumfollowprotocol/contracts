@@ -3,9 +3,14 @@ pragma solidity ^0.8.20;
 
 /**
  * @title ListOp
- * @notice Represents an operation to be performed on a list.
+ * @notice A ListOp represents an operation to be performed on a list.
  */
 struct ListOp {
+    /// @notice The version byte of the list record.
+    /// @dev Used for differentiating between record formats for upgradability,
+    ///      ensuring backward compatibility, and identifying the record's schema.
+    uint8 version;
+
     /// @dev Represents the operation code (opcode) for the list operation.
     ///      It's a byte-sized identifier for the type of operation to be performed.
     ///      For example, different byte values could signify add, remove, update, etc.
