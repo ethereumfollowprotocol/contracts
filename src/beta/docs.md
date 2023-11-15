@@ -41,7 +41,7 @@ To illustrate the design, however, consider a few hypothetical list record types
 
 - a subscription to another EFP List, where the `data` field would contain the 32-byte token ID of the corresponding EFP NFT.
 - an ERC-721 NFT token, where the `data` field would contain the 20-byte address of the ERC-721 contract, and the 32-byte token ID.
-- an ERC-1155 token, where the `data` field would contain the 20-byte address of the ERC-1155 contract, the 32-byte token ID, and the 32-byte token amount.
+- an ERC-1155 token, where the `data` field would contain the 20-byte address of the ERC-1155 contract, the 32-byte token ID (exclude token amount).
 - an ENS name, where the `data` field would contain the 32-byte hash of the ENS name OR possibly the normalized string of the ENS name.
 
 ## Tag
@@ -128,7 +128,9 @@ The following is an example of an encoded `ListOp` for tagging a `ListRecord` of
 | 2       | `ListRecord` version (1 byte) | 0x01                                       |
 | 3       | `ListRecord` type (1 byte)    | 0x01                                       |
 | 4 - 23  | `ListRecord` data (20 bytes)  | 0x00000000000000000000000000000000DeaDBeef |
-| 24 - N  | Tag (variable)                | 0x746167 ("tag")                           |
+| 24 - N  | Tag (variable) (UTF-8)        | 0x746167 ("tag")                           |
+
+The tag should be encoded as UTF-8.
 
 ### Example - Untag Record
 
@@ -141,4 +143,184 @@ The following is an example of an encoded `ListOp` for untagging a `ListRecord` 
 | 2       | `ListRecord` version (1 byte) | 0x01                                       |
 | 3       | `ListRecord` type (1 byte)    | 0x01                                       |
 | 4 - 23  | `ListRecord` data (20 bytes)  | 0x00000000000000000000000000000000DeaDBeef |
-| 24 - N  | Tag (variable)                | 0x746167 ("tag")                           |
+| 24 - N  | Tag (variable) (UTF-8)        | 0x746167 ("tag")                           |
+
+The tag should be encoded as UTF-8.
+
+## Social Graph
+
+The social graph is the full set of lists and their associated records and tags.
+
+To construct the social graph, it is sufficient to iterate through all lists and apply the operations in order:
+
+```
+for each list in lists:
+    for each op in list:
+        apply op to social graph
+```
+
+### Via Logs
+
+The contract defines a `ListOperation` event as:
+
+```solidity
+event ListOperation(uint indexed nonce, bytes op);
+```
+
+So, the social graph can be constructed by iterating through the `ListOperation` events emitted by the EFP NFT contract.
+
+### Via Contract Calls
+
+The contract defines four read functions:
+
+- `getListOpCount`: Returns the number of operations in a list.
+- `getListOp`: Returns a single operation in a list.
+- `getListOpsInRange`: Returns a range of operations in a list.
+- `getAllListOps`: Returns all operations in a list.
+
+If you are using a node without gas limits, you can use `getAllListOps` to retrieve all operations in a list. Otherwise, you will need to use `getListOpCount` and `getListOpsInRange` to retrieve the operations in batches.
+
+### Social Graph implementation
+
+A rough implementation of a Social Graph is defined below
+
+```TypeScript
+type TokenId = number;
+
+type ListRecord {
+    version: number;
+    recordType: number;
+    data: bytes;
+}
+
+type Tag = string;
+
+class LinkedListNode {
+    value: ListRecord;
+    next: LinkedListNode | null;
+    prev: LinkedListNode | null;
+
+    constructor(value: ListRecord) {
+        this.value = value;
+        this.next = null;
+        this.prev = null;
+    }
+}
+
+class LinkedList {
+    head: LinkedListNode | null;
+    tail: LinkedListNode | null;
+
+    constructor() {
+        this.head = null;
+        this.tail = null;
+    }
+
+    // O(1) time
+    add(record: ListRecord) {
+        const newNode = new LinkedListNode(record);
+        if (!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
+        } else {
+            if (this.tail) {
+                this.tail.next = newNode;
+                newNode.prev = this.tail;
+                this.tail = newNode;
+            }
+        }
+        return newNode; // Return the node for external reference
+    }
+
+    // O(1) time
+    remove(node: LinkedListNode) {
+        if (node.prev) {
+            node.prev.next = node.next;
+        } else {
+            this.head = node.next;
+        }
+        if (node.next) {
+            node.next.prev = node.prev;
+        } else {
+            this.tail = node.prev;
+        }
+    }
+}
+
+// Social Graph supports:
+// O(1) add/remove records via doubly-linked list to maintain order
+// O(1) add/remove tags via set
+// O(n) get records since we need to iterate through the linked list
+// O(1) get tags since we use a set
+//
+// other tradeoffs are possible but this is a simple implementation shown as an example
+class SocialGraph {
+    private lists: Map<TokenId, LinkedList>;
+    private nodeMap: Map<ListRecord, LinkedListNode>; // To quickly find the node for a given record
+    private tags: Map<TokenId, Map<LinkedListNode, Set<Tag>>>;
+
+    constructor() {
+        this.lists = new Map();
+        this.tags = new Map();
+        this.nodeMap = new Map();
+    }
+
+    addRecord(listId: TokenId, record: ListRecord): void {
+        if (!this.lists.has(listId)) {
+            this.lists.set(listId, new LinkedList());
+        }
+        const node = this.lists.get(listId).add(record);
+        this.nodeMap.set(record, node);
+    }
+
+    removeRecord(listId: TokenId, record: ListRecord): void {
+        if (this.lists.has(listId) && this.nodeMap.has(record)) {
+            const node = this.nodeMap.get(record);
+            this.lists.get(listId).remove(node);
+            this.nodeMap.delete(record);
+        }
+    }
+
+    tagRecord(listId: TokenId, record: ListRecord, tag: Tag): void {
+        if (!this.tags.has(listId)) {
+            this.tags.set(listId, new Map());
+        }
+        const node = this.nodeMap.get(record);
+        if (!this.tags.get(listId).has(node)) {
+            this.tags.get(listId).set(node, new Set<Tag>());
+        }
+        this.tags.get(listId).get(node).add(tag);
+    }
+
+    untagRecord(listId: TokenId, record: ListRecord, tag: Tag): void {
+        const node = this.nodeMap.get(record);
+        if (this.tags.has(listId) && this.tags.get(listId).has(node)) {
+            this.tags.get(listId).get(node).delete(tag);
+        }
+    }
+
+    // read-only functions
+
+    // O(n) time
+    getRecords(listId: TokenId): ListRecord[] {
+        const records: ListRecord[] = [];
+        if (this.lists.has(listId)) {
+            let node = this.lists.get(listId).head;
+            while (node) {
+                records.push(node.value);
+                node = node.next;
+            }
+        }
+        return records;
+    }
+
+    // O(1) time
+    getTags(listId: TokenId, record: ListRecord): Set<Tag> {
+        const node = this.nodeMap.get(record);
+        if (this.tags.has(listId) && this.tags.get(listId).has(node)) {
+            return this.tags.get(listId).get(node);
+        }
+        return new Set<Tag>();
+    }
+}
+```
