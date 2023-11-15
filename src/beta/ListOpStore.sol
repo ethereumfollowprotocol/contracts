@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListOp} from "./ListOp.sol";
-import {ListRecord} from "./ListRecord.sol";
-
 /**
- * @title Lists
+ * @title ListOpStore
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
- *         Provides functionalities for list managers to append, modify, or delete records.
+ *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract Lists {
+contract ListOpStore {
 
     ///////////////////////////////////////////////////////////////////////////
     // Events
@@ -18,9 +14,18 @@ contract Lists {
 
     /// @notice Emitted when an operation is applied to a list.
     /// @param nonce The unique identifier of the list being modified.
-    /// @param code The operation code indicating the type of operation.
-    /// @param data The data associated with the operation.
-    event ListOperation(uint nonce, bytes1 code, bytes data);
+    /// @param op The operation being applied.
+    event ListOperation(uint nonce, bytes op);
+
+    /// @notice Emitted when a list nonce is claimed.
+    /// @param nonce The unique identifier of the list being claimed.
+    /// @param manager The address of the manager claiming the list.
+    event NonceClaim(uint nonce, address manager);
+
+    /// @notice Emitted when a list manager is changed.
+    /// @param nonce The unique identifier of the list being modified.
+    /// @param manager The address of the new manager.
+    event ListManagerChange(uint nonce, address manager);
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
@@ -32,7 +37,7 @@ contract Lists {
 
     /// @notice Stores a sequence of operations for each list identified by its nonce.
     /// @dev Each list can have multiple operations performed over time.
-    mapping(uint => ListOp[]) public listOps;
+    mapping(uint => bytes[]) public listOps;
 
     ///////////////////////////////////////////////////////////////////////////
     // Modifiers
@@ -60,6 +65,7 @@ contract Lists {
     function claimListManager(uint nonce) external {
         require(managers[nonce] == address(0), "Nonce already claimed");
         managers[nonce] = msg.sender;
+        emit NonceClaim(nonce, msg.sender);
     }
 
     /**
@@ -70,6 +76,7 @@ contract Lists {
      */
     function setListManager(uint nonce, address manager) external onlyListManager(nonce) {
         managers[nonce] = manager;
+        emit ListManagerChange(nonce, manager);
     }
 
     /**
@@ -82,18 +89,72 @@ contract Lists {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // List Operation Functions
+    // List Operation Functions -  Read
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Retrieves the number of operations performed on a list.
+     * @param nonce The list's unique identifier.
+     * @return The number of operations performed on the list.
+     */
+    function getListOpCount(uint nonce) external view returns (uint) {
+        return listOps[nonce].length;
+    }
+
+    /**
+     * @notice Retrieves the operation at a specified index for a list.
+     * @param nonce The list's unique identifier.
+     * @param index The index of the operation to be retrieved.
+     * @return The operation at the specified index.
+     */
+    function getListOp(uint nonce, uint index) external view returns (bytes memory) {
+        return listOps[nonce][index];
+    }
+
+    /**
+     * @notice Retrieves all operations for a list.
+     * @param nonce The list's unique identifier.
+     * @return The operations performed on the list.
+     */
+    function getListOps(uint nonce) external view returns (bytes[] memory) {
+        return listOps[nonce];
+    }
+
+    /**
+     * @notice Retrieves a range of operations for a list.
+     * @param nonce The list's unique identifier.
+     * @param start The starting index of the range.
+     * @param end The ending index of the range.
+     * @return The operations in the specified range.
+     */
+    function getListOpsInRange(uint nonce, uint start, uint end) external view returns (bytes[] memory) {
+        if (start > end) {
+            revert("Invalid range");
+        }
+
+        bytes[] memory ops = new bytes[](end - start);
+        for (uint i = start; i < end; ) {
+            ops[i - start] = listOps[nonce][i];
+
+            unchecked {
+                ++i;
+            }
+        }
+        return ops;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Operation Functions - Write
     ///////////////////////////////////////////////////////////////////////////
 
     /**
      * @notice Applies a single operation to the list.
      * @param nonce The list's unique identifier.
      * @param op The operation to be applied.
-     * @dev Internal function, integral to the list modification process.
      */
-    function _applyOp(uint nonce, ListOp calldata op) internal {
+    function _applyListOp(uint nonce, bytes calldata op) internal {
         listOps[nonce].push(op);
-        emit ListOperation(nonce, op.code, op.data);
+        emit ListOperation(nonce, op);
     }
 
     /**
@@ -101,20 +162,19 @@ contract Lists {
      * @param nonce The list's unique identifier.
      * @param op The operation to be applied.
      */
-    function applyOp(uint nonce, ListOp calldata op) public onlyListManager(nonce) {
-        _applyOp(nonce, op);
+    function applyListOp(uint nonce, bytes calldata op) public onlyListManager(nonce) {
+        _applyListOp(nonce, op);
     }
 
     /**
      * @notice Allows list managers to apply multiple operations in a single transaction.
      * @param nonce The list's unique identifier.
      * @param ops An array of operations to be applied.
-     * @dev Utilizes an unchecked loop for gas optimization.
      */
-    function applyAllOps(uint nonce, ListOp[] calldata ops) public onlyListManager(nonce) {
+    function applyAllListOps(uint nonce, bytes[] calldata ops) public onlyListManager(nonce) {
         uint len = ops.length;
         for (uint i = 0; i < len; ) {
-            _applyOp(nonce, ops[i]);
+            _applyListOp(nonce, ops[i]);
             unchecked {
                 ++i;
             }
