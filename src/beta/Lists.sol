@@ -1,26 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import {ILists} from "./ILists.sol";
+
 /**
  * @title Lists
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract Lists {
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Events
-    ///////////////////////////////////////////////////////////////////////////
-
-    /// @notice Emitted when a list manager is changed.
-    /// @param nonce The unique identifier of the list being modified.
-    /// @param manager The address of the new manager.
-    event ListManagerChange(uint indexed nonce, address manager);
-
-    /// @notice Emitted when an operation is applied to a list.
-    /// @param nonce The unique identifier of the list being modified.
-    /// @param op The operation being applied.
-    event ListOperation(uint indexed nonce, bytes op);
+contract Lists is ILists {
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures

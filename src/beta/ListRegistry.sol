@@ -11,16 +11,6 @@ import {ListStorageLocation} from "./ListStorageLocation.sol";
 contract ListRegistry is IListRegistry, ERC721A {
 
     ///////////////////////////////////////////////////////////////////////////
-    // Events
-    ///////////////////////////////////////////////////////////////////////////
-
-    /// @notice Emitted when a list storage location is set
-    event ListStorageLocationChange(uint indexed tokenId, ListStorageLocation listStorageLocation);
-
-    /// @notice Emitted when a list user is set
-    event ListUserChange(uint indexed tokenId, address listUser);
-
-    ///////////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////////
 
@@ -101,12 +91,7 @@ contract ListRegistry is IListRegistry, ERC721A {
         address user = tokenIdToListUser[tokenId];
 
         // distinguish from 0x0000...0000 address
-        if (user != address(0)) {
-            return user;
-        } else {
-            // else default to the owner of the token
-            return ownerOf(tokenId);
-        }
+        return (user != address(0)) ? user : ownerOf(tokenId);
     }
 
     /**
