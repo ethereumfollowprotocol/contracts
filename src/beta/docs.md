@@ -175,8 +175,8 @@ The contract defines four read functions:
 
 - `getListOpCount`: Returns the number of operations in a list.
 - `getListOp`: Returns a single operation in a list.
+- `getListOps`: Returns all operations in a list.
 - `getListOpsInRange`: Returns a range of operations in a list.
-- `getAllListOps`: Returns all operations in a list.
 
 If you are using a node without gas limits, you can use `getAllListOps` to retrieve all operations in a list. Otherwise, you will need to use `getListOpCount` and `getListOpsInRange` to retrieve the operations in batches.
 
