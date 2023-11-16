@@ -12,20 +12,15 @@ contract Lists {
     // Events
     ///////////////////////////////////////////////////////////////////////////
 
-    /// @notice Emitted when an operation is applied to a list.
-    /// @param nonce The unique identifier of the list being modified.
-    /// @param op The operation being applied.
-    event ListOperation(uint indexed nonce, bytes op);
-
-    /// @notice Emitted when a list nonce is claimed.
-    /// @param nonce The unique identifier of the list being claimed.
-    /// @param manager The address of the manager claiming the list.
-    event NonceClaim(uint indexed nonce, address manager);
-
     /// @notice Emitted when a list manager is changed.
     /// @param nonce The unique identifier of the list being modified.
     /// @param manager The address of the new manager.
     event ListManagerChange(uint indexed nonce, address manager);
+
+    /// @notice Emitted when an operation is applied to a list.
+    /// @param nonce The unique identifier of the list being modified.
+    /// @param op The operation being applied.
+    event ListOperation(uint indexed nonce, bytes op);
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
@@ -65,7 +60,7 @@ contract Lists {
     function claimListManager(uint nonce) external {
         require(managers[nonce] == address(0), "Nonce already claimed");
         managers[nonce] = msg.sender;
-        emit NonceClaim(nonce, msg.sender);
+        emit ListManagerChange(nonce, msg.sender);
     }
 
     /**

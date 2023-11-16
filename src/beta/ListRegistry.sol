@@ -15,19 +15,16 @@ contract ListRegistry is IListRegistry, ERC721A {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Emitted when a list storage location is set
-    event ChangeListStorageLocation(uint indexed tokenId, ListStorageLocation listStorageLocation);
+    event ListStorageLocationChange(uint indexed tokenId, ListStorageLocation listStorageLocation);
 
     /// @notice Emitted when a list user is set
-    event ChangeListUser(uint indexed tokenId, address listUser);
+    event ListUserChange(uint indexed tokenId, address listUser);
 
     ///////////////////////////////////////////////////////////////////////////
     // Constants
     ///////////////////////////////////////////////////////////////////////////
 
     uint8 constant VERSION = 1;
-
-    uint8 constant LIST_LOCATION_L1 = 1;
-    uint8 constant LIST_LOCATION_L2_WITH_NONCE = 2;
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
@@ -88,7 +85,7 @@ contract ListRegistry is IListRegistry, ERC721A {
      */
     function setListStorageLocation(uint tokenId, ListStorageLocation calldata listStorageLocation) external onlyTokenOwner(tokenId) {
         tokenIdToListStorageLocation[tokenId] = listStorageLocation;
-        emit ChangeListStorageLocation(tokenId, listStorageLocation);
+        emit ListStorageLocationChange(tokenId, listStorageLocation);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -120,6 +117,6 @@ contract ListRegistry is IListRegistry, ERC721A {
     function setUser(uint tokenId, address userAddress) external onlyTokenOwner(tokenId) {
         require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager");
         tokenIdToListUser[tokenId] = userAddress;
-        emit ChangeListUser(tokenId, userAddress);
+        emit ListUserChange(tokenId, userAddress);
     }
 }
