@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import {ListStorageLocation} from "./ListStorageLocation.sol";
-import {IListRegistry} from "./IListRegistry.sol";
 
 /**
  * @title ListRegistry
