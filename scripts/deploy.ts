@@ -16,31 +16,33 @@ async function deployContracts() {
     .readdirSync(path.resolve(import.meta.dir, '../out/beta'))
     .filter((directory) => !directory.endsWith('.t.sol'))
 
-  const deployedContracts: Array<[contractName: string, hash: Address]> = []
+  const deployedContracts: Array<[contractName: string, transactionHash: Address, abi: readonly any[]]> = []
 
   for await (const contractDirectory of contractDirectories) {
     const [contractName] = contractDirectory.split('.')
     const filePath = path.resolve(import.meta.dir, `../out/beta/${contractDirectory}/${contractName}.json`)
     const contractJson = await bun.file(filePath).json()
+    const abi = contractJson.abi as readonly any[]
 
     // @ts-expect-error
     const hash = await client.deployContract({
-      abi: contractJson.abi,
+      abi,
       account: client.account,
       bytecode: contractJson.bytecode.object,
     })
 
-    deployedContracts.push([contractDirectory, hash])
+    deployedContracts.push([contractDirectory, hash, abi])
   }
 
   const contractAddresses = await Promise.all(
     deployedContracts.map(([, hash]) => client.waitForTransactionReceipt({ hash }))
   )
 
-  const deployContracts = deployedContracts.map(([contractName, hash], index) => ({
+  const deployContracts = deployedContracts.map(([contractName, hash, abi], index) => ({
     contractName,
     transactionHash: hash,
     contractAddress: contractAddresses[index].contractAddress,
+    abi,
   }))
 
   const write = await bun.write('./out/anvil-deployed-contracts.json', JSON.stringify(deployContracts, undefined, 2), {
