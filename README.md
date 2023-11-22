@@ -54,7 +54,7 @@ ANVIL_ACCOUNT_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae78
 (3) Run the deploy script:
 
 ```bash
-bun deploy:anvil
+yarn deploy:anvil
 ```
 
 (4) Now check the generated file in `./out/anvil-deployed-contracts.json` for the deployed contract addresses:
