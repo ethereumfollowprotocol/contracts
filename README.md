@@ -23,22 +23,14 @@ forge test
 
 ### Deploy contracts locally
 
-#### (1) Start `anvil`
+(1) Start `anvil`
 
 ```bash
 anvil --host 0.0.0.0
 ```
 This will log accounts with private keys:
 ```bash
-                             _   _
-                            (_) | |
-      __ _   _ __   __   __  _  | |
-     / _` | | '_ \  \ \ / / | | | |
-    | (_| | | | | |  \ V /  | | | |
-     \__,_| |_| |_|   \_/   |_| |_|
-
-    0.2.0 (f689fb8 2023-11-22T00:33:56.200094000Z)
-    https://github.com/foundry-rs/foundry
+# ...
 
 Available Accounts
 ==================
@@ -52,22 +44,22 @@ Private Keys
 (0) 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 # ...
 ```
-#### (2) Copy the private key above (`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`) and store it in `.env` as `ANVIL_ACCOUNT_PRIVATE_KEY`:
+(2) Copy the private key above (`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`) and store it in `.env` as `ANVIL_ACCOUNT_PRIVATE_KEY`:
 
 ```bash
 # .env
 ANVIL_ACCOUNT_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
-#### (3) Run the deploy script:
+(3) Run the deploy script:
 
 ```bash
 bun deploy:anvil
 ```
 
-#### (4) Now check the generated file in `./out/anvil-deployed-contracts.json` for the deployed contract addresses:
+(4) Now check the generated file in `./out/anvil-deployed-contracts.json` for the deployed contract addresses:
 
-```json
+```jsonc
 // out/anvil-deployed-contracts.json
 [
   {
