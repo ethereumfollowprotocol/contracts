@@ -95,15 +95,6 @@ contract Lists is ILists {
     }
 
     /**
-     * @notice Retrieves all operations for a list.
-     * @param nonce The list's unique identifier.
-     * @return The operations performed on the list.
-     */
-    function getListOps(uint nonce) external view returns (bytes[] memory) {
-        return listOps[nonce];
-    }
-
-    /**
      * @notice Retrieves a range of operations for a list.
      * @param nonce The list's unique identifier.
      * @param start The starting index of the range.
@@ -124,6 +115,15 @@ contract Lists is ILists {
             }
         }
         return ops;
+    }
+
+    /**
+     * @notice Retrieves all operations for a list.
+     * @param nonce The list's unique identifier.
+     * @return The operations performed on the list.
+     */
+    function getAllListOps(uint nonce) external view returns (bytes[] memory) {
+        return listOps[nonce];
     }
 
     ///////////////////////////////////////////////////////////////////////////
