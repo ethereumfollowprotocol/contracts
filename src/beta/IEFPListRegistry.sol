@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 import {ListStorageLocation} from "./ListStorageLocation.sol";
 
 /**
- * @title ListRegistry
+ * @title EFPListRegistry
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
-interface IListRegistry {
+interface IEFPListRegistry {
 
     ///////////////////////////////////////////////////////////////////////////
     // Events
@@ -26,8 +26,17 @@ interface IListRegistry {
     /// @notice Mints a new token.
     function mint() external;
 
-    /// @notice Mints a new token to the given address.
+    /**
+     * @notice Mints a new token to the given address.
+     * @param to The address to mint the token to.
+    */
     function mintTo(address to) external;
+
+    /// @notice Mints a new token to the given address.
+    function mintBatch(uint num) external;
+
+    /// @notice Mints a new token to the given address.
+    function mintBatchTo(address to, uint num) external;
 
     ///////////////////////////////////////////////////////////////////////////
     // List Location

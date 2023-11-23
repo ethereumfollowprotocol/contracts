@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {Lists} from "../../src/beta/Lists.sol";
+import {EFPLists} from "../../src/beta/EFPLists.sol";
 
-contract ListsTest is Test {
-    Lists public lists;
+contract EFPListsTest is Test {
+    EFPLists public lists;
     uint8 constant LIST_OP_VERSION = 1;
     uint8 constant LIST_OP_TYPE_ADD_RECORD = 1;
     uint8 constant LIST_OP_TYPE_REMOVE_RECORD = 2;
@@ -19,7 +19,7 @@ contract ListsTest is Test {
     uint constant TOKEN_ID = 0;
 
     function setUp() public {
-        lists = new Lists();
+        lists = new EFPLists();
     }
 
     function test_CanClaimListManager() public {

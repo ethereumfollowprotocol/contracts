@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ILists} from "./ILists.sol";
+import {IEFPLists} from "./IEFPLists.sol";
 
 /**
- * @title Lists
+ * @title EFPLists
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract Lists is ILists {
+contract EFPLists is IEFPLists {
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures

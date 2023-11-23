@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title ILists
+ * @title IEFPLists
  * @notice Interface for the Lists contract.
  */
-interface ILists {
+interface IEFPLists {
 
     // Events
     event ListManagerChange(uint indexed nonce, address manager);

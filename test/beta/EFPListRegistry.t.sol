@@ -2,18 +2,18 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import {ListRegistry} from "../../src/beta/ListRegistry.sol";
+import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
 import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
 
 
-contract ListRegistryTest is Test {
+contract EFPListRegistryTest is Test {
     uint8 constant VERSION = 1;
     uint8 constant LIST_LOCATION_L1 = 1;
     uint8 constant LIST_LOCATION_L2_WITH_NONCE = 2;
-    ListRegistry public registry;
+    EFPListRegistry public registry;
 
     function setUp() public {
-        registry = new ListRegistry();
+        registry = new EFPListRegistry();
     }
 
     function _bytesToAddress(bytes memory data) private pure returns (address addr) {
@@ -30,8 +30,15 @@ contract ListRegistryTest is Test {
         }
     }
 
+    function test_CanSetMintState() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+        EFPListRegistry.MintState mintState = registry.getMintState();
+        assertEq(uint(mintState), uint(EFPListRegistry.MintState.OwnerOnly));
+    }
+
     function test_CanMint() public {
         assertEq(registry.totalSupply(), 0);
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         assertEq(registry.totalSupply(), 1);
         assertEq(registry.balanceOf(address(this)), 1);
@@ -40,6 +47,7 @@ contract ListRegistryTest is Test {
 
     function test_CanMintTo() public {
         assertEq(registry.totalSupply(), 0);
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mintTo(address(this));
         assertEq(registry.totalSupply(), 1);
         assertEq(registry.balanceOf(address(this)), 1);
@@ -47,6 +55,7 @@ contract ListRegistryTest is Test {
     }
 
     function test_CanSetListStorageLocationL1() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(this));
         registry.setListStorageLocation(0, listStorageLocationToSet);
@@ -59,6 +68,7 @@ contract ListRegistryTest is Test {
     }
 
     function test_CanSetListStorageLocationL2WithNonce() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
 
         uint chainId = 1234;
@@ -77,17 +87,20 @@ contract ListRegistryTest is Test {
     }
 
     function test_CanSetUser() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         registry.setUser(0, address(0xDef));
         assertEq(registry.getUser(0), address(0xDef));
     }
 
     function test_CanGetUser() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         assertEq(registry.getUser(0), address(this));
     }
 
     function test_CanUserFallbackToOwner() public {
+        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         assertEq(registry.getUser(0), address(this));
     }
