@@ -2,9 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
-import {DeletableListEntry} from "../src/alpha/ArrayLists.sol";
-import {ListRegistry} from "../src/alpha/ListRegistry.sol";
-import {NonceArrayLists} from "../src/alpha/NonceArrayLists.sol";
+import {DeletableListEntry} from "../../src/alpha/ArrayLists.sol";
+import {ListRegistry} from "../../src/alpha/ListRegistry.sol";
+import {NonceArrayLists} from "../../src/alpha/NonceArrayLists.sol";
 
 contract EFPScript is Script {
 

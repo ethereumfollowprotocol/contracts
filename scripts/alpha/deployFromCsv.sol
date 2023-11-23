@@ -2,10 +2,10 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
-import {DeletableListEntry} from "../src/alpha/ArrayLists.sol";
-import {ListRecord} from "../src/alpha/ListRecord.sol";
-import {ListRegistry} from "../src/alpha/ListRegistry.sol";
-import {NonceArrayLists} from "../src/alpha/NonceArrayLists.sol";
+import {DeletableListEntry} from "../../src/alpha/ArrayLists.sol";
+import {ListRecord} from "../../src/alpha/ListRecord.sol";
+import {ListRegistry} from "../../src/alpha/ListRegistry.sol";
+import {NonceArrayLists} from "../../src/alpha/NonceArrayLists.sol";
 
 struct CsvRecords {
     uint256 lastTokenId;

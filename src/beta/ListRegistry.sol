@@ -47,6 +47,19 @@ contract ListRegistry is IListRegistry, ERC721A {
     /// @notice Mints a new token to the given address.
     function mintTo(address to) public {
         _mint(to, 1);
+}
+
+    /// @notice Mints a batch of new tokens.
+    /// @param num The number of tokens to mint.
+    function mintBatch(uint8 num) public {
+        _mint(msg.sender, num);
+    }
+
+    /// @notice Mints a batch of new tokens.
+    /// @param to The address to mint the tokens to.
+    /// @param num The number of tokens to mint.
+    function mintBatchTo(address to, uint8 num) public {
+        _mint(to, num);
     }
 
     ///////////////////////////////////////////////////////////////////////////
