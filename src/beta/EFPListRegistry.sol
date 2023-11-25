@@ -31,9 +31,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
 
-    mapping(uint => ListStorageLocation) private tokenIdToListStorageLocation;
+    // mapping(uint => ListStorageLocation) private tokenIdToListStorageLocation;
 
-    mapping(uint => address) private tokenIdToListUser;
+    // mapping(uint => address) private tokenIdToListUser;
 
     MintState private mintState = MintState.Disabled;
 
@@ -130,53 +130,53 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         _mint(to, num);
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // List Location
-    ///////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////
+    // // List Location
+    // ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @notice Fetches the list location associated with a specific token.
-     * @param tokenId The ID of the token.
-     * @return The list location.
-     */
-    function getListStorageLocation(uint tokenId) external view returns (ListStorageLocation memory) {
-        return tokenIdToListStorageLocation[tokenId];
-    }
+    // /**
+    //  * @notice Fetches the list location associated with a specific token.
+    //  * @param tokenId The ID of the token.
+    //  * @return The list location.
+    //  */
+    // function getListStorageLocation(uint tokenId) external view returns (ListStorageLocation memory) {
+    //     return tokenIdToListStorageLocation[tokenId];
+    // }
 
-    /**
-     * @notice Associates a token with a list storage location.
-     * @param tokenId The ID of the token.
-     * @param listStorageLocation The list storage location to be associated with the token.
-     */
-    function setListStorageLocation(uint tokenId, ListStorageLocation calldata listStorageLocation) external onlyTokenOwner(tokenId) {
-        tokenIdToListStorageLocation[tokenId] = listStorageLocation;
-        emit ListStorageLocationChange(tokenId, listStorageLocation);
-    }
+    // /**
+    //  * @notice Associates a token with a list storage location.
+    //  * @param tokenId The ID of the token.
+    //  * @param listStorageLocation The list storage location to be associated with the token.
+    //  */
+    // function setListStorageLocation(uint tokenId, ListStorageLocation calldata listStorageLocation) external onlyTokenOwner(tokenId) {
+    //     tokenIdToListStorageLocation[tokenId] = listStorageLocation;
+    //     emit ListStorageLocationChange(tokenId, listStorageLocation);
+    // }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // User
-    ///////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////
+    // // User
+    // ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @notice Fetches the user associated with a specific token.
-     * @param tokenId The ID of the token.
-     * @return The Ethereum address of the user.
-     */
-    function getUser(uint tokenId) external view returns (address) {
-        address user = tokenIdToListUser[tokenId];
+    // /**
+    //  * @notice Fetches the user associated with a specific token.
+    //  * @param tokenId The ID of the token.
+    //  * @return The Ethereum address of the user.
+    //  */
+    // function getUser(uint tokenId) external view returns (address) {
+    //     address user = tokenIdToListUser[tokenId];
 
-        // distinguish from 0x0000...0000 address
-        return (user != address(0)) ? user : ownerOf(tokenId);
-    }
+    //     // distinguish from 0x0000...0000 address
+    //     return (user != address(0)) ? user : ownerOf(tokenId);
+    // }
 
-    /**
-     * @notice Sets the user for a specific token.
-     * @param tokenId The ID of the token.
-     * @param userAddress The Ethereum address of the user.
-     */
-    function setUser(uint tokenId, address userAddress) external onlyTokenOwner(tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager");
-        tokenIdToListUser[tokenId] = userAddress;
-        emit ListUserChange(tokenId, userAddress);
-    }
+    // /**
+    //  * @notice Sets the user for a specific token.
+    //  * @param tokenId The ID of the token.
+    //  * @param userAddress The Ethereum address of the user.
+    //  */
+    // function setUser(uint tokenId, address userAddress) external onlyTokenOwner(tokenId) {
+    //     require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager");
+    //     tokenIdToListUser[tokenId] = userAddress;
+    //     emit ListUserChange(tokenId, userAddress);
+    // }
 }

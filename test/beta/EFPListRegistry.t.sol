@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
+// import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
 
 
 contract EFPListRegistryTest is Test {
@@ -54,54 +54,54 @@ contract EFPListRegistryTest is Test {
         assertEq(registry.ownerOf(0), address(this));
     }
 
-    function test_CanSetListStorageLocationL1() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
-        ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(this));
-        registry.setListStorageLocation(0, listStorageLocationToSet);
-        // Assuming a way to get the list location in ListRegistry
-        ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
-        assertEq(listStorageLocation.version, 1);
-        assertEq(listStorageLocation.locationType, 1);
-        address decodedAddress = _bytesToAddress(listStorageLocation.data);
-        assertEq(decodedAddress, address(this));
-    }
+    // function test_CanSetListStorageLocationL1() public {
+    //     registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+    //     registry.mint();
+    //     ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(this));
+    //     registry.setListStorageLocation(0, listStorageLocationToSet);
+    //     // Assuming a way to get the list location in ListRegistry
+    //     ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
+    //     assertEq(listStorageLocation.version, 1);
+    //     assertEq(listStorageLocation.locationType, 1);
+    //     address decodedAddress = _bytesToAddress(listStorageLocation.data);
+    //     assertEq(decodedAddress, address(this));
+    // }
 
-    function test_CanSetListStorageLocationL2WithNonce() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
+    // function test_CanSetListStorageLocationL2WithNonce() public {
+    //     registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+    //     registry.mint();
 
-        uint chainId = 1234;
-        address contractAddress = address(123);
-        uint nonce = 123456789;
-        ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L2_WITH_NONCE, abi.encodePacked(chainId, contractAddress, nonce));
-        registry.setListStorageLocation(0, listStorageLocationToSet);
-        // Assuming a way to get the list location in ListRegistry
-        ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
-        assertEq(listStorageLocation.version, 1);
-        assertEq(listStorageLocation.locationType, 2);
-        (uint decodedChainId, address decodedContractAddress, uint decodedNonce) = _bytesToStructOfUintAddressUint(listStorageLocation.data);
-        assertEq(decodedChainId, chainId);
-        assertEq(decodedContractAddress, contractAddress);
-        assertEq(decodedNonce, nonce);
-    }
+    //     uint chainId = 1234;
+    //     address contractAddress = address(123);
+    //     uint nonce = 123456789;
+    //     ListStorageLocation memory listStorageLocationToSet = ListStorageLocation(VERSION, LIST_LOCATION_L2_WITH_NONCE, abi.encodePacked(chainId, contractAddress, nonce));
+    //     registry.setListStorageLocation(0, listStorageLocationToSet);
+    //     // Assuming a way to get the list location in ListRegistry
+    //     ListStorageLocation memory listStorageLocation = registry.getListStorageLocation(0);
+    //     assertEq(listStorageLocation.version, 1);
+    //     assertEq(listStorageLocation.locationType, 2);
+    //     (uint decodedChainId, address decodedContractAddress, uint decodedNonce) = _bytesToStructOfUintAddressUint(listStorageLocation.data);
+    //     assertEq(decodedChainId, chainId);
+    //     assertEq(decodedContractAddress, contractAddress);
+    //     assertEq(decodedNonce, nonce);
+    // }
 
-    function test_CanSetUser() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
-        registry.setUser(0, address(0xDef));
-        assertEq(registry.getUser(0), address(0xDef));
-    }
+    // function test_CanSetUser() public {
+    //     registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+    //     registry.mint();
+    //     registry.setUser(0, address(0xDef));
+    //     assertEq(registry.getUser(0), address(0xDef));
+    // }
 
-    function test_CanGetUser() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
-        assertEq(registry.getUser(0), address(this));
-    }
+    // function test_CanGetUser() public {
+    //     registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+    //     registry.mint();
+    //     assertEq(registry.getUser(0), address(this));
+    // }
 
-    function test_CanUserFallbackToOwner() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
-        assertEq(registry.getUser(0), address(this));
-    }
+    // function test_CanUserFallbackToOwner() public {
+    //     registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+    //     registry.mint();
+    //     assertEq(registry.getUser(0), address(this));
+    // }
 }
