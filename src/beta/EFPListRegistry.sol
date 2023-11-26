@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 import "lib/ERC721A/contracts/ERC721A.sol";
 import {IEFPListRegistry} from "./IEFPListRegistry.sol";
+import {IEFPListPriceOracle} from "./IEFPListPriceOracle.sol";
 import {ListStorageLocation} from "./ListStorageLocation.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
@@ -27,6 +28,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     /// @notice Emitted when the mint state is changed.
     event MintStateChange(MintState mintState);
 
+    /// @notice Emitted when the price oracle is changed.
+    event PriceOracleChange(address priceOracle);
+
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
@@ -39,12 +43,32 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
 
     uint private maxMintBatchSize = 10000;
 
+    IEFPListPriceOracle private priceOracle;
+
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Constructs a new ListRegistry and sets its name and symbol.
     constructor() ERC721A("EFP", "EFP") {}
+
+    ///////////////////////////////////////////////////////////////////////////
+    // price oracle getter/setter
+    ///////////////////////////////////////////////////////////////////////////
+
+    /// @notice Fetches the price oracle.
+    function getPriceOracle() external view returns (address) {
+        return address(priceOracle);
+    }
+
+    /**
+     * @notice Sets the price oracle.
+     * @param priceOracle_ The new price oracle.
+     */
+    function setPriceOracle(address priceOracle_) external onlyOwner {
+        priceOracle = IEFPListPriceOracle(priceOracle_);
+        emit PriceOracleChange(priceOracle_);
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Modifiers
@@ -103,7 +127,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     }
 
     /// @notice Mints a new token.
-    function mint() public mintAllowed {
+    function mint() public payable mintAllowed {
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
+        require(msg.value >= price, "insufficient funds");
+
         _mint(msg.sender, 1);
     }
 
@@ -111,23 +138,34 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
      * @notice Mints a new token to the given address.
      * @param to The address to mint the token to.
     */
-    function mintTo(address to) public mintAllowed {
+    function mintTo(address to) public payable mintAllowed {
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
+        require(msg.value >= price, "insufficient funds");
+
         _mint(to, 1);
-}
+    }
 
     /// @notice Mints a batch of new tokens.
-    /// @param num The number of tokens to mint.
-    function mintBatch(uint num) public mintBatchAllowed {
-        require(num <= maxMintBatchSize, "EFP: batch size exceeds maximum");
-        _mint(msg.sender, num);
+    /// @param quantity The number of tokens to mint.
+    function mintBatch(uint quantity) public payable mintBatchAllowed {
+        require(quantity <= maxMintBatchSize, "batch size too big");
+
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
+        require(msg.value >= price, "insufficient funds");
+
+        _mint(msg.sender, quantity);
     }
 
     /// @notice Mints a batch of new tokens.
     /// @param to The address to mint the tokens to.
-    /// @param num The number of tokens to mint.
-    function mintBatchTo(address to, uint num) public mintBatchAllowed {
-        require(num <= maxMintBatchSize, "EFP: batch size exceeds maximum");
-        _mint(to, num);
+    /// @param quantity The number of tokens to mint.
+    function mintBatchTo(address to, uint quantity) public payable mintBatchAllowed {
+        require(quantity <= maxMintBatchSize, "batch size too big");
+
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
+        require(msg.value >= price, "insufficient funds");
+
+        _mint(to, quantity);
     }
 
     // ///////////////////////////////////////////////////////////////////////////

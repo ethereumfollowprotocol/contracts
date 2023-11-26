@@ -24,19 +24,19 @@ interface IEFPListRegistry {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Mints a new token.
-    function mint() external;
+    function mint() external payable;
 
     /**
      * @notice Mints a new token to the given address.
      * @param to The address to mint the token to.
     */
-    function mintTo(address to) external;
+    function mintTo(address to) external payable;
 
     /// @notice Mints a new token to the given address.
-    function mintBatch(uint num) external;
+    function mintBatch(uint quantity) external payable;
 
     /// @notice Mints a new token to the given address.
-    function mintBatchTo(address to, uint num) external;
+    function mintBatchTo(address to, uint quantity) external payable;
 
     // ///////////////////////////////////////////////////////////////////////////
     // // List Location
