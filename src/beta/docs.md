@@ -1,10 +1,32 @@
 # List Registry
 
-The list registry is an NFT contract `EFPListRegistry` representing ownership of an EFP List.
+The list registry is an NFT contract `EFPListRegistry` on Ethereum where the NFT represents ownership of an EFP List.
+
+## Minting an EFP List
+
+Minting an EFP List is free and unrestricted.
+
+TOOD: confirm non-rentrancy
+
+Any address can mint an EFP List NFT but only one EFP List can be minted per transaction.
+
+To mint an EFP List, simply call the `mint` function on the `EFPListRegistry` contract.
+
+```solidity
+// mint an EFP List
+efpListRegistry.mint();
+```
+
+To mint to a specific address, call the `mintTo` function on the `EFPListRegistry` contract.
+
+```solidity
+// mint an EFP List to a specific address
+efpListRegistry.mintTo(<address>);
+```
 
 # Lists
 
-Lists are stored in the contract `EFPLists`.
+Lists are stored in a contract `EFPLists` which may be deployed on Ethereum L1 or a supported L2 chain.
 
 A list is comprised of list records, which can be associated with a list of strings called "tags".
 
