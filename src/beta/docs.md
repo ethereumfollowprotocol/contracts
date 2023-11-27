@@ -337,7 +337,19 @@ The `EFPAccountMetdata` contract allows any account (address) to store any EFP-r
 
 Data is stored by `string` key and `bytes` value, for each account.
 
-This allows for the storage of account-specific EFP configuration or preference data such as the user's default/preferred EFP List (represented as a token id).
+This allows for the storage of account-specific EFP configuration or preference data.
+
+## efp.list.default
+
+The `efp.list.default` key is used to store the default/preferred EFP List for an account.
+
+The default/preferred EFP List is represented as a 32-byte token id.
+
+| Byte(s) | Description         | Value                                                              |
+| ------- | ------------------- | ------------------------------------------------------------------ |
+| 0-31    | Token ID (32 bytes) | 0x0000000000000000000000000000000000000000000000000000000000000001 |
+
+with example code shown below:
 
 ```solidity
 // set the default/preferred EFP List for the caller's address
@@ -347,8 +359,13 @@ efpAccountMetadata.setValue("efp.list.default", abi.encodePacked(tokenId));
 By reading the `efp.list.default` key for a given address, a client can determine the default/preferred EFP List for that address.
 
 ```solidity
-uint tokenId = abi.decode(efpAccountMetadata.getValue(msg.sender, "efp.list.default"), (uint));
+uint defaultTokenId = abi.decode(efpAccountMetadata.getValue(msg.sender, "efp.list.default"), (uint));
+// validate ownership
+// TODO: this should be the "user" not necessarily the NFT owner...
+require(efpListRegistry.ownerOf(defaultTokenId) == msg.sender);
 ```
+
+## Future
 
 This pattern can be extended to support other account-specific metadata.
 
@@ -360,7 +377,36 @@ Only the owner of the EFP List NFT can set the metadata for a given token id.
 
 Data is stored as `string` key and `bytes` value, for each EFP List (token id).
 
-This allows EFP List NFT owners to store list-specific configuration or preference data such as the list's location.
+This allows EFP List NFT owners to store list-specific configuration or preference data.
+
+## efp.list.location
+
+The `efp.list.location` key is used to store the storage location of an EFP List.
+
+The list location struct looks like:
+
+```solidity
+struct ListStorageLocation {
+    uint8 version;
+    uint8 locationType;
+    bytes data;
+}
+```
+
+### Location Type 1: L1 Address + Nonce
+
+For an EFP List stored on L1, it is sufficient to specify the address of the EFP List contract and the corresponding nonce to retrieve the list data.
+
+This can be encoded in a `bytes` array as follows:
+
+| Byte(s) | Description                   | Value                                                              |
+| ------- | ----------------------------- | ------------------------------------------------------------------ |
+| 0       | `ListStorageLocation` version | 0x01                                                               |
+| 1       | `ListStorageLocation` type    | 0x01                                                               |
+| 2 - 21  | L1 address (20 bytes)         | 0x00000000000000000000000000000000DeaDBeef                         |
+| 22 - 53 | Nonce (32 bytes)              | 0x0000000000000000000000000000000000000000000000000000000000000001 |
+
+with example code shown below:
 
 ```solidity
 bytes1 version = 0x01;
@@ -371,6 +417,35 @@ uint256 nonce = <nonce>;
 // set the list location for the EFP List
 efpListMetadata.setValue(tokenId, "efp.list.location", abi.encodePacked(version, listLocationType, addr, nonce));
 ```
+
+### Location Type 2: L2 Chain ID + Address + Nonce
+
+For an EFP List stored on L2, it is sufficient to specify the chain ID, address of the EFP List contract, and the corresponding nonce to retrieve the list data.
+
+This can be encoded in a `bytes` array as follows:
+
+| Byte(s) | Description                   | Value                                                              |
+| ------- | ----------------------------- | ------------------------------------------------------------------ |
+| 0       | `ListStorageLocation` version | 0x01                                                               |
+| 1       | `ListStorageLocation` type    | 0x02                                                               |
+| 2 - 33  | L2 chain ID (32 bytes)        | 0x000000000000000000000000000000000000000000000000000000000000000a |
+| 34 - 53 | L2 address (20 bytes)         | 0x00000000000000000000000000000000DeaDBeef                         |
+| 54 - 85 | Nonce (32 bytes)              | 0x0000000000000000000000000000000000000000000000000000000000000001 |
+
+with example code shown below:
+
+```solidity
+bytes1 version = 0x01;
+bytes1 listLocationType = 0x02;
+uint256 chainId = <L2 chain ID>;
+address addr = <L2 address>;
+uint256 nonce = <nonce>;
+
+// set the list location for the EFP List
+efpListMetadata.setValue(tokenId, "efp.list.location", abi.encodePacked(version, listLocationType, chainId, addr, nonce));
+```
+
+### Determining List Location from Metadata
 
 By reading the `efp.list.location` key for a given EFP List, a client can determine the location of the list data, which can be used to retrieve the list data from L1 or L2.
 
@@ -389,5 +464,7 @@ if (listLocation[1] == 0x01) {
     revert("Unsupported list location type");
 }
 ```
+
+## Future
 
 This pattern can be extended to support other list-specific metadata such as a name or description.
