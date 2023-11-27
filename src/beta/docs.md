@@ -1,4 +1,10 @@
+# List Registry
+
+The list registry is an NFT contract `EFPListRegistry` representing ownership of an EFP List.
+
 # Lists
+
+Lists are stored in the contract `EFPLists`.
 
 A list is comprised of list records, which can be associated with a list of strings called "tags".
 
@@ -324,3 +330,64 @@ class SocialGraph {
     }
 }
 ```
+
+# EFP Account Metadata
+
+The `EFPAccountMetdata` contract allows any account (address) to store any EFP-related data specific to their account.
+
+Data is stored by `string` key and `bytes` value, for each account.
+
+This allows for the storage of account-specific EFP configuration or preference data such as the user's default/preferred EFP List (represented as a token id).
+
+```solidity
+// set the default/preferred EFP List for the caller's address
+efpAccountMetadata.setValue("efp.list.default", abi.encodePacked(tokenId));
+```
+
+By reading the `efp.list.default` key for a given address, a client can determine the default/preferred EFP List for that address.
+
+```solidity
+uint tokenId = abi.decode(efpAccountMetadata.getValue(msg.sender, "efp.list.default"), (uint));
+```
+
+This pattern can be extended to support other account-specific metadata.
+
+# EFP List Metadata
+
+The `EFPListMetadata` contract allows any EFP List (represented as a token id) to store key-value data.
+
+Only the owner of the EFP List NFT can set the metadata for a given token id.
+
+Data is stored as `string` key and `bytes` value, for each EFP List (token id).
+
+This allows EFP List NFT owners to store list-specific configuration or preference data such as the list's location.
+
+```solidity
+bytes1 version = 0x01;
+bytes1 listLocationType = 0x01;
+address addr = <L1 address>;
+uint256 nonce = <nonce>;
+
+// set the list location for the EFP List
+efpListMetadata.setValue(tokenId, "efp.list.location", abi.encodePacked(version, listLocationType, addr, nonce));
+```
+
+By reading the `efp.list.location` key for a given EFP List, a client can determine the location of the list data, which can be used to retrieve the list data from L1 or L2.
+
+```solidity
+bytes memory listLocation = efpListMetadata.getValue(tokenId, "efp.list.location");
+
+require(listLocation[0] == 0x01, "unsupported version");
+
+if (listLocation[1] == 0x01) {
+    // [version, listLocationType, address, nonce]
+    (bytes1 version, bytes1 listLocationType, address addr, uint256 nonce) = abi.decode(listLocation, (bytes1, bytes1, address, uint256));
+} else if (listLocationType == 0x02) {
+    // [version, listLocationType, chainId, address, nonce]
+    (bytes1 version, bytes1 listLocationType, uint256 chainId, address addr, uint256 nonce) = abi.decode(listLocation, (bytes1, bytes1, uint256, address, uint256));
+} else {
+    revert("Unsupported list location type");
+}
+```
+
+This pattern can be extended to support other list-specific metadata such as a name or description.
