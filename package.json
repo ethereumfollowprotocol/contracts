@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "deploy:anvil": "bun ./scripts/deploy.ts",
+    "deploy:anvil:solidity": "forge script scripts/deploy.s.sol",
     "format": "yarn prettier --config .prettierrc --write scripts/**/*.ts"
   },
   "dependencies": {

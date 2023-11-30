@@ -6,6 +6,7 @@ import {IEFPListMetadata} from "./IEFPListMetadata.sol";
 import {IEFPListRegistry} from "./IEFPListRegistry.sol";
 
 interface IEFPListRegistry_ is IEFPListRegistry {
+    function ownerOf(uint256 tokenId) external view returns (address);
     function totalSupply() external view returns (uint);
 }
 
