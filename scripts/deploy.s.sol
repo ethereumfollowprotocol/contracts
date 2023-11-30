@@ -56,7 +56,10 @@ contract DeployScript is Script {
 
         registry.setMintState(EFPListRegistry.MintState.PublicMint);
         console.log("Mint state         : PublicMint");
-        registry.mint();
+
+        const nonce = 1023;
+        minter.mintWithListLocationOnL1AndSetAsDefaultList(nonce);
+
         uint tokenId = registry.totalSupply() - 1;
         address owner = registry.ownerOf(tokenId);
 
