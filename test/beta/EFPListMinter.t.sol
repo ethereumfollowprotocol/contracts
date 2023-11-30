@@ -31,12 +31,14 @@ contract EFPListMinterTest is Test {
 
         minter = new EFPListMinter(address(registry), address(accountMetadata), address(listMetadata), address(lists));
         accountMetadata.addProxy(address(minter));
+        listMetadata.addProxy(address(minter));
     }
 
     function test_CanMintWithListLocationOnL1AndSetAsDefaultList() public {
         uint tokenId = registry.totalSupply();
         minter.mintWithListLocationOnL1AndSetAsDefaultList(NONCE_L1);
 
+        assertEq(registry.ownerOf(tokenId), address(this));
         assertEq(accountMetadata.getValue(address(this), "efp.list.primary"), abi.encodePacked(tokenId));
         assertEq(listMetadata.getValue(uint(tokenId), "efp.list.location"), abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L1, address(lists), NONCE_L1));
     }
@@ -48,6 +50,7 @@ contract EFPListMinterTest is Test {
         uint tokenId = registry.totalSupply();
         minter.mintWithListLocationOnL2AndSetAsDefaultList(chainId, addressL2, nonceL2);
 
+        assertEq(registry.ownerOf(tokenId), address(this));
         assertEq(accountMetadata.getValue(address(this), "efp.list.primary"), abi.encodePacked(tokenId));
         assertEq(listMetadata.getValue(uint(tokenId), "efp.list.location"), abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L2, chainId, addressL2, nonceL2));
     }

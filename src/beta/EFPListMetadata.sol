@@ -13,11 +13,17 @@ import {IEFPListMetadata} from "./IEFPListMetadata.sol";
  */
 contract EFPListMetadata is IEFPListMetadata, Ownable {
 
-  /// @dev The key-value set for each token ID
-  mapping(uint => mapping(string => bytes)) private values;
+  event ProxyAdded(address proxy);
+
+  event ProxyRemoved(address proxy);
 
   /// @dev The EFP List Registry contract
   IERC721 public efpListRegistry;
+
+  /// @dev The key-value set for each token ID
+  mapping(uint => mapping(string => bytes)) private values;
+
+  mapping(address => bool) private proxies;
 
   /**
    * @dev Get the address of the EFP List Registry contract.
@@ -36,11 +42,33 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
   }
 
   /////////////////////////////////////////////////////////////////////////////
+  // add/remove proxy
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @dev Add proxy address.
+   * @param proxy The proxy address.
+   */
+  function addProxy(address proxy) external onlyOwner {
+    proxies[proxy] = true;
+    emit ProxyAdded(proxy);
+  }
+
+  /**
+   * @dev Remove proxy address.
+   * @param proxy The proxy address.
+   */
+  function removeProxy(address proxy) external onlyOwner {
+    proxies[proxy] = false;
+    emit ProxyRemoved(proxy);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
   // Modifier
   /////////////////////////////////////////////////////////////////////////////
 
-  modifier onlyTokenOwner(uint tokenId) {
-    require(efpListRegistry.ownerOf(tokenId) == msg.sender, "not token owner");
+  modifier onlyTokenOwnerOrProxy(uint tokenId) {
+    require(efpListRegistry.ownerOf(tokenId) == msg.sender || proxies[msg.sender], "not token owner");
     _;
   }
 
@@ -103,7 +131,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
    * @param key The key to set.
    * @param value The value to set.
    */
-  function setValue(uint tokenId, string calldata key, bytes calldata value) external onlyTokenOwner(tokenId) {
+  function setValue(uint tokenId, string calldata key, bytes calldata value) external onlyTokenOwnerOrProxy(tokenId) {
     _setValue(tokenId, key, value);
   }
 
@@ -124,7 +152,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
     bytes calldata value,
     string calldata key2,
     bytes calldata value2
-  ) external onlyTokenOwner(tokenId) {
+  ) external onlyTokenOwnerOrProxy(tokenId) {
     _setValue(tokenId, key, value);
     _setValue(tokenId, key2, value2);
   }
@@ -150,7 +178,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
   //   bytes calldata value2,
   //   string calldata key3,
   //   bytes calldata value3
-  // ) external onlyTokenOwner(tokenId) {
+  // ) external onlyTokenOwnerOrProxy(tokenId) {
   //   _setValue(tokenId, key, value);
   //   _setValue(tokenId, key2, value2);
   //   _setValue(tokenId, key3, value3);
@@ -162,7 +190,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
    * @param tokenId The token ID to update.
    * @param records The records to set.
    */
-  function setValues(uint tokenId, KeyValue[] calldata records) external onlyTokenOwner(tokenId) {
+  function setValues(uint tokenId, KeyValue[] calldata records) external onlyTokenOwnerOrProxy(tokenId) {
     uint length = records.length;
     for (uint256 i = 0; i < length; ) {
       KeyValue calldata record = records[i];

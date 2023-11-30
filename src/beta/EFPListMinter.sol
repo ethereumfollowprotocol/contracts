@@ -24,9 +24,9 @@ contract EFPListMinter {
 
     function mintWithListLocationOnL1AndSetAsDefaultList(uint nonceL1) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mint{
+        registry.mintTo{
             value: msg.value
-        }();
+        }(msg.sender);
         _setDefaultListForAccount(msg.sender, tokenId);
         _setListLocationL1(tokenId, listsAddressL1, nonceL1);
     }
@@ -42,9 +42,9 @@ contract EFPListMinter {
 
     function mintWithListLocationOnL2AndSetAsDefaultList(uint chainId, address addressL2, uint nonceL2) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mint{
+        registry.mintTo{
             value: msg.value
-        }();
+        }(msg.sender);
         _setDefaultListForAccount(msg.sender, tokenId);
         _setListLocationL2(tokenId, chainId, addressL2, nonceL2);
     }
