@@ -59,7 +59,7 @@ contract EFPListMinter {
     }
 
     function _setDefaultListForAccount(address to, uint tokenId) internal {
-        accountMetadata.setValueForAddress(to, "efp.list.default", abi.encodePacked(tokenId));
+        accountMetadata.setValueForAddress(to, "efp.list.primary", abi.encodePacked(tokenId));
     }
 
     function _setListLocationL1(uint tokenId, address addr, uint nonce) internal {

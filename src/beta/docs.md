@@ -361,11 +361,11 @@ Data is stored by `string` key and `bytes` value, for each account.
 
 This allows for the storage of account-specific EFP configuration or preference data.
 
-## efp.list.default
+## efp.list.primary
 
-The `efp.list.default` key is used to store the default/preferred EFP List for an account.
+The `efp.list.primary` key is used to store the primary EFP List for an account.
 
-The default/preferred EFP List is represented as a 32-byte token id.
+The primary EFP List is represented as a 32-byte token id.
 
 | Byte(s) | Description         | Value                                                              |
 | ------- | ------------------- | ------------------------------------------------------------------ |
@@ -374,17 +374,22 @@ The default/preferred EFP List is represented as a 32-byte token id.
 with example code shown below:
 
 ```solidity
-// set the default/preferred EFP List for the caller's address
-efpAccountMetadata.setValue("efp.list.default", abi.encodePacked(tokenId));
+// set the primary EFP List for the caller's address
+efpAccountMetadata.setValue("efp.list.primary", abi.encodePacked(tokenId));
 ```
 
-By reading the `efp.list.default` key for a given address, a client can determine the default/preferred EFP List for that address.
+By reading the `efp.list.primary` key for a given address, a client can determine the primary EFP List for that address.
 
 ```solidity
-uint defaultTokenId = abi.decode(efpAccountMetadata.getValue(msg.sender, "efp.list.default"), (uint));
-// validate ownership
-// TODO: this should be the "user" not necessarily the NFT owner...
-require(efpListRegistry.ownerOf(defaultTokenId) == msg.sender);
+address addr = <address>
+uint primaryEfpListTokenId = abi.decode(efpAccountMetadata.getValue(addr, "efp.list.primary"), (uint));
+
+// validate: primary EFP List must exist
+require(primaryEfpListTokenId < efpListRegistry.totalSupply());
+
+// validate the user for this EFP List is the caller
+address user = abi.decode(efpListMetadata.getValue(primaryEfpListTokenId, "efp.list.user"), (address));
+require(user == addr);
 ```
 
 ## Future
@@ -485,6 +490,29 @@ if (listLocation[1] == 0x01) {
 } else {
     revert("Unsupported list location type");
 }
+```
+
+## efp.list.user
+
+The `efp.list.user` key is used to store the user associated with an EFP List.
+
+The user is represented as a 20-byte address.
+
+| Byte(s) | Description        | Value                                      |
+| ------- | ------------------ | ------------------------------------------ |
+| 0-19    | Address (20 bytes) | 0x00000000000000000000000000000000DeaDBeef |
+
+with example code shown below:
+
+```solidity
+// set the user for the EFP List
+efpListMetadata.setValue(tokenId, "efp.list.user", abi.encodePacked(user));
+```
+
+By reading the `efp.list.user` key for a given EFP List, a client can determine the user associated with that list.
+
+```solidity
+address user = abi.decode(efpListMetadata.getValue(tokenId, "efp.list.user"), (address));
 ```
 
 ## Future
