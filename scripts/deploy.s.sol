@@ -1,82 +1,93 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "forge-std/console.sol";
-import "forge-std/Script.sol";
+import {console} from "lib/forge-std/src/console.sol";
+import {Script} from "lib/forge-std/src/Script.sol";
+import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 
-import { EFPAccountMetadata } from "../src/beta/EFPAccountMetadata.sol";
-import { EFPListMetadata } from "../src/beta/EFPListMetadata.sol";
-import { EFPListRegistry } from "../src/beta/EFPListRegistry.sol";
-import { EFPLists } from "../src/beta/EFPLists.sol";
-import { EFPListMinter } from "../src/beta/EFPListMinter.sol";
+import {CSVUtils} from "./util/CSVUtils.sol";
+import {Logger} from "./util/Logger.sol";
+import {StringUtils} from "./util/StringUtils.sol";
 
+import {EFPAccountMetadata} from "../src/beta/EFPAccountMetadata.sol";
+import {EFPListMetadata} from "../src/beta/EFPListMetadata.sol";
+import {EFPListMinter} from "../src/beta/EFPListMinter.sol";
+import {EFPListRegistry} from "../src/beta/EFPListRegistry.sol";
+import {EFPLists} from "../src/beta/EFPLists.sol";
+import {ListOp} from "../src/beta/ListOp.sol";
+import {ListRecord} from "../src/beta/ListRecord.sol";
 
+/**
+ * @title A Foundry script to deploy and initialize EFP contracts
+ * @dev Inherits from the Script class provided by Forge standard library
+ */
 contract DeployScript is Script {
-    string RED = "\x1b[31m";
-    string GREEN = "\x1b[32m";
-    string BLUE = "\x1b[34m";
-    string ENDC = "\x1b[0m";
+    using Strings for uint256;
 
+    EFPAccountMetadata public accountMetadata;
+    EFPListRegistry public registry;
+    EFPListMetadata public listMetadata;
+    EFPLists public lists;
+    EFPListMinter public minter;
+
+    /**
+     * @notice Performs any necessary setup before the deployment of contracts.
+     * @dev This function can be used to set initial states or variables, or to perform checks.
+     * It's an optional preparatory step before the main deployment actions.
+     */
     function setUp() public {
-        // Any setup needed before deployment
+        // This function is for any setup required before deploying the contracts.
+        // It is an optional function and can be used to set initial states or variables.
     }
 
-    function run() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-
-        // msg.sender will be set to the address derived from the private key
-        // you're using for the transaction, specified in the
-        // vm.startBroadcast(deployerPrivateKey) call.
-        console.log(GREEN, "Deployer           :", msg.sender, ENDC);
-        // address(this) refers to the address of the currently executing
-        // contract. In your deployment script, this refers to the instance
-        // of the DeployScript contract.
-        // console.log(GREEN, "address(this)      :", address(this), ENDC);
+    /**
+     * @notice Deploys the EFP smart contracts.
+     */
+    function deployContracts() public {
+        console.log(StringUtils.GREEN, "Deployer           :", msg.sender, StringUtils.ENDC);
         console.log();
 
-        // Deploy the contracts
-        EFPAccountMetadata accountMetadata = new EFPAccountMetadata();
-        console.log(BLUE, "EFPAccountMetadata :", address(accountMetadata), ENDC);
-        EFPListRegistry registry = new EFPListRegistry();
-        console.log(BLUE, "EFPListRegistry    :", address(registry), ENDC);
-        EFPListMetadata listMetadata = new EFPListMetadata();
-        console.log(BLUE, "EFPListMetadata    :", address(listMetadata), ENDC);
-        EFPLists lists = new EFPLists();
-        console.log(BLUE, "EFPLists           :", address(lists), ENDC);
+        accountMetadata = new EFPAccountMetadata();
+        console.log(StringUtils.BLUE, "EFPAccountMetadata :", address(accountMetadata), StringUtils.ENDC);
+        registry = new EFPListRegistry();
+        console.log(StringUtils.BLUE, "EFPListRegistry    :", address(registry), StringUtils.ENDC);
+        listMetadata = new EFPListMetadata();
+        console.log(StringUtils.BLUE, "EFPListMetadata    :", address(listMetadata), StringUtils.ENDC);
+        lists = new EFPLists();
+        console.log(StringUtils.BLUE, "EFPLists           :", address(lists), StringUtils.ENDC);
 
-        // Additional setup for registry and listMetadata if needed
-        listMetadata.setEFPListRegistry(address(registry));
-
-        EFPListMinter minter = new EFPListMinter(
+        minter = new EFPListMinter(
             address(registry),
             address(accountMetadata),
             address(listMetadata),
             address(lists)
         );
-        console.log(BLUE, "EFPListMinter      :", address(minter), ENDC);
+        console.log(StringUtils.BLUE, "EFPListMinter      :", address(minter), StringUtils.ENDC);
         console.log();
+    }
 
+    /**
+     * @notice Performs initial configuration for the deployed EFP contracts.
+     */
+    function initContracts() public {
+        // Additional setup for registry and listMetadata if needed
+        listMetadata.setEFPListRegistry(address(registry));
         // Add the minter as a proxy for accountMetadata and listMetadata
         accountMetadata.addProxy(address(minter));
         listMetadata.addProxy(address(minter));
+    }
 
-        registry.setMintState(EFPListRegistry.MintState.PublicMint);
-        console.log("Mint state         : PublicMint");
+    /**
+     * @notice Executes the script to deploy and initialize the EFP contracts.
+     */
+    function run() public {
+        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
-        uint nonce = 1023;
-        minter.mintWithListLocationOnL1AndSetAsDefaultList(nonce);
+        // Deploy the contracts
+        deployContracts();
 
-        uint tokenId = registry.totalSupply() - 1;
-        address owner = registry.ownerOf(tokenId);
-
-        // Formatting the output as a row in the table
-        console.log();
-        console.log("---------------------------------------------------------");
-        console.log("| Token ID |                    Owner                   |");
-        console.log("---------------------------------------------------------");
-        console.log("|    #%d    | %s |", tokenId, owner);
-        console.log("---------------------------------------------------------");
+        // initialize the contracts
+        initContracts();
 
         vm.stopBroadcast();
     }
