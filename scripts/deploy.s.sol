@@ -25,7 +25,14 @@ contract DeployScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
+        // msg.sender will be set to the address derived from the private key
+        // you're using for the transaction, specified in the
+        // vm.startBroadcast(deployerPrivateKey) call.
         console.log(GREEN, "Deployer           :", msg.sender, ENDC);
+        // address(this) refers to the address of the currently executing
+        // contract. In your deployment script, this refers to the instance
+        // of the DeployScript contract.
+        // console.log(GREEN, "address(this)      :", address(this), ENDC);
         console.log();
 
         // Deploy the contracts
