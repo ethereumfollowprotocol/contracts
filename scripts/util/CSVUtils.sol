@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {BytesUtils} from "./BytesUtils.sol";
+import { BytesUtils } from './BytesUtils.sol';
 
 library CSVUtils {
-
-    function split(string memory s, string memory delimiter) internal pure returns (string[] memory) {
+    function split(
+        string memory s,
+        string memory delimiter
+    ) internal pure returns (string[] memory) {
         bytes memory b = bytes(s);
         uint count = 1;
         for (uint i = 0; i < b.length; i++) {
@@ -23,7 +25,7 @@ library CSVUtils {
                 j++;
             }
         }
-        if(start < b.length) {
+        if (start < b.length) {
             parts[j] = new string(b.length - start);
             BytesUtils.copy(b, start, b.length - start, bytes(parts[j]), 0);
         }

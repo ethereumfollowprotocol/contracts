@@ -8,11 +8,9 @@ struct ListRecord {
     /// @dev Used for differentiating between record formats for upgradability,
     ///      ensuring backward compatibility, and identifying the record's schema.
     uint8 version;
-
     /// @notice The type of the list record.
     /// @dev Represents the specific category or format of the list record.
     uint8 recordType;
-
     /// @notice The data associated with the list record.
     /// @dev Contains the actual content or information of the list record.
     bytes data;

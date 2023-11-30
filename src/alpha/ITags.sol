@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ListRecord} from "./ListRecord.sol";
-import {Lists} from "./Lists.sol";
-import {IListRegistry} from "./IListRegistry.sol";
+import { ListRecord } from './ListRecord.sol';
+import { Lists } from './Lists.sol';
+import { IListRegistry } from './IListRegistry.sol';
 
 interface ITags {
-
     ///////////////////////////////////////////////////////////////////////////
     // add
     ///////////////////////////////////////////////////////////////////////////
@@ -17,7 +16,11 @@ interface ITags {
      * @param recordHash The unique identifier of the record.
      * @param tag The tag to be added.
      */
-    function addTagToRecord(uint nonce, bytes32 recordHash, string calldata tag) external;
+    function addTagToRecord(
+        uint nonce,
+        bytes32 recordHash,
+        string calldata tag
+    ) external;
 
     /**
      * @notice Adds a set of tags to a record.
@@ -25,7 +28,11 @@ interface ITags {
      * @param recordHash The unique identifier of the record.
      * @param tags An array of tags to be added.
      */
-    function addTagsToRecord(uint nonce, bytes32 recordHash, string[] calldata tags) external;
+    function addTagsToRecord(
+        uint nonce,
+        bytes32 recordHash,
+        string[] calldata tags
+    ) external;
 
     ///////////////////////////////////////////////////////////////////////////
     // delete
@@ -37,7 +44,11 @@ interface ITags {
      * @param recordHash The unique identifier of the record.
      * @param tag The tag to be deleted.
      */
-    function deleteTagFromRecord(uint nonce, bytes32 recordHash, string calldata tag) external;
+    function deleteTagFromRecord(
+        uint nonce,
+        bytes32 recordHash,
+        string calldata tag
+    ) external;
 
     /**
      * @notice Removes a set of tags from a record.
@@ -45,7 +56,11 @@ interface ITags {
      * @param recordHash The unique identifier of the record.
      * @param tags An array of tags to be deleted.
      */
-    function deleteTagsFromRecord(uint nonce, bytes32 recordHash, string[] calldata tags) external;
+    function deleteTagsFromRecord(
+        uint nonce,
+        bytes32 recordHash,
+        string[] calldata tags
+    ) external;
 
     /**
      * @notice Checks if a record has a specific tag.
@@ -54,5 +69,9 @@ interface ITags {
      * @param tag The tag to check.
      * @return bool True if the record has the tag, false otherwise.
      */
-    function hasTag(uint nonce, bytes32 recordHash, string calldata tag) external view returns (bool);
+    function hasTag(
+        uint nonce,
+        bytes32 recordHash,
+        string calldata tag
+    ) external view returns (bool);
 }

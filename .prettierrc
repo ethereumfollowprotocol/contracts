@@ -4,5 +4,18 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "useTabs": false
+  "useTabs": false,
+  "overrides": [
+    {
+      "files": "*.sol",
+      "options": {
+        "parser": "solidity-parse",
+        "plugins": ["prettier-plugin-solidity"],
+        "bracketSpacing": true,
+        "printWidth": 80,
+        "tabWidth": 4,
+        "useTabs": false
+      }
+    }
+  ]
 }

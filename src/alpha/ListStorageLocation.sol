@@ -6,7 +6,6 @@ pragma solidity ^0.8.20;
  * @notice A ListStorageLocation is a struct that represents a location of a list
  */
 struct ListStorageLocation {
-
     /**
      * @dev The version byte allows for:
      * 1. Differentiating between record formats for upgradability.
@@ -14,10 +13,8 @@ struct ListStorageLocation {
      * 3. Identifying the record's schema or processing logic.
      */
     uint8 version;
-
     /// @dev type of list location
     uint8 locationType;
-
     /// @dev data for the list location
     bytes data;
 }

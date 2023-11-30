@@ -1,22 +1,26 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
-import {ERC721A} from "lib/ERC721A/contracts/ERC721A.sol";
-import {IEFPListRegistry} from "./IEFPListRegistry.sol";
-import {IEFPListPriceOracle} from "./IEFPListPriceOracle.sol";
-import {ListStorageLocation} from "./ListStorageLocation.sol";
-import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import { ERC721A } from 'lib/ERC721A/contracts/ERC721A.sol';
+import { IEFPListRegistry } from './IEFPListRegistry.sol';
+import { IEFPListPriceOracle } from './IEFPListPriceOracle.sol';
+import { ListStorageLocation } from './ListStorageLocation.sol';
+import { Ownable } from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 
 /**
  * @title EFPListRegistry
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
 contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
-
     ///////////////////////////////////////////////////////////////////////////
     // Enums
     ///////////////////////////////////////////////////////////////////////////
 
-    enum MintState { Disabled, OwnerOnly, PublicMint, PublicBatch }
+    enum MintState {
+        Disabled,
+        OwnerOnly,
+        PublicMint,
+        PublicBatch
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Events
@@ -50,7 +54,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Constructs a new ListRegistry and sets its name and symbol.
-    constructor() ERC721A("EFP", "EFP") {}
+    constructor() ERC721A('EFP', 'EFP') {}
 
     ///////////////////////////////////////////////////////////////////////////
     // price oracle getter/setter
@@ -76,14 +80,17 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
 
     /// @notice Restrict access to the owner of a specific token.
     modifier onlyTokenOwner(uint tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the owner");
+        require(ownerOf(tokenId) == msg.sender, 'EFP: caller is not the owner');
         _;
     }
 
     /// @notice Restrict mint if minting is disabled OR restricted to owner && caller is not owner.
     modifier mintAllowed() {
-        require(mintState != MintState.Disabled, "EFP: minting is disabled");
-        require(mintState != MintState.OwnerOnly || msg.sender == owner(), "EFP: minting is restricted to owner");
+        require(mintState != MintState.Disabled, 'EFP: minting is disabled');
+        require(
+            mintState != MintState.OwnerOnly || msg.sender == owner(),
+            'EFP: minting is restricted to owner'
+        );
         // else PublicMint allowed
         // else PublicBatch allowed
         _;
@@ -91,9 +98,15 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
 
     /// @notice Restrict mint if minting is disabled OR restricted to owner && caller is not owner OR restricted to public single
     modifier mintBatchAllowed() {
-        require(mintState != MintState.Disabled, "EFP: minting is disabled");
-        require(mintState != MintState.OwnerOnly || msg.sender == owner(), "EFP: minting is restricted to owner");
-        require(mintState != MintState.PublicMint || msg.sender == owner(), "EFP: batch minting is restricted to owner");
+        require(mintState != MintState.Disabled, 'EFP: minting is disabled');
+        require(
+            mintState != MintState.OwnerOnly || msg.sender == owner(),
+            'EFP: minting is restricted to owner'
+        );
+        require(
+            mintState != MintState.PublicMint || msg.sender == owner(),
+            'EFP: batch minting is restricted to owner'
+        );
         // else PublicBatch allowed
         _;
     }
@@ -128,8 +141,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
 
     /// @notice Mints a new token.
     function mint() public payable mintAllowed {
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
-        require(msg.value >= price, "insufficient funds");
+        uint price = (address(priceOracle) != address(0))
+            ? priceOracle.getPrice(totalSupply(), 1)
+            : 0;
+        require(msg.value >= price, 'insufficient funds');
 
         _mint(msg.sender, 1);
     }
@@ -137,10 +152,12 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     /**
      * @notice Mints a new token to the given address.
      * @param to The address to mint the token to.
-    */
+     */
     function mintTo(address to) public payable mintAllowed {
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
-        require(msg.value >= price, "insufficient funds");
+        uint price = (address(priceOracle) != address(0))
+            ? priceOracle.getPrice(totalSupply(), 1)
+            : 0;
+        require(msg.value >= price, 'insufficient funds');
 
         _mint(to, 1);
     }
@@ -148,10 +165,12 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     /// @notice Mints a batch of new tokens.
     /// @param quantity The number of tokens to mint.
     function mintBatch(uint quantity) public payable mintBatchAllowed {
-        require(quantity <= maxMintBatchSize, "batch size too big");
+        require(quantity <= maxMintBatchSize, 'batch size too big');
 
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
-        require(msg.value >= price, "insufficient funds");
+        uint price = (address(priceOracle) != address(0))
+            ? priceOracle.getPrice(totalSupply(), quantity)
+            : 0;
+        require(msg.value >= price, 'insufficient funds');
 
         _mint(msg.sender, quantity);
     }
@@ -159,11 +178,16 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     /// @notice Mints a batch of new tokens.
     /// @param to The address to mint the tokens to.
     /// @param quantity The number of tokens to mint.
-    function mintBatchTo(address to, uint quantity) public payable mintBatchAllowed {
-        require(quantity <= maxMintBatchSize, "batch size too big");
+    function mintBatchTo(
+        address to,
+        uint quantity
+    ) public payable mintBatchAllowed {
+        require(quantity <= maxMintBatchSize, 'batch size too big');
 
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
-        require(msg.value >= price, "insufficient funds");
+        uint price = (address(priceOracle) != address(0))
+            ? priceOracle.getPrice(totalSupply(), quantity)
+            : 0;
+        require(msg.value >= price, 'insufficient funds');
 
         _mint(to, quantity);
     }

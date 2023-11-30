@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListRecord} from "./ListRecord.sol";
+import { IListRegistry } from './IListRegistry.sol';
+import { ListRecord } from './ListRecord.sol';
 
 /**
  * @title NonceListManager
@@ -11,7 +11,6 @@ import {ListRecord} from "./ListRecord.sol";
  * @dev The contract employs a first-come-first-serve model where the first entity to claim a nonce becomes its manager.
  */
 contract NonceListManager {
-
     /// @notice A mapping that associates each nonce with its manager's address.
     mapping(uint nonce => address) public managers;
 
@@ -26,7 +25,7 @@ contract NonceListManager {
     }
 
     function _onlyListManager(uint nonce) internal view {
-        require(managers[nonce] == msg.sender, "Not manager");
+        require(managers[nonce] == msg.sender, 'Not manager');
     }
 
     /**
@@ -37,7 +36,7 @@ contract NonceListManager {
      */
     function claimListManager(uint nonce) external {
         // First-come-first-serve basis for claiming nonce
-        require(managers[nonce] == address(0), "Nonce already claimed");
+        require(managers[nonce] == address(0), 'Nonce already claimed');
         managers[nonce] = msg.sender;
     }
 
@@ -47,7 +46,10 @@ contract NonceListManager {
      * @param manager The address of the new manager.
      * @dev Throws an error if the caller is not the current manager of the specified nonce.
      */
-    function setListManager(uint nonce, address manager) external onlyListManager(nonce) {
+    function setListManager(
+        uint nonce,
+        address manager
+    ) external onlyListManager(nonce) {
         managers[nonce] = manager;
     }
 
@@ -59,5 +61,4 @@ contract NonceListManager {
     function getListManager(uint nonce) external view returns (address) {
         return managers[nonce];
     }
-
 }

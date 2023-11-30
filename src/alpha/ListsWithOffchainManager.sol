@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ArrayLists} from "./ArrayLists.sol";
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListRecord} from "./ListRecord.sol";
-import "../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
+import { ArrayLists } from './ArrayLists.sol';
+import { IListRegistry } from './IListRegistry.sol';
+import { ListRecord } from './ListRecord.sol';
+import '../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol';
 
 /**
  * @title ListManager
@@ -14,7 +14,6 @@ import "../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol"
 struct ListManager {
     /// @notice Initialization flag for the structure.
     bool isSet;
-
     /// @notice Ethereum address of the manager.
     address managerAddress;
 }
@@ -26,7 +25,6 @@ struct ListManager {
  * @dev Utilizes offchain signatures to authenticate manager's actions, bypassing the EIP-191 standard.
  */
 contract ListsWithOffchainManager is ArrayLists {
-
     /// @notice The Ethereum address responsible for offchain signing.
     address public signer;
 
@@ -52,7 +50,10 @@ contract ListsWithOffchainManager is ArrayLists {
      */
     modifier onlyListManager(uint nonce) override {
         ListManager memory manager = managers[nonce];
-        require(manager.isSet && manager.managerAddress == msg.sender, "Only EFP List Manager can call this function");
+        require(
+            manager.isSet && manager.managerAddress == msg.sender,
+            'Only EFP List Manager can call this function'
+        );
         _;
     }
 
@@ -65,7 +66,11 @@ contract ListsWithOffchainManager is ArrayLists {
      * @dev Constructs a unique message for the token and manager, then checks if the recovered signer's address
      * from the signature matches the caller's address.
      */
-    function proveListManagerWithOffchainSignature(uint nonce, address manager, bytes calldata signature) internal view returns (bool) {
+    function proveListManagerWithOffchainSignature(
+        uint nonce,
+        address manager,
+        bytes calldata signature
+    ) internal view returns (bool) {
         // Create a unique message for validation using the following structure:
         // - Start with a 0x19 byte ensuring the data isn't considered valid RLP.
         // - Follow with version 0x00 and a 3-byte "EFP" prefix.
@@ -81,11 +86,14 @@ contract ListsWithOffchainManager is ArrayLists {
         return recoveredSigner == signer;
     }
 
-    function makeSignatureMessage(uint nonce, address manager) internal pure returns (bytes memory) {
+    function makeSignatureMessage(
+        uint nonce,
+        address manager
+    ) internal pure returns (bytes memory) {
         bytes memory message = abi.encodePacked(
-            "\x19\x00EFP",
+            '\x19\x00EFP',
             bytes32(nonce),
-            "manager",
+            'manager',
             bytes20(manager)
         );
         return message;
@@ -100,8 +108,14 @@ contract ListsWithOffchainManager is ArrayLists {
      * the manager's address (which is the address of the caller) is set as the manager for the token.
      * The token's manager data is then updated in the `managers` mapping.
      */
-    function claimListManagerWithOffchainSignature(uint nonce, bytes calldata signature) external {
-        require(proveListManagerWithOffchainSignature(nonce, msg.sender, signature), "Invalid signature");
+    function claimListManagerWithOffchainSignature(
+        uint nonce,
+        bytes calldata signature
+    ) external {
+        require(
+            proveListManagerWithOffchainSignature(nonce, msg.sender, signature),
+            'Invalid signature'
+        );
         managers[nonce] = ListManager({
             isSet: true,
             managerAddress: msg.sender
@@ -111,5 +125,4 @@ contract ListsWithOffchainManager is ArrayLists {
     function getListManager(uint nonce) external view returns (address) {
         return managers[nonce].managerAddress;
     }
-
 }

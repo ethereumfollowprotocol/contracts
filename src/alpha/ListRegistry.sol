@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
-import {ERC721A} from "lib/ERC721A/contracts/ERC721A.sol";
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListStorageLocation} from "./ListStorageLocation.sol";
+import { ERC721A } from 'lib/ERC721A/contracts/ERC721A.sol';
+import { IListRegistry } from './IListRegistry.sol';
+import { ListStorageLocation } from './ListStorageLocation.sol';
 
 /**
  * @title ListManager
@@ -11,7 +11,6 @@ import {ListStorageLocation} from "./ListStorageLocation.sol";
 struct ListManager {
     /// @dev True if this struct has been set, used to distinguish from default zero struct.
     bool isSet;
-
     /// @dev Ethereum address of the manager.
     address managerAddress;
 }
@@ -23,7 +22,6 @@ struct ListManager {
 struct ListUser {
     /// @dev True if this struct has been set, used to distinguish from default zero struct.
     bool isSet;
-
     /// @dev Ethereum address of the user.
     address userAddress;
 }
@@ -33,7 +31,6 @@ struct ListUser {
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
 contract ListRegistry is IListRegistry, ERC721A {
-
     uint8 constant VERSION = 1;
 
     uint8 constant LIST_LOCATION_L1 = 1;
@@ -46,7 +43,7 @@ contract ListRegistry is IListRegistry, ERC721A {
     mapping(uint => ListUser) private tokenIdToListUser;
 
     /// @notice Constructs a new ListRegistry and sets its name and symbol.
-    constructor() ERC721A("EFP", "EFP") {}
+    constructor() ERC721A('EFP', 'EFP') {}
 
     /// @notice Mints a new token.
     function mint() public {
@@ -60,7 +57,7 @@ contract ListRegistry is IListRegistry, ERC721A {
 
     /// @notice Restrict access to the owner of a specific token.
     modifier onlyListManager(uint tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the owner");
+        require(ownerOf(tokenId) == msg.sender, 'EFP: caller is not the owner');
         _;
     }
 
@@ -73,7 +70,9 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param tokenId The ID of the token.
      * @return The list location.
      */
-    function getListStorageLocation(uint tokenId) external view returns (ListStorageLocation memory) {
+    function getListStorageLocation(
+        uint tokenId
+    ) external view returns (ListStorageLocation memory) {
         return tokenIdToListStorageLocation[tokenId];
     }
 
@@ -82,9 +81,16 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param tokenId The ID of the token.
      * @param contractAddress The contract address to be associated with the token.
      */
-    function setListStorageLocationL1(uint tokenId, address contractAddress) external onlyListManager(tokenId) {
+    function setListStorageLocationL1(
+        uint tokenId,
+        address contractAddress
+    ) external onlyListManager(tokenId) {
         // abi.encodePacked will give a 20 byte representation of the address
-        tokenIdToListStorageLocation[tokenId] = ListStorageLocation(VERSION, LIST_LOCATION_L1, abi.encodePacked(contractAddress));
+        tokenIdToListStorageLocation[tokenId] = ListStorageLocation(
+            VERSION,
+            LIST_LOCATION_L1,
+            abi.encodePacked(contractAddress)
+        );
     }
 
     /**
@@ -94,8 +100,17 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param contractAddress The contract address to be associated with the token.
      * @param nonce The nonce to be associated with the token.
      */
-    function setListStorageLocationL2WithNonce(uint tokenId, uint chainId, address contractAddress, uint nonce) external onlyListManager(tokenId) {
-        tokenIdToListStorageLocation[tokenId] = ListStorageLocation(VERSION, LIST_LOCATION_L2_WITH_NONCE, abi.encodePacked(chainId, contractAddress, nonce));
+    function setListStorageLocationL2WithNonce(
+        uint tokenId,
+        uint chainId,
+        address contractAddress,
+        uint nonce
+    ) external onlyListManager(tokenId) {
+        tokenIdToListStorageLocation[tokenId] = ListStorageLocation(
+            VERSION,
+            LIST_LOCATION_L2_WITH_NONCE,
+            abi.encodePacked(chainId, contractAddress, nonce)
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -124,20 +139,30 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param tokenId The ID of the token.
      * @param managerAddress The Ethereum address of the manager.
      */
-    function setManager(uint tokenId, address managerAddress) external onlyManagerOrOwner(tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the owner");
+    function setManager(
+        uint tokenId,
+        address managerAddress
+    ) external onlyManagerOrOwner(tokenId) {
+        require(ownerOf(tokenId) == msg.sender, 'EFP: caller is not the owner');
         tokenIdToListManager[tokenId] = ListManager(true, managerAddress);
     }
 
     /// @notice Restrict access to the manager of a specific token.
     modifier onlyManager(uint tokenId) {
-        require(tokenIdToListManager[tokenId].managerAddress == msg.sender, "EFP: caller is not the manager");
+        require(
+            tokenIdToListManager[tokenId].managerAddress == msg.sender,
+            'EFP: caller is not the manager'
+        );
         _;
     }
 
     /// @notice Restrict access to the owner or manager of a specific token.
     modifier onlyManagerOrOwner(uint tokenId) {
-        require(tokenIdToListManager[tokenId].managerAddress == msg.sender || ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager or owner");
+        require(
+            tokenIdToListManager[tokenId].managerAddress == msg.sender ||
+                ownerOf(tokenId) == msg.sender,
+            'EFP: caller is not the manager or owner'
+        );
         _;
     }
 
@@ -167,8 +192,14 @@ contract ListRegistry is IListRegistry, ERC721A {
      * @param tokenId The ID of the token.
      * @param userAddress The Ethereum address of the user.
      */
-    function setUser(uint tokenId, address userAddress) external onlyManagerOrOwner(tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager");
+    function setUser(
+        uint tokenId,
+        address userAddress
+    ) external onlyManagerOrOwner(tokenId) {
+        require(
+            ownerOf(tokenId) == msg.sender,
+            'EFP: caller is not the manager'
+        );
         tokenIdToListUser[tokenId] = ListUser(true, userAddress);
     }
 }

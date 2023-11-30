@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ABaseLists} from "./ABaseLists.sol";
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListOperation} from "./ListOperation.sol";
-import {ListRecord} from "./ListRecord.sol";
+import { ABaseLists } from './ABaseLists.sol';
+import { IListRegistry } from './IListRegistry.sol';
+import { ListOperation } from './ListOperation.sol';
+import { ListRecord } from './ListRecord.sol';
 
 /**
  * @title MappingLists
@@ -14,7 +14,6 @@ import {ListRecord} from "./ListRecord.sol";
  * actually removed from storage.
  */
 contract MappingLists is ABaseLists {
-
     /// @dev Maps the hash of a record to whether it is in the list
     mapping(uint => mapping(bytes32 => bool)) private recordsByNonce;
 
@@ -34,11 +33,16 @@ contract MappingLists is ABaseLists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function _appendRecord(uint nonce, uint8 version, uint8 recordType, bytes memory data) internal override {
+    function _appendRecord(
+        uint nonce,
+        uint8 version,
+        uint8 recordType,
+        bytes memory data
+    ) internal override {
         bytes32 hash = keccak256(abi.encode(version, recordType, data));
         mapping(bytes32 => bool) storage nonceRecords = recordsByNonce[nonce];
 
-        require(!nonceRecords[hash], "Record already exists");
+        require(!nonceRecords[hash], 'Record already exists');
 
         nonceRecords[hash] = true;
         emit RecordAdded(nonce, hash);
@@ -57,7 +61,7 @@ contract MappingLists is ABaseLists {
     function _deleteRecord(uint nonce, bytes32 recordHash) internal override {
         mapping(bytes32 => bool) storage nonceRecords = recordsByNonce[nonce];
 
-        require(nonceRecords[recordHash], "Record does not exist");
+        require(nonceRecords[recordHash], 'Record does not exist');
 
         nonceRecords[recordHash] = false;
 
@@ -74,15 +78,23 @@ contract MappingLists is ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function _modifyRecord(uint nonce, ListOperation calldata operation) virtual internal override {
+    function _modifyRecord(
+        uint nonce,
+        ListOperation calldata operation
+    ) internal virtual override {
         if (operation.operationType == OPERATION_APPEND) {
             ListRecord memory record = abi.decode(operation.data, (ListRecord));
-            _appendRecord(nonce, record.version, record.recordType, record.data);
+            _appendRecord(
+                nonce,
+                record.version,
+                record.recordType,
+                record.data
+            );
         } else if (operation.operationType == OPERATION_DELETE) {
             bytes32 recordHash = abi.decode(operation.data, (bytes32));
             _deleteRecord(nonce, recordHash);
         } else {
-            revert("Invalid operation type");
+            revert('Invalid operation type');
         }
     }
 
@@ -96,7 +108,10 @@ contract MappingLists is ABaseLists {
      * @param nonce The ID of the token whose record count is desired.
      * @return Total number of records for the specified nonce.
      */
-    function hasRecord(uint nonce, bytes32 recordHash) public view returns (bool) {
+    function hasRecord(
+        uint nonce,
+        bytes32 recordHash
+    ) public view returns (bool) {
         return recordsByNonce[nonce][recordHash];
     }
 }

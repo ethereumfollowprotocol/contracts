@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ABaseLists} from "./ABaseLists.sol";
-import {IListRegistry} from "./IListRegistry.sol";
-import {ListOperation} from "./ListOperation.sol";
-import {ListRecord} from "./ListRecord.sol";
+import { ABaseLists } from './ABaseLists.sol';
+import { IListRegistry } from './IListRegistry.sol';
+import { ListOperation } from './ListOperation.sol';
+import { ListRecord } from './ListRecord.sol';
 
 /**
  * @title LogLists
@@ -14,7 +14,6 @@ import {ListRecord} from "./ListRecord.sol";
  * actually removed from storage.
  */
 contract LogLists is ABaseLists {
-
     ///////////////////////////////////////////////////////////////////////////
     // Write APIs
     ///////////////////////////////////////////////////////////////////////////
@@ -31,8 +30,16 @@ contract LogLists is ABaseLists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function _appendRecord(uint nonce, uint8 version, uint8 recordType, bytes memory data) internal override {
-        emit RecordAdded(nonce, keccak256(abi.encode(version, recordType, data)));
+    function _appendRecord(
+        uint nonce,
+        uint8 version,
+        uint8 recordType,
+        bytes memory data
+    ) internal override {
+        emit RecordAdded(
+            nonce,
+            keccak256(abi.encode(version, recordType, data))
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -59,15 +66,23 @@ contract LogLists is ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function _modifyRecord(uint nonce, ListOperation calldata operation) virtual internal override {
+    function _modifyRecord(
+        uint nonce,
+        ListOperation calldata operation
+    ) internal virtual override {
         if (operation.operationType == OPERATION_APPEND) {
             ListRecord memory record = abi.decode(operation.data, (ListRecord));
-            _appendRecord(nonce, record.version, record.recordType, record.data);
+            _appendRecord(
+                nonce,
+                record.version,
+                record.recordType,
+                record.data
+            );
         } else if (operation.operationType == OPERATION_DELETE) {
             bytes32 recordHash = abi.decode(operation.data, (bytes32));
             _deleteRecord(nonce, recordHash);
         } else {
-            revert("Invalid operation type");
+            revert('Invalid operation type');
         }
     }
 }
