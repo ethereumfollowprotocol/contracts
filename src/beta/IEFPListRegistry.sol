@@ -9,18 +9,43 @@ import {ListStorageLocation} from "./ListStorageLocation.sol";
  */
 interface IEFPListRegistry {
     ///////////////////////////////////////////////////////////////////////////
+    // Enums
+    ///////////////////////////////////////////////////////////////////////////
+
+    enum MintState {
+        Disabled,
+        OwnerOnly,
+        PublicMint,
+        PublicBatch
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Events
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Emitted when a list storage location is set
-    event ListStorageLocationChange(uint indexed tokenId, ListStorageLocation listStorageLocation);
+    event ListStorageLocationChange(uint256 indexed tokenId, ListStorageLocation listStorageLocation);
 
     /// @notice Emitted when a list user is set
-    event ListUserChange(uint indexed tokenId, address listUser);
+    event ListUserChange(uint256 indexed tokenId, address listUser);
 
     ///////////////////////////////////////////////////////////////////////////
     // Mint
     ///////////////////////////////////////////////////////////////////////////
+
+    /// @notice Fetches the mint state.
+    function getMintState() external view returns (MintState);
+
+    /// @notice Sets the mint state.
+    /// @param _mintState The new mint state.
+    function setMintState(MintState _mintState) external;
+
+    /// @notice Fetches the max mint batch size.
+    function getMaxMintBatchSize() external view returns (uint256);
+
+    /// @notice Sets the max mint batch size.
+    /// @param _maxMintBatchSize The new max mint batch size.
+    function setMaxMintBatchSize(uint256 _maxMintBatchSize) external;
 
     /// @notice Mints a new token.
     function mint() external payable;
@@ -32,10 +57,10 @@ interface IEFPListRegistry {
     function mintTo(address to) external payable;
 
     /// @notice Mints a new token to the given address.
-    function mintBatch(uint quantity) external payable;
+    function mintBatch(uint256 quantity) external payable;
 
     /// @notice Mints a new token to the given address.
-    function mintBatchTo(address to, uint quantity) external payable;
+    function mintBatchTo(address to, uint256 quantity) external payable;
 
     // ///////////////////////////////////////////////////////////////////////////
     // // List Location

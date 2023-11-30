@@ -11,11 +11,10 @@ import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 import {IERC721Enumerable} from "lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
 library Logger {
-    function formatListOp(ListOp memory op) internal view returns (string memory) {
+    function formatListOp(ListOp memory op) internal pure returns (string memory) {
         // Directly use op.data[0] and op.data[1] in the string.concat to reduce local variables
-        string memory codeColor = op.code == 0x01
-            ? StringUtils.GREEN
-            : (op.code == 0x02 ? StringUtils.RED : StringUtils.MAGENTA);
+        string memory codeColor =
+            op.code == 0x01 ? StringUtils.GREEN : (op.code == 0x02 ? StringUtils.RED : StringUtils.MAGENTA);
 
         // Minimize the creation of new variables by directly manipulating and passing parameters
         string memory s = string.concat(
@@ -37,16 +36,16 @@ library Logger {
         return s;
     }
 
-    function logNFTs(address nftContract) internal {
+    function logNFTs(address nftContract) internal view {
         IERC721Enumerable erc721 = IERC721Enumerable(nftContract);
 
-        uint totalSupply = erc721.totalSupply();
+        uint256 totalSupply = erc721.totalSupply();
 
         console.log("---------------------------------------------------------");
         console.log("| Token ID |                    Owner                   |");
         console.log("---------------------------------------------------------");
 
-        for (uint j = 0; j < totalSupply; j++) {
+        for (uint256 j = 0; j < totalSupply; j++) {
             address owner = erc721.ownerOf(j);
 
             // Formatting the output as a row in the table
@@ -61,17 +60,18 @@ library Logger {
     }
 
     // Modified for loop to print listOps in a tabular format
-    function logListOps(uint start, uint end, mapping(uint => ListOp[]) storage listOpsMapping) public {
-        string memory output;
-
+    function logListOps(uint256 start, uint256 end, mapping(uint256 => ListOp[]) storage listOpsMapping)
+        internal
+        view
+    {
         console.log("----------------------------------------------------------------------------");
         console.log("|    Nonce    | Index | ListOp                                             |");
         console.log("----------------------------------------------------------------------------");
 
-        for (uint n = start; n <= end; n++) {
+        for (uint256 n = start; n <= end; n++) {
             ListOp[] memory listOps = listOpsMapping[n];
 
-            for (uint i = 0; i < listOps.length; i++) {
+            for (uint256 i = 0; i < listOps.length; i++) {
                 // nonce
                 string memory line = string.concat("|      #", Strings.toString(n), "    ", (n < 10 ? " |" : "|"));
 

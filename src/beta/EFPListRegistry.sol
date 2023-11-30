@@ -11,16 +11,6 @@ import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
 contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
-    ///////////////////////////////////////////////////////////////////////////
-    // Enums
-    ///////////////////////////////////////////////////////////////////////////
-
-    enum MintState {
-        Disabled,
-        OwnerOnly,
-        PublicMint,
-        PublicBatch
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Events

@@ -20,7 +20,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
     IERC721 public efpListRegistry;
 
     /// @dev The key-value set for each token ID
-    mapping(uint => mapping(string => bytes)) private values;
+    mapping(uint256 => mapping(string => bytes)) private values;
 
     mapping(address => bool) private proxies;
 
@@ -62,11 +62,20 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
         emit ProxyRemoved(proxy);
     }
 
+    /**
+     * @dev Check if the address is a proxy.
+     * @param proxy The address to check.
+     * @return True if the address is a proxy, false otherwise.
+     */
+    function isProxy(address proxy) external view returns (bool) {
+        return proxies[proxy];
+    }
+
     /////////////////////////////////////////////////////////////////////////////
     // Modifier
     /////////////////////////////////////////////////////////////////////////////
 
-    modifier onlyTokenOwnerOrProxy(uint tokenId) {
+    modifier onlyTokenOwnerOrProxy(uint256 tokenId) {
         require(efpListRegistry.ownerOf(tokenId) == msg.sender || proxies[msg.sender], "not token owner");
         _;
     }
@@ -81,7 +90,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to query.
      * @return The associated value.
      */
-    function getValue(uint tokenId, string calldata key) external view returns (bytes memory) {
+    function getValue(uint256 tokenId, string calldata key) external view returns (bytes memory) {
         return values[tokenId][key];
     }
 
@@ -91,10 +100,10 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param keys The keys to query.
      * @return The associated values.
      */
-    function getValues(uint tokenId, string[] calldata keys) external view returns (bytes[] memory) {
-        uint length = keys.length;
+    function getValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
+        uint256 length = keys.length;
         bytes[] memory result = new bytes[](length);
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i = 0; i < length;) {
             string calldata key = keys[i];
             result[i] = values[tokenId][key];
             unchecked {
@@ -116,7 +125,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function _setValue(uint tokenId, string calldata key, bytes calldata value) internal {
+    function _setValue(uint256 tokenId, string calldata key, bytes calldata value) internal {
         values[tokenId][key] = value;
         emit ValueSet(tokenId, key, value);
     }
@@ -130,7 +139,10 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function setValue(uint tokenId, string calldata key, bytes calldata value) external onlyTokenOwnerOrProxy(tokenId) {
+    function setValue(uint256 tokenId, string calldata key, bytes calldata value)
+        external
+        onlyTokenOwnerOrProxy(tokenId)
+    {
         _setValue(tokenId, key, value);
     }
 
@@ -146,7 +158,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param value2 The second value to set.
      */
     function setValue2(
-        uint tokenId,
+        uint256 tokenId,
         string calldata key,
         bytes calldata value,
         string calldata key2,
@@ -189,9 +201,9 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param tokenId The token ID to update.
      * @param records The records to set.
      */
-    function setValues(uint tokenId, KeyValue[] calldata records) external onlyTokenOwnerOrProxy(tokenId) {
-        uint length = records.length;
-        for (uint256 i = 0; i < length; ) {
+    function setValues(uint256 tokenId, KeyValue[] calldata records) external onlyTokenOwnerOrProxy(tokenId) {
+        uint256 length = records.length;
+        for (uint256 i = 0; i < length;) {
             KeyValue calldata record = records[i];
             _setValue(tokenId, record.key, record.value);
             unchecked {

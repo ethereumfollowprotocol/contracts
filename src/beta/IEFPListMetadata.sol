@@ -5,7 +5,17 @@ pragma solidity ^0.8.20;
  * @title IEFPListMetadata
  */
 interface IEFPListMetadata {
-    event ValueSet(uint indexed tokenId, string key, bytes value);
+    function getEFPListRegistry() external view returns (address);
+
+    function setEFPListRegistry(address efpListRegistry_) external;
+
+    function addProxy(address proxy) external;
+
+    function removeProxy(address proxy) external;
+
+    function isProxy(address proxy) external view returns (bool);
+
+    event ValueSet(uint256 indexed tokenId, string key, bytes value);
 
     /**
      * @title Key-value Record
@@ -16,12 +26,12 @@ interface IEFPListMetadata {
         bytes value;
     }
 
-    function getValue(uint tokenId, string calldata key) external view returns (bytes memory);
+    function getValue(uint256 tokenId, string calldata key) external view returns (bytes memory);
 
-    function setValue(uint tokenId, string calldata key, bytes calldata value) external;
+    function setValue(uint256 tokenId, string calldata key, bytes calldata value) external;
 
     function setValue2(
-        uint tokenId,
+        uint256 tokenId,
         string calldata key,
         bytes calldata value,
         string calldata key2,
@@ -38,5 +48,5 @@ interface IEFPListMetadata {
     //   bytes calldata value3
     // ) external;
 
-    function setValues(uint tokenId, KeyValue[] calldata records) external;
+    function setValues(uint256 tokenId, KeyValue[] calldata records) external;
 }

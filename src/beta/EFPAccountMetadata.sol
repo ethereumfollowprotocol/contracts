@@ -43,6 +43,15 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
         emit ProxyRemoved(proxy);
     }
 
+    /**
+     * @dev Check if the address is a proxy.
+     * @param proxy The address to check.
+     * @return True if the address is a proxy, false otherwise.
+     */
+    function isProxy(address proxy) external view returns (bool) {
+        return proxies[proxy];
+    }
+
     /////////////////////////////////////////////////////////////////////////////
     // Modifier
     /////////////////////////////////////////////////////////////////////////////
@@ -73,9 +82,9 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @return The associated values.
      */
     function getValues(address addr, string[] calldata keys) external view returns (bytes[] memory) {
-        uint length = keys.length;
+        uint256 length = keys.length;
         bytes[] memory result = new bytes[](length);
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i = 0; i < length;) {
             string calldata key = keys[i];
             result[i] = values[addr][key];
             unchecked {
@@ -123,11 +132,10 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function setValueForAddress(
-        address addr,
-        string calldata key,
-        bytes calldata value
-    ) external onlyCallerOrProxy(addr) {
+    function setValueForAddress(address addr, string calldata key, bytes calldata value)
+        external
+        onlyCallerOrProxy(addr)
+    {
         _setValue(addr, key, value);
     }
 
@@ -137,8 +145,8 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param records The records to set.
      */
     function setValues(KeyValue[] calldata records) external {
-        uint length = records.length;
-        for (uint256 i = 0; i < length; ) {
+        uint256 length = records.length;
+        for (uint256 i = 0; i < length;) {
             KeyValue calldata record = records[i];
             _setValue(msg.sender, record.key, record.value);
             unchecked {
@@ -154,8 +162,8 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param records The records to set.
      */
     function setValuesForAddress(address addr, KeyValue[] calldata records) external onlyCallerOrProxy(addr) {
-        uint length = records.length;
-        for (uint256 i = 0; i < length; ) {
+        uint256 length = records.length;
+        for (uint256 i = 0; i < length;) {
             KeyValue calldata record = records[i];
             _setValue(addr, record.key, record.value);
             unchecked {

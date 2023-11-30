@@ -5,6 +5,12 @@ pragma solidity ^0.8.20;
  * @title IEFPAccountMetadata
  */
 interface IEFPAccountMetadata {
+    function addProxy(address proxy) external;
+
+    function removeProxy(address proxy) external;
+
+    function isProxy(address proxy) external view returns (bool);
+
     event ValueSet(address indexed addr, string key, bytes value);
 
     /**

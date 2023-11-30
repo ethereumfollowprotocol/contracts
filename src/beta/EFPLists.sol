@@ -15,11 +15,11 @@ contract EFPLists is IEFPLists {
 
     /// @notice Maps each nonce to the address of its managing entity.
     /// @dev Nonces are unique identifiers for lists; each list has one manager.
-    mapping(uint => address) public managers;
+    mapping(uint256 => address) public managers;
 
     /// @notice Stores a sequence of operations for each list identified by its nonce.
     /// @dev Each list can have multiple operations performed over time.
-    mapping(uint => bytes[]) public listOps;
+    mapping(uint256 => bytes[]) public listOps;
 
     ///////////////////////////////////////////////////////////////////////////
     // Modifiers
@@ -30,7 +30,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The unique identifier of the list.
      * @dev Used to restrict function access to the list's manager.
      */
-    modifier onlyListManager(uint nonce) {
+    modifier onlyListManager(uint256 nonce) {
         require(managers[nonce] == msg.sender, "Not manager");
         _;
     }
@@ -44,8 +44,8 @@ contract EFPLists is IEFPLists {
      * @param nonce The nonce that the sender wishes to claim.
      * @dev This function establishes the first-come-first-serve basis for nonce claiming.
      */
-    function claimListManager(uint nonce) external {
-        require(managers[nonce] == address(0), "Nonce already claimed");
+    function claimListManager(uint256 nonce) external {
+        require(managers[nonce] == address(0) || managers[nonce] == msg.sender, "Nonce already claimed");
         managers[nonce] = msg.sender;
         emit ListManagerChange(nonce, msg.sender);
     }
@@ -56,7 +56,7 @@ contract EFPLists is IEFPLists {
      * @param manager The address to be set as the new manager.
      * @dev Only the current manager can transfer their management role.
      */
-    function setListManager(uint nonce, address manager) external onlyListManager(nonce) {
+    function setListManager(uint256 nonce, address manager) external onlyListManager(nonce) {
         managers[nonce] = manager;
         emit ListManagerChange(nonce, manager);
     }
@@ -66,7 +66,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @return The address of the manager.
      */
-    function getListManager(uint nonce) external view returns (address) {
+    function getListManager(uint256 nonce) external view returns (address) {
         return managers[nonce];
     }
 
@@ -79,7 +79,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @return The number of operations performed on the list.
      */
-    function getListOpCount(uint nonce) external view returns (uint) {
+    function getListOpCount(uint256 nonce) external view returns (uint256) {
         return listOps[nonce].length;
     }
 
@@ -89,7 +89,7 @@ contract EFPLists is IEFPLists {
      * @param index The index of the operation to be retrieved.
      * @return The operation at the specified index.
      */
-    function getListOp(uint nonce, uint index) external view returns (bytes memory) {
+    function getListOp(uint256 nonce, uint256 index) external view returns (bytes memory) {
         return listOps[nonce][index];
     }
 
@@ -100,13 +100,13 @@ contract EFPLists is IEFPLists {
      * @param end The ending index of the range.
      * @return The operations in the specified range.
      */
-    function getListOpsInRange(uint nonce, uint start, uint end) external view returns (bytes[] memory) {
+    function getListOpsInRange(uint256 nonce, uint256 start, uint256 end) external view returns (bytes[] memory) {
         if (start > end) {
             revert("Invalid range");
         }
 
         bytes[] memory ops = new bytes[](end - start);
-        for (uint i = start; i < end; ) {
+        for (uint256 i = start; i < end;) {
             ops[i - start] = listOps[nonce][i];
 
             unchecked {
@@ -121,7 +121,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @return The operations performed on the list.
      */
-    function getAllListOps(uint nonce) external view returns (bytes[] memory) {
+    function getAllListOps(uint256 nonce) external view returns (bytes[] memory) {
         return listOps[nonce];
     }
 
@@ -134,7 +134,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @param op The operation to be applied.
      */
-    function _applyListOp(uint nonce, bytes calldata op) internal {
+    function _applyListOp(uint256 nonce, bytes calldata op) internal {
         listOps[nonce].push(op);
         emit ListOperation(nonce, op);
     }
@@ -144,7 +144,7 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @param op The operation to be applied.
      */
-    function applyListOp(uint nonce, bytes calldata op) public onlyListManager(nonce) {
+    function applyListOp(uint256 nonce, bytes calldata op) public onlyListManager(nonce) {
         _applyListOp(nonce, op);
     }
 
@@ -153,9 +153,9 @@ contract EFPLists is IEFPLists {
      * @param nonce The list's unique identifier.
      * @param ops An array of operations to be applied.
      */
-    function applyListOps(uint nonce, bytes[] calldata ops) public onlyListManager(nonce) {
-        uint len = ops.length;
-        for (uint i = 0; i < len; ) {
+    function applyListOps(uint256 nonce, bytes[] calldata ops) public onlyListManager(nonce) {
+        uint256 len = ops.length;
+        for (uint256 i = 0; i < len;) {
             _applyListOp(nonce, ops[i]);
             unchecked {
                 ++i;
