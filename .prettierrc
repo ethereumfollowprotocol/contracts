@@ -11,8 +11,9 @@
       "options": {
         "parser": "solidity-parse",
         "plugins": ["prettier-plugin-solidity"],
-        "bracketSpacing": true,
-        "printWidth": 80,
+        "bracketSpacing": false,
+        "printWidth": 120,
+        "singleQuote": false,
         "tabWidth": 4,
         "useTabs": false
       }

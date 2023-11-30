@@ -16,16 +16,9 @@ interface IEFPListMetadata {
         bytes value;
     }
 
-    function getValue(
-        uint tokenId,
-        string calldata key
-    ) external view returns (bytes memory);
+    function getValue(uint tokenId, string calldata key) external view returns (bytes memory);
 
-    function setValue(
-        uint tokenId,
-        string calldata key,
-        bytes calldata value
-    ) external;
+    function setValue(uint tokenId, string calldata key, bytes calldata value) external;
 
     function setValue2(
         uint tokenId,

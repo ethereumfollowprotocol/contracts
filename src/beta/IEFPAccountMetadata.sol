@@ -16,23 +16,13 @@ interface IEFPAccountMetadata {
         bytes value;
     }
 
-    function getValue(
-        address addr,
-        string calldata key
-    ) external view returns (bytes memory);
+    function getValue(address addr, string calldata key) external view returns (bytes memory);
 
     function setValue(string calldata key, bytes calldata value) external;
 
-    function setValueForAddress(
-        address addr,
-        string calldata key,
-        bytes calldata value
-    ) external;
+    function setValueForAddress(address addr, string calldata key, bytes calldata value) external;
 
     function setValues(KeyValue[] calldata records) external;
 
-    function setValuesForAddress(
-        address addr,
-        KeyValue[] calldata records
-    ) external;
+    function setValuesForAddress(address addr, KeyValue[] calldata records) external;
 }

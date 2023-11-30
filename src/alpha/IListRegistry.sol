@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { ListStorageLocation } from './ListStorageLocation.sol';
-import { IListRegistry } from './IListRegistry.sol';
+import {ListStorageLocation} from "./ListStorageLocation.sol";
+import {IListRegistry} from "./IListRegistry.sol";
 
 /**
  * @title ListRegistry
@@ -28,19 +28,14 @@ interface IListRegistry {
      * @param tokenId The ID of the token.
      * @return The list location.
      */
-    function getListStorageLocation(
-        uint tokenId
-    ) external view returns (ListStorageLocation memory);
+    function getListStorageLocation(uint tokenId) external view returns (ListStorageLocation memory);
 
     /**
      * @notice Associates a token with a list location.
      * @param tokenId The ID of the token.
      * @param contractAddress The contract address to be associated with the token.
      */
-    function setListStorageLocationL1(
-        uint tokenId,
-        address contractAddress
-    ) external;
+    function setListStorageLocationL1(uint tokenId, address contractAddress) external;
 
     ///////////////////////////////////////////////////////////////////////////
     // Manager

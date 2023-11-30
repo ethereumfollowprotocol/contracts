@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { ABaseLists } from './ABaseLists.sol';
-import { IListRegistry } from './IListRegistry.sol';
-import { ListOperation } from './ListOperation.sol';
-import { ListRecord } from './ListRecord.sol';
+import {ABaseLists} from "./ABaseLists.sol";
+import {IListRegistry} from "./IListRegistry.sol";
+import {ListOperation} from "./ListOperation.sol";
+import {ListRecord} from "./ListRecord.sol";
 
 /**
  * @title DeletableListEntry
@@ -48,18 +48,11 @@ contract ArrayLists is ABaseLists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function _appendRecord(
-        uint nonce,
-        uint8 version,
-        uint8 recordType,
-        bytes memory data
-    ) internal override {
+    function _appendRecord(uint nonce, uint8 version, uint8 recordType, bytes memory data) internal override {
         bytes32 hash = keccak256(abi.encode(version, recordType, data));
-        require(recordIndexByNonce[nonce][hash] == 0, 'Record already exists!');
+        require(recordIndexByNonce[nonce][hash] == 0, "Record already exists!");
 
-        recordsByNonce[nonce].push(
-            DeletableListEntry(false, ListRecord(version, recordType, data))
-        );
+        recordsByNonce[nonce].push(DeletableListEntry(false, ListRecord(version, recordType, data)));
         // store the index so we can look it up later for deletion
         recordIndexByNonce[nonce][hash] = recordsByNonce[nonce].length;
         emit RecordAdded(nonce, hash);
@@ -76,10 +69,8 @@ contract ArrayLists is ABaseLists {
      * @param recordHash The hash identifier of the record to delete.
      */
     function _deleteRecord(uint nonce, bytes32 recordHash) internal override {
-        mapping(bytes32 => uint) storage recordIndices = recordIndexByNonce[
-            nonce
-        ];
-        require(recordIndices[recordHash] > 0, 'Record not found');
+        mapping(bytes32 => uint) storage recordIndices = recordIndexByNonce[nonce];
+        require(recordIndices[recordHash] > 0, "Record not found");
 
         uint indexToDelete = recordIndices[recordHash] - 1;
         // mark the record as deleted
@@ -99,23 +90,15 @@ contract ArrayLists is ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function _modifyRecord(
-        uint nonce,
-        ListOperation calldata operation
-    ) internal virtual override {
+    function _modifyRecord(uint nonce, ListOperation calldata operation) internal virtual override {
         if (operation.operationType == OPERATION_APPEND) {
             ListRecord memory record = abi.decode(operation.data, (ListRecord));
-            _appendRecord(
-                nonce,
-                record.version,
-                record.recordType,
-                record.data
-            );
+            _appendRecord(nonce, record.version, record.recordType, record.data);
         } else if (operation.operationType == OPERATION_DELETE) {
             bytes32 recordHash = abi.decode(operation.data, (bytes32));
             _deleteRecord(nonce, recordHash);
         } else {
-            revert('Invalid operation type');
+            revert("Invalid operation type");
         }
     }
 
@@ -140,11 +123,8 @@ contract ArrayLists is ABaseLists {
      * @param index The position of the desired record in the list.
      * @return The record at the specified position for the specified nonce.
      */
-    function getRecord(
-        uint nonce,
-        uint index
-    ) public view returns (DeletableListEntry memory) {
-        require(index < recordsByNonce[nonce].length, 'Index out of bounds');
+    function getRecord(uint nonce, uint index) public view returns (DeletableListEntry memory) {
+        require(index < recordsByNonce[nonce].length, "Index out of bounds");
         return recordsByNonce[nonce][index];
     }
 
@@ -154,9 +134,7 @@ contract ArrayLists is ABaseLists {
      * @param nonce The nonce of the list.
      * @return An array of all records for the specified nonce.
      */
-    function getRecords(
-        uint nonce
-    ) public view returns (DeletableListEntry[] memory) {
+    function getRecords(uint nonce) public view returns (DeletableListEntry[] memory) {
         return getRecordsInRange(nonce, 0, recordsByNonce[nonce].length - 1);
     }
 
@@ -173,12 +151,10 @@ contract ArrayLists is ABaseLists {
         uint fromIndex,
         uint toIndex
     ) public view returns (DeletableListEntry[] memory) {
-        require(fromIndex <= toIndex, 'Invalid range');
-        require(toIndex < recordsByNonce[nonce].length, 'Index out of bounds');
+        require(fromIndex <= toIndex, "Invalid range");
+        require(toIndex < recordsByNonce[nonce].length, "Index out of bounds");
 
-        DeletableListEntry[] memory result = new DeletableListEntry[](
-            toIndex - fromIndex + 1
-        );
+        DeletableListEntry[] memory result = new DeletableListEntry[](toIndex - fromIndex + 1);
         for (uint i = fromIndex; i <= toIndex; ) {
             result[i - fromIndex] = recordsByNonce[nonce][i];
 

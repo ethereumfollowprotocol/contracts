@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { IERC721 } from 'lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol';
-import { Ownable } from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
-import { IEFPListMetadata } from './IEFPListMetadata.sol';
+import {IERC721} from "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
+import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IEFPListMetadata} from "./IEFPListMetadata.sol";
 
 /**
  * @title EFPListMetadata
@@ -67,11 +67,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
     /////////////////////////////////////////////////////////////////////////////
 
     modifier onlyTokenOwnerOrProxy(uint tokenId) {
-        require(
-            efpListRegistry.ownerOf(tokenId) == msg.sender ||
-                proxies[msg.sender],
-            'not token owner'
-        );
+        require(efpListRegistry.ownerOf(tokenId) == msg.sender || proxies[msg.sender], "not token owner");
         _;
     }
 
@@ -85,10 +81,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to query.
      * @return The associated value.
      */
-    function getValue(
-        uint tokenId,
-        string calldata key
-    ) external view returns (bytes memory) {
+    function getValue(uint tokenId, string calldata key) external view returns (bytes memory) {
         return values[tokenId][key];
     }
 
@@ -98,10 +91,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param keys The keys to query.
      * @return The associated values.
      */
-    function getValues(
-        uint tokenId,
-        string[] calldata keys
-    ) external view returns (bytes[] memory) {
+    function getValues(uint tokenId, string[] calldata keys) external view returns (bytes[] memory) {
         uint length = keys.length;
         bytes[] memory result = new bytes[](length);
         for (uint256 i = 0; i < length; ) {
@@ -126,11 +116,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function _setValue(
-        uint tokenId,
-        string calldata key,
-        bytes calldata value
-    ) internal {
+    function _setValue(uint tokenId, string calldata key, bytes calldata value) internal {
         values[tokenId][key] = value;
         emit ValueSet(tokenId, key, value);
     }
@@ -144,11 +130,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function setValue(
-        uint tokenId,
-        string calldata key,
-        bytes calldata value
-    ) external onlyTokenOwnerOrProxy(tokenId) {
+    function setValue(uint tokenId, string calldata key, bytes calldata value) external onlyTokenOwnerOrProxy(tokenId) {
         _setValue(tokenId, key, value);
     }
 
@@ -207,10 +189,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param tokenId The token ID to update.
      * @param records The records to set.
      */
-    function setValues(
-        uint tokenId,
-        KeyValue[] calldata records
-    ) external onlyTokenOwnerOrProxy(tokenId) {
+    function setValues(uint tokenId, KeyValue[] calldata records) external onlyTokenOwnerOrProxy(tokenId) {
         uint length = records.length;
         for (uint256 i = 0; i < length; ) {
             KeyValue calldata record = records[i];

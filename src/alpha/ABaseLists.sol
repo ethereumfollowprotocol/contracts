@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { IListRegistry } from './IListRegistry.sol';
-import { ListOperation } from './ListOperation.sol';
-import { ListRecord } from './ListRecord.sol';
+import {IListRegistry} from "./IListRegistry.sol";
+import {ListOperation} from "./ListOperation.sol";
+import {ListRecord} from "./ListRecord.sol";
 
 /**
  * @title BaseLists
@@ -59,12 +59,7 @@ abstract contract ABaseLists {
      * @param recordType The type identifier of the record.
      * @param data The actual data content of the record.
      */
-    function _appendRecord(
-        uint nonce,
-        uint8 version,
-        uint8 recordType,
-        bytes memory data
-    ) internal virtual;
+    function _appendRecord(uint nonce, uint8 version, uint8 recordType, bytes memory data) internal virtual;
 
     /**
      * @notice Appends a record to the end of the list.
@@ -89,18 +84,10 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to append.
      * @param records The array of records to append.
      */
-    function appendRecords(
-        uint nonce,
-        ListRecord[] calldata records
-    ) public onlyListManager(nonce) {
+    function appendRecords(uint nonce, ListRecord[] calldata records) public onlyListManager(nonce) {
         uint len = records.length;
         for (uint i = 0; i < len; ) {
-            _appendRecord(
-                nonce,
-                records[i].version,
-                records[i].recordType,
-                records[i].data
-            );
+            _appendRecord(nonce, records[i].version, records[i].recordType, records[i].data);
             unchecked {
                 ++i;
             }
@@ -125,10 +112,7 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to delete record.
      * @param recordHash The hash identifier of the record to delete.
      */
-    function deleteRecord(
-        uint nonce,
-        bytes32 recordHash
-    ) public onlyListManager(nonce) {
+    function deleteRecord(uint nonce, bytes32 recordHash) public onlyListManager(nonce) {
         _deleteRecord(nonce, recordHash);
     }
 
@@ -138,10 +122,7 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to delete record.
      * @param recordHashes The array of record hashes to delete.
      */
-    function deleteRecords(
-        uint nonce,
-        bytes32[] calldata recordHashes
-    ) public onlyListManager(nonce) {
+    function deleteRecords(uint nonce, bytes32[] calldata recordHashes) public onlyListManager(nonce) {
         uint len = recordHashes.length;
         for (uint i = 0; i < len; ) {
             _deleteRecord(nonce, recordHashes[i]);
@@ -162,10 +143,7 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function _modifyRecord(
-        uint nonce,
-        ListOperation calldata operation
-    ) internal virtual;
+    function _modifyRecord(uint nonce, ListOperation calldata operation) internal virtual;
 
     /**
      * @notice Perform a generalized modification to the list.
@@ -173,10 +151,7 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operation The operation to perform.
      */
-    function modifyRecord(
-        uint nonce,
-        ListOperation calldata operation
-    ) public onlyListManager(nonce) {
+    function modifyRecord(uint nonce, ListOperation calldata operation) public onlyListManager(nonce) {
         _modifyRecord(nonce, operation);
     }
 
@@ -186,10 +161,7 @@ abstract contract ABaseLists {
      * @param nonce The nonce of the list for which to modify records.
      * @param operations The array of operations to perform.
      */
-    function modifyRecords(
-        uint nonce,
-        ListOperation[] calldata operations
-    ) public onlyListManager(nonce) {
+    function modifyRecords(uint nonce, ListOperation[] calldata operations) public onlyListManager(nonce) {
         uint len = operations.length;
         for (uint i = 0; i < len; ) {
             _modifyRecord(nonce, operations[i]);

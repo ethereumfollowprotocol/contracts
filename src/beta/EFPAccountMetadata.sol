@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { IERC721 } from 'lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol';
-import { Ownable } from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
-import { IEFPAccountMetadata } from './IEFPAccountMetadata.sol';
+import {IERC721} from "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
+import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IEFPAccountMetadata} from "./IEFPAccountMetadata.sol";
 
 /**
  * @title EFPListMetadata
@@ -48,7 +48,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
     /////////////////////////////////////////////////////////////////////////////
 
     modifier onlyCallerOrProxy(address addr) {
-        require(addr == msg.sender || proxies[msg.sender], 'not allowed');
+        require(addr == msg.sender || proxies[msg.sender], "not allowed");
         _;
     }
 
@@ -62,10 +62,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param key The key to query.
      * @return The associated value.
      */
-    function getValue(
-        address addr,
-        string calldata key
-    ) external view returns (bytes memory) {
+    function getValue(address addr, string calldata key) external view returns (bytes memory) {
         return values[addr][key];
     }
 
@@ -75,10 +72,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param keys The keys to query.
      * @return The associated values.
      */
-    function getValues(
-        address addr,
-        string[] calldata keys
-    ) external view returns (bytes[] memory) {
+    function getValues(address addr, string[] calldata keys) external view returns (bytes[] memory) {
         uint length = keys.length;
         bytes[] memory result = new bytes[](length);
         for (uint256 i = 0; i < length; ) {
@@ -103,11 +97,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function _setValue(
-        address addr,
-        string calldata key,
-        bytes calldata value
-    ) internal {
+    function _setValue(address addr, string calldata key, bytes calldata value) internal {
         values[addr][key] = value;
         emit ValueSet(addr, key, value);
     }
@@ -163,10 +153,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      * @param addr The address to update.
      * @param records The records to set.
      */
-    function setValuesForAddress(
-        address addr,
-        KeyValue[] calldata records
-    ) external onlyCallerOrProxy(addr) {
+    function setValuesForAddress(address addr, KeyValue[] calldata records) external onlyCallerOrProxy(addr) {
         uint length = records.length;
         for (uint256 i = 0; i < length; ) {
             KeyValue calldata record = records[i];

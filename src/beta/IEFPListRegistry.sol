@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { ListStorageLocation } from './ListStorageLocation.sol';
+import {ListStorageLocation} from "./ListStorageLocation.sol";
 
 /**
  * @title EFPListRegistry
@@ -13,10 +13,7 @@ interface IEFPListRegistry {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Emitted when a list storage location is set
-    event ListStorageLocationChange(
-        uint indexed tokenId,
-        ListStorageLocation listStorageLocation
-    );
+    event ListStorageLocationChange(uint indexed tokenId, ListStorageLocation listStorageLocation);
 
     /// @notice Emitted when a list user is set
     event ListUserChange(uint indexed tokenId, address listUser);

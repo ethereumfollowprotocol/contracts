@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { ArrayLists } from './ArrayLists.sol';
-import { IListRegistry } from './IListRegistry.sol';
-import { ListRecord } from './ListRecord.sol';
-import '../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol';
+import {ArrayLists} from "./ArrayLists.sol";
+import {IListRegistry} from "./IListRegistry.sol";
+import {ListRecord} from "./ListRecord.sol";
+import "../../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 
 /**
  * @title ListManager
@@ -50,10 +50,7 @@ contract ListsWithOffchainManager is ArrayLists {
      */
     modifier onlyListManager(uint nonce) override {
         ListManager memory manager = managers[nonce];
-        require(
-            manager.isSet && manager.managerAddress == msg.sender,
-            'Only EFP List Manager can call this function'
-        );
+        require(manager.isSet && manager.managerAddress == msg.sender, "Only EFP List Manager can call this function");
         _;
     }
 
@@ -86,16 +83,8 @@ contract ListsWithOffchainManager is ArrayLists {
         return recoveredSigner == signer;
     }
 
-    function makeSignatureMessage(
-        uint nonce,
-        address manager
-    ) internal pure returns (bytes memory) {
-        bytes memory message = abi.encodePacked(
-            '\x19\x00EFP',
-            bytes32(nonce),
-            'manager',
-            bytes20(manager)
-        );
+    function makeSignatureMessage(uint nonce, address manager) internal pure returns (bytes memory) {
+        bytes memory message = abi.encodePacked("\x19\x00EFP", bytes32(nonce), "manager", bytes20(manager));
         return message;
     }
 
@@ -108,18 +97,9 @@ contract ListsWithOffchainManager is ArrayLists {
      * the manager's address (which is the address of the caller) is set as the manager for the token.
      * The token's manager data is then updated in the `managers` mapping.
      */
-    function claimListManagerWithOffchainSignature(
-        uint nonce,
-        bytes calldata signature
-    ) external {
-        require(
-            proveListManagerWithOffchainSignature(nonce, msg.sender, signature),
-            'Invalid signature'
-        );
-        managers[nonce] = ListManager({
-            isSet: true,
-            managerAddress: msg.sender
-        });
+    function claimListManagerWithOffchainSignature(uint nonce, bytes calldata signature) external {
+        require(proveListManagerWithOffchainSignature(nonce, msg.sender, signature), "Invalid signature");
+        managers[nonce] = ListManager({isSet: true, managerAddress: msg.sender});
     }
 
     function getListManager(uint nonce) external view returns (address) {

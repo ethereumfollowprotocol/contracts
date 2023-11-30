@@ -17,15 +17,8 @@ interface IEFPLists {
 
     // List Operation Functions - Read
     function getListOpCount(uint nonce) external view returns (uint);
-    function getListOp(
-        uint nonce,
-        uint index
-    ) external view returns (bytes memory);
-    function getListOpsInRange(
-        uint nonce,
-        uint start,
-        uint end
-    ) external view returns (bytes[] memory);
+    function getListOp(uint nonce, uint index) external view returns (bytes memory);
+    function getListOpsInRange(uint nonce, uint start, uint end) external view returns (bytes[] memory);
     function getAllListOps(uint nonce) external view returns (bytes[] memory);
 
     // List Operation Functions - Write

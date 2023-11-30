@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import { ArrayLists } from './ArrayLists.sol';
-import { IListRegistry } from './IListRegistry.sol';
-import { ListRecord } from './ListRecord.sol';
+import {ArrayLists} from "./ArrayLists.sol";
+import {IListRegistry} from "./IListRegistry.sol";
+import {ListRecord} from "./ListRecord.sol";
 
 /**
  * @title Lists
@@ -24,10 +24,7 @@ contract Lists is ArrayLists {
      * @param nonce The nonce of the list whose manager is to be checked.
      */
     modifier onlyListManager(uint nonce) override {
-        require(
-            listRegistry.getManager(nonce) == msg.sender,
-            'Only EFP List Manager can call this function'
-        );
+        require(listRegistry.getManager(nonce) == msg.sender, "Only EFP List Manager can call this function");
         _;
     }
 }
