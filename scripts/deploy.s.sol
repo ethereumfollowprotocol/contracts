@@ -10,7 +10,13 @@ import { EFPListRegistry } from "../src/beta/EFPListRegistry.sol";
 import { EFPLists } from "../src/beta/EFPLists.sol";
 import { EFPListMinter } from "../src/beta/EFPListMinter.sol";
 
+
 contract DeployScript is Script {
+    string RED = "\x1b[31m";
+    string GREEN = "\x1b[32m";
+    string BLUE = "\x1b[34m";
+    string ENDC = "\x1b[0m";
+
     function setUp() public {
         // Any setup needed before deployment
     }
@@ -18,15 +24,18 @@ contract DeployScript is Script {
     function run() public {
         vm.startBroadcast();
 
+        console.log(GREEN, "Deployer           :", msg.sender, ENDC);
+        console.log();
+
         // Deploy the contracts
         EFPAccountMetadata accountMetadata = new EFPAccountMetadata();
-        console.log("EFPAccountMetadata :", address(accountMetadata));
+        console.log(BLUE, "EFPAccountMetadata :", address(accountMetadata), ENDC);
         EFPListRegistry registry = new EFPListRegistry();
-        console.log("EFPListRegistry    :", address(registry));
+        console.log(BLUE, "EFPListRegistry    :", address(registry), ENDC);
         EFPListMetadata listMetadata = new EFPListMetadata();
-        console.log("EFPListMetadata    :", address(listMetadata));
+        console.log(BLUE, "EFPListMetadata    :", address(listMetadata), ENDC);
         EFPLists lists = new EFPLists();
-        console.log("EFPLists           :", address(lists));
+        console.log(BLUE, "EFPLists           :", address(lists), ENDC);
 
         // Additional setup for registry and listMetadata if needed
         listMetadata.setEFPListRegistry(address(registry));
@@ -37,7 +46,7 @@ contract DeployScript is Script {
             address(listMetadata),
             address(lists)
         );
-        console.log("EFPListMinter      :", address(minter));
+        console.log(BLUE, "EFPListMinter      :", address(minter), ENDC);
         console.log();
 
         // Add the minter as a proxy for accountMetadata and listMetadata

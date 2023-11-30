@@ -1,7 +1,12 @@
 [profile.default]
-src = "src"
-out = "out"
-libs = ["lib"]
+src = 'src'                                                 # the source directory
+test = 'test'                                               # the test directory
+out = 'out'                                                 # the output directory (for artifacts)
+libs = ['lib']                                              # a list of library directories
+cache = true                                                # whether to cache builds or not
+cache_path = 'cache'                                        # where the cache is stored if enabled
+force = false                                               # whether to ignore the cache (clean build)
 fs_permissions = [{ access = "read", path = "./" }]
-solc = "0.8.20"
+solc_version = '0.8.20'                                     # override for the solc version
+evm_version = 'shanghai'                                    # set the EVM target version
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
