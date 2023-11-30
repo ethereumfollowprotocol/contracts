@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
 import {DeletableListEntry} from "../../src/alpha/ArrayLists.sol";
@@ -167,9 +167,6 @@ contract EFPScript is Script {
             destination[destinationStart + i] = source[sourceStart + i];
         }
     }
-
-
-
 
     function logRecord(uint num, DeletableListEntry memory record) internal view {
         console.log("  record #%d", num);
