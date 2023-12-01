@@ -150,6 +150,16 @@ contract DeployScript is Script, Deployer {
                     });
                     listOpsMapping[tokenId].push(op);
                 }
+
+                // if i is 6, add a remove record op
+                if (i == 6) {
+                    ListOp memory op = ListOp({
+                        version: 0x01,
+                        code: 0x02,
+                        data: abi.encodePacked(record.version, record.recordType, record.data)
+                    });
+                    listOpsMapping[tokenId].push(op);
+                }
             }
         }
     }
