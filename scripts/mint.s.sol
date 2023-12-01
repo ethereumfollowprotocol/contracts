@@ -124,6 +124,32 @@ contract DeployScript is Script, Deployer {
                     data: abi.encodePacked(record.version, record.recordType, record.data)
                 });
                 listOpsMapping[tokenId].push(op);
+                // now we do classical foo bar tagging
+                // if mod 3 == 0, add foo
+                // else if mod 5 == 0, add bar
+                // else if mod 3 == 0 && mod 5 == 0, add foobar
+                if (i % 3 == 0) {
+                    ListOp memory op = ListOp({
+                        version: 0x01,
+                        code: 0x03,
+                        data: abi.encodePacked(record.version, record.recordType, record.data, "foo")
+                    });
+                    listOpsMapping[tokenId].push(op);
+                } else if (i % 5 == 0) {
+                    ListOp memory op = ListOp({
+                        version: 0x01,
+                        code: 0x03,
+                        data: abi.encodePacked(record.version, record.recordType, record.data, "bar")
+                    });
+                    listOpsMapping[tokenId].push(op);
+                } else if (i % 3 == 0 && i % 5 == 0) {
+                    ListOp memory op = ListOp({
+                        version: 0x01,
+                        code: 0x03,
+                        data: abi.encodePacked(record.version, record.recordType, record.data, "foobar")
+                    });
+                    listOpsMapping[tokenId].push(op);
+                }
             }
         }
     }

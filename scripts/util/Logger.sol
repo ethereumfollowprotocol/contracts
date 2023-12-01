@@ -11,11 +11,20 @@ import {Colors} from "./Colors.sol";
 import {StringUtils} from "./StringUtils.sol";
 
 import {ListOp} from "../../src/beta/ListOp.sol";
+import {ListOpUtils} from "./ListOpUtils.sol";
 
 library Logger {
+    using ListOpUtils for ListOp;
+
     function formatListOp(ListOp memory op) internal pure returns (string memory) {
         // Directly use op.data[0] and op.data[1] in the string.concat to reduce local variables
-        string memory codeColor = op.code == 0x01 ? Colors.GREEN : (op.code == 0x02 ? Colors.RED : Colors.MAGENTA);
+        string memory codeColor = op.code == 0x01
+            ? Colors.GREEN
+            : (
+                op.code == 0x02
+                    ? Colors.RED
+                    : (op.code == 0x03 ? Colors.DARK_GREEN : (op.code == 0x04 ? Colors.DARK_RED : Colors.MAGENTA))
+            );
 
         // Minimize the creation of new variables by directly manipulating and passing parameters
         string memory s = string.concat(
@@ -69,16 +78,27 @@ library Logger {
         view
     {
         console.log();
-        console.log("--------------------------------------------------------------------------------------------");
-        console.log("|                                        EFP Lists                                         |");
-        console.log("--------------------------------------------------------------------------------------------");
-        console.log("|    Nonce    | Index | ListOp                                             | Description   |");
-        console.log("--------------------------------------------------------------------------------------------");
+        console.log(
+            "--------------------------------------------------------------------------------------------------"
+        );
+        console.log(
+            "|                                           EFP Lists                                            |"
+        );
+        console.log(
+            "--------------------------------------------------------------------------------------------------"
+        );
+        console.log(
+            "|    Nonce    | Index | ListOp                                                   | Description   |"
+        );
+        console.log(
+            "--------------------------------------------------------------------------------------------------"
+        );
 
         for (uint256 n = start; n <= end; n++) {
             ListOp[] memory listOps = listOpsMapping[n];
 
             for (uint256 i = 0; i < listOps.length; i++) {
+                ListOp memory listOp = listOps[i];
                 // nonce
                 string memory line = string.concat("|      #", Strings.toString(n), "    ", (n < 10 ? " |" : "|"));
 
@@ -86,29 +106,27 @@ library Logger {
                 line = string.concat(line, "   ", Strings.toString(i), "  ", (i < 10 ? " |" : "|"));
 
                 // listOp
-                line = string.concat(line, " ", Logger.formatListOp(listOps[i]), " |");
+                line = string.concat(line, " ", Logger.formatListOp(listOp), " ");
+                if (listOp.code == 0x01 || listOp.code == 0x02) {
+                    line = string.concat(line, "      |");
+                } else {
+                    line = string.concat(line, "|");
+                }
 
                 // description
                 // 0x01 - add record
                 // 0x02 - remove record
                 // 0x03 - tag record
                 // 0x04 - untag record
-                string memory desc = "";
-                if (listOps[i].code == 0x01) {
-                    desc = string.concat(Colors.GREEN, "add record   ", Colors.ENDC);
-                } else if (listOps[i].code == 0x02) {
-                    desc = string.concat(Colors.RED, "remove record", Colors.ENDC);
-                } else if (listOps[i].code == 0x03) {
-                    desc = string.concat(Colors.GREEN, "tag record   ", Colors.ENDC);
-                } else if (listOps[i].code == 0x04) {
-                    desc = string.concat(Colors.RED, "untag record ", Colors.ENDC);
-                }
+                string memory desc = listOp.description();
                 line = string.concat(line, " ", desc, " |");
 
                 console.log(line);
             }
 
-            console.log("--------------------------------------------------------------------------------------------");
+            console.log(
+                "--------------------------------------------------------------------------------------------------"
+            );
         }
     }
 }
