@@ -129,4 +129,55 @@ contract Deployer {
             console.log(" EFPListMinter address already a proxy for EFPListMetadata");
         }
     }
+
+    /**
+     * @notice Loads all EFP smart contracts, reverts if any are not deployed.
+     * @return A Contracts struct containing all loaded contract addresses.
+     */
+    function loadAll() public view returns (Contracts memory) {
+        Contracts memory contracts;
+
+        // Load EFPAccountMetadata
+        if (isContract(ContractConfigs.EFP_ACCOUNT_METADATA)) {
+            contracts.accountMetadata = ContractConfigs.EFP_ACCOUNT_METADATA;
+            console.log(Colors.BLUE, "EFPAccountMetadata :", contracts.accountMetadata, Colors.ENDC);
+        } else {
+            revert("EFPAccountMetadata not deployed");
+        }
+
+        // Load EFPListRegistry
+        if (isContract(ContractConfigs.EFP_LIST_REGISTRY)) {
+            contracts.listRegistry = ContractConfigs.EFP_LIST_REGISTRY;
+            console.log(Colors.BLUE, "EFPListRegistry    :", contracts.listRegistry, Colors.ENDC);
+        } else {
+            revert("EFPListRegistry not deployed");
+        }
+
+        // Load EFPListMetadata
+        if (isContract(ContractConfigs.EFP_LIST_METADATA)) {
+            contracts.listMetadata = ContractConfigs.EFP_LIST_METADATA;
+            console.log(Colors.BLUE, "EFPListMetadata    :", contracts.listMetadata, Colors.ENDC);
+        } else {
+            revert("EFPListMetadata not deployed");
+        }
+
+        // Load EFPLists
+        if (isContract(ContractConfigs.EFP_LISTS)) {
+            contracts.lists = ContractConfigs.EFP_LISTS;
+            console.log(Colors.BLUE, "EFPLists           :", contracts.lists, Colors.ENDC);
+        } else {
+            revert("EFPLists not deployed");
+        }
+
+        // Load EFPListMinter
+        if (isContract(ContractConfigs.EFP_LIST_MINTER)) {
+            contracts.listMinter = ContractConfigs.EFP_LIST_MINTER;
+            console.log(Colors.BLUE, "EFPListMinter      :", contracts.listMinter, Colors.ENDC);
+        } else {
+            revert("EFPListMinter not deployed");
+        }
+
+        console.log();
+        return contracts;
+    }
 }

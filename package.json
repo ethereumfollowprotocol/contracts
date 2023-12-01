@@ -6,13 +6,13 @@
   "scripts": {
     "deploy:anvil:ts": "bun ./scripts/deploy.ts",
     "deploy:anvil": "PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-    "mint": "PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
     "format:sol": "prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
     "format:ts": "prettier --config .prettierrc --write 'scripts/**/*.ts'",
     "format": "bun format:ts && bun format:sol",
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
-    "lint:ts": "eslint --config .eslintrc 'scripts/**/*.ts'"
+    "lint:ts": "eslint --config .eslintrc 'scripts/**/*.ts'",
+    "mint:anvil": "PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
   },
   "dependencies": {
     "ethers": "^5.7.1",

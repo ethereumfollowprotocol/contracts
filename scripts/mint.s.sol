@@ -4,11 +4,13 @@ pragma solidity ^0.8.20;
 import {console} from "lib/forge-std/src/console.sol";
 import {Script} from "lib/forge-std/src/Script.sol";
 import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
+import {IERC721Enumerable} from "lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
+import {Colors} from "./util/Colors.sol";
 import {ContractConfigs} from "./util/ContractConfigs.sol";
 import {Contracts} from "./util/Contracts.sol";
 import {CSVUtils} from "./util/CSVUtils.sol";
-import {DeployUtils} from "./util/DeployUtils.sol";
+import {Deployer} from "./util/Deployer.sol";
 import {Logger} from "./util/Logger.sol";
 import {StringUtils} from "./util/StringUtils.sol";
 
@@ -25,7 +27,7 @@ import {ListRecord} from "../src/beta/ListRecord.sol";
 /**
  * @notice This script deploys the EFP contracts and initializes them.
  */
-contract DeployScript is Script {
+contract DeployScript is Script, Deployer {
     using Strings for uint256;
 
     uint256 lastTokenId = 0;
@@ -37,58 +39,9 @@ contract DeployScript is Script {
         // Any setup needed before deployment
     }
 
-    /**
-     * @notice Loads all EFP smart contracts, reverts if any are not deployed.
-     * @return A Contracts struct containing all loaded contract addresses.
-     */
-    function loadAll() public view returns (Contracts memory) {
-        Contracts memory contracts;
-
-        // Load EFPAccountMetadata
-        if (DeployUtils.isContract(ContractConfigs.EFP_ACCOUNT_METADATA)) {
-            contracts.accountMetadata = ContractConfigs.EFP_ACCOUNT_METADATA;
-            console.log(StringUtils.BLUE, "EFPAccountMetadata :", contracts.accountMetadata, StringUtils.ENDC);
-        } else {
-            revert("EFPAccountMetadata not deployed");
-        }
-
-        // Load EFPListRegistry
-        if (DeployUtils.isContract(ContractConfigs.EFP_LIST_REGISTRY)) {
-            contracts.listRegistry = ContractConfigs.EFP_LIST_REGISTRY;
-            console.log(StringUtils.BLUE, "EFPListRegistry    :", contracts.listRegistry, StringUtils.ENDC);
-        } else {
-            revert("EFPListRegistry not deployed");
-        }
-
-        // Load EFPListMetadata
-        if (DeployUtils.isContract(ContractConfigs.EFP_LIST_METADATA)) {
-            contracts.listMetadata = ContractConfigs.EFP_LIST_METADATA;
-            console.log(StringUtils.BLUE, "EFPListMetadata    :", contracts.listMetadata, StringUtils.ENDC);
-        } else {
-            revert("EFPListMetadata not deployed");
-        }
-
-        // Load EFPLists
-        if (DeployUtils.isContract(ContractConfigs.EFP_LISTS)) {
-            contracts.lists = ContractConfigs.EFP_LISTS;
-            console.log(StringUtils.BLUE, "EFPLists           :", contracts.lists, StringUtils.ENDC);
-        } else {
-            revert("EFPLists not deployed");
-        }
-
-        // Load EFPListMinter
-        if (DeployUtils.isContract(ContractConfigs.EFP_LIST_MINTER)) {
-            contracts.listMinter = ContractConfigs.EFP_LIST_MINTER;
-            console.log(StringUtils.BLUE, "EFPListMinter      :", contracts.listMinter, StringUtils.ENDC);
-        } else {
-            revert("EFPListMinter not deployed");
-        }
-
-        console.log();
-        return contracts;
-    }
-
     function initMint(Contracts memory contracts) public {
+        console.log(" totalSupply        :", IERC721Enumerable(contracts.listRegistry).totalSupply());
+
         IEFPListRegistry.MintState mintState = IEFPListRegistry(contracts.listRegistry).getMintState();
         string memory s = " Mint state         : ";
         if (mintState == IEFPListRegistry.MintState.Disabled) {
@@ -106,10 +59,9 @@ contract DeployScript is Script {
         IEFPListRegistry.MintState desired = IEFPListRegistry.MintState.PublicMint;
         if (mintState != desired) {
             IEFPListRegistry(contracts.listRegistry).setMintState(desired);
-            s = string.concat(s, " -> ", StringUtils.GREEN, "PublicMint", StringUtils.ENDC);
+            s = string.concat(s, " -> ", Colors.GREEN, "PublicMint", Colors.ENDC);
         }
         console.log(s);
-        console.log();
     }
 
     // Helper function to parse the CSV and populate the recordsMapping
@@ -128,12 +80,12 @@ contract DeployScript is Script {
 
             uint256 efp_nft_token_id = StringUtils.stringToUint(values[0]);
 
-            console.log(
-                'i=%d, require(efp_nft_token_id=%d >= %d=lastTokenId, "tokenIds are not monotonically increasing");',
-                i,
-                efp_nft_token_id,
-                lastTokenId
-            );
+            // console.log(
+            //     'i=%d, require(efp_nft_token_id=%d >= %d=lastTokenId, "tokenIds are not monotonically increasing");',
+            //     i,
+            //     efp_nft_token_id,
+            //     lastTokenId
+            // );
             require(efp_nft_token_id >= lastTokenId, "tokenIds are not monotonically increasing");
 
             uint256 nonce = StringUtils.stringToUint(values[1]);
@@ -149,9 +101,9 @@ contract DeployScript is Script {
             ListRecord memory record = ListRecord({version: version, recordType: list_record_type, data: data});
 
             recordsMapping[efp_nft_token_id].push(record);
-            console.log(
-                "LOADED EFP NFT #%d record #%d as %s", efp_nft_token_id, record_num, StringUtils.bytesToHexString(data)
-            );
+            // console.log(
+            //     "LOADED EFP NFT #%d record #%d as %s", efp_nft_token_id, record_num, StringUtils.bytesToHexString(data)
+            // );
 
             lastTokenId = efp_nft_token_id; // Update lastTokenId after processing the line
         }
@@ -183,23 +135,26 @@ contract DeployScript is Script {
         // msg.sender will be set to the address derived from the private key
         // you're using for the transaction, specified in the
         // vm.startBroadcast(deployerPrivateKey) call.
-        console.log(StringUtils.GREEN, "Deployer           :", msg.sender, StringUtils.ENDC);
+        console.log(Colors.GREEN, "Deployer           :", msg.sender, Colors.ENDC);
         // address(this) refers to the address of the currently executing
         // contract. In your deployment script, this refers to the instance
         // of the DeployScript contract.
-        // console.log(GREEN, "address(this)      :", address(this), StringUtils.ENDC);
+        // console.log(GREEN, "address(this)      :", address(this), Colors.ENDC);
         console.log();
 
         // initialize the contracts
         Contracts memory contracts = loadAll();
         initMint(contracts);
+        console.log();
 
         loadCsv(vm.readFile("scripts/lists.csv"));
-        console.log("lastTokenId    :", lastTokenId);
-        console.log("totalRecords   :", totalRecords);
+        // console.log("lastTokenId    :", lastTokenId);
+        // console.log("totalRecords   :", totalRecords);
+
         parseListOps();
         // add all list ops to Lists
-        for (uint256 tid = 0; tid <= lastTokenId; tid++) {
+        uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        for (uint256 tid = totalSupply; tid <= lastTokenId; tid++) {
             EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(tid);
             IEFPLists(contracts.lists).claimListManager(tid);
             ListOp[] memory listOps = listOpsMapping[tid];
@@ -214,7 +169,6 @@ contract DeployScript is Script {
         }
 
         // // print all token ids and owners
-        console.log();
         Logger.logNFTs(contracts.listRegistry);
         console.log();
         Logger.logListOps(0, lastTokenId, listOpsMapping);
