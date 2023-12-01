@@ -2,7 +2,7 @@ import bun from 'bun'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { Address } from 'viem'
-import { client } from 'scripts/client.ts'
+import { client } from 'scripts/clients'
 
 deployContracts()
   .then(console.log)
@@ -12,15 +12,13 @@ deployContracts()
   })
 
 async function deployContracts() {
-  const contractDirectories = fs
-    .readdirSync(path.resolve(import.meta.dir, '../out/beta'))
-    .filter((directory) => !directory.endsWith('.t.sol'))
+  const contractDirectories = contractNames()
 
   const deployedContracts: Array<[contractName: string, transactionHash: Address, abi: readonly any[]]> = []
 
   for await (const contractDirectory of contractDirectories) {
     const [contractName] = contractDirectory.split('.')
-    const filePath = path.resolve(import.meta.dir, `../out/beta/${contractDirectory}/${contractName}.json`)
+    const filePath = path.resolve(import.meta.dir, `../out/${contractDirectory}/${contractName}.json`)
     const contractJson = await bun.file(filePath).json()
     const abi = contractJson.abi as readonly any[]
 
@@ -52,4 +50,8 @@ async function deployContracts() {
   if (!write) throw new Error('Failed to write anvil-deployed-contracts.json')
 
   console.log(JSON.stringify(deployContracts, undefined, 2))
+}
+
+function contractNames() {
+  return fs.readdirSync(path.resolve(import.meta.dir, '../src/beta')).filter((filename) => filename.endsWith('.sol'))
 }

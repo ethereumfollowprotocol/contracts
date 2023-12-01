@@ -23,14 +23,8 @@
       "node",
       "bun-types"
     ],
-    "paths": {
-      "~/*": [
-        "./out/beta"
-      ]
-    }
   },
   "include": [
     "scripts",
-    "out/beta"
   ]
 }

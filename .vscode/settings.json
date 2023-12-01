@@ -1,8 +1,7 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.preferences.importModuleSpecifierEnding": "auto",
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
   "editor.formatOnSave": true,
   "[solidity]": {
     "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
