@@ -118,47 +118,52 @@ contract DeployScript is Script, Deployer {
             // convert each record to a list op (add record) and add to listOps
             for (uint256 i = 0; i < records.length; i++) {
                 ListRecord memory record = records[i];
-                ListOp memory op = ListOp({
-                    version: 0x01,
-                    code: 0x01,
-                    data: abi.encodePacked(record.version, record.recordType, record.data)
-                });
-                listOpsMapping[tokenId].push(op);
+                listOpsMapping[tokenId].push(
+                    ListOp({
+                        version: 0x01,
+                        code: 0x01,
+                        data: abi.encodePacked(record.version, record.recordType, record.data)
+                    })
+                );
                 // now we do classical foo bar tagging
                 // if mod 3 == 0, add foo
                 // else if mod 5 == 0, add bar
                 // else if mod 3 == 0 && mod 5 == 0, add foobar
                 if (i % 3 == 0) {
-                    ListOp memory op = ListOp({
-                        version: 0x01,
-                        code: 0x03,
-                        data: abi.encodePacked(record.version, record.recordType, record.data, "foo")
-                    });
-                    listOpsMapping[tokenId].push(op);
+                    listOpsMapping[tokenId].push(
+                        ListOp({
+                            version: 0x01,
+                            code: 0x03,
+                            data: abi.encodePacked(record.version, record.recordType, record.data, "foo")
+                        })
+                    );
                 } else if (i % 5 == 0) {
-                    ListOp memory op = ListOp({
-                        version: 0x01,
-                        code: 0x03,
-                        data: abi.encodePacked(record.version, record.recordType, record.data, "bar")
-                    });
-                    listOpsMapping[tokenId].push(op);
+                    listOpsMapping[tokenId].push(
+                        ListOp({
+                            version: 0x01,
+                            code: 0x03,
+                            data: abi.encodePacked(record.version, record.recordType, record.data, "bar")
+                        })
+                    );
                 } else if (i % 3 == 0 && i % 5 == 0) {
-                    ListOp memory op = ListOp({
-                        version: 0x01,
-                        code: 0x03,
-                        data: abi.encodePacked(record.version, record.recordType, record.data, "foobar")
-                    });
-                    listOpsMapping[tokenId].push(op);
+                    listOpsMapping[tokenId].push(
+                        ListOp({
+                            version: 0x01,
+                            code: 0x03,
+                            data: abi.encodePacked(record.version, record.recordType, record.data, "foobar")
+                        })
+                    );
                 }
 
                 // if i is 6, add a remove record op
                 if (i == 6) {
-                    ListOp memory op = ListOp({
-                        version: 0x01,
-                        code: 0x02,
-                        data: abi.encodePacked(record.version, record.recordType, record.data)
-                    });
-                    listOpsMapping[tokenId].push(op);
+                    listOpsMapping[tokenId].push(
+                        ListOp({
+                            version: 0x01,
+                            code: 0x02,
+                            data: abi.encodePacked(record.version, record.recordType, record.data)
+                        })
+                    );
                 }
             }
         }

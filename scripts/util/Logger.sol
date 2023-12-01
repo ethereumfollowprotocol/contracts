@@ -38,11 +38,17 @@ library Logger {
         );
         s = string.concat(s, Colors.MAGENTA, StringUtils.byteToHexString(uint8(op.data[1])));
         s = string.concat(
-            s,
-            Colors.CYAN,
-            StringUtils.bytesToHexStringWithoutPrefix(BytesUtils.slice(op.data, 2, op.data.length - 2)),
-            Colors.ENDC
+            s, Colors.CYAN, StringUtils.bytesToHexStringWithoutPrefix(BytesUtils.slice(op.data, 2, 20)), Colors.ENDC
         );
+        // see if there is anything after the first 22 bytes
+        if (op.data.length > 22) {
+            s = string.concat(
+                s,
+                Colors.ORANGE,
+                StringUtils.bytesToHexStringWithoutPrefix(BytesUtils.slice(op.data, 22, op.data.length - 22)),
+                Colors.ENDC
+            );
+        }
         return s;
     }
 
@@ -113,11 +119,6 @@ library Logger {
                     line = string.concat(line, "|");
                 }
 
-                // description
-                // 0x01 - add record
-                // 0x02 - remove record
-                // 0x03 - tag record
-                // 0x04 - untag record
                 string memory desc = listOp.description();
                 line = string.concat(line, " ", desc, " |");
 
