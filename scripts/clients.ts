@@ -1,63 +1,121 @@
-import { foundry, mainnet } from 'viem/chains'
+import { raise } from 'scripts/utilities.ts'
 import { privateKeyToAccount } from 'viem/accounts'
+import { foundry, mainnet, optimism, optimismSepolia, sepolia } from 'viem/chains'
 import {
   http,
-  createTestClient,
+  isHex,
   publicActions,
   walletActions,
-  isHex,
-  type PrivateKeyAccount,
+  createTestClient,
   createPublicClient,
+  type PrivateKeyAccount,
+  fallback,
+  webSocket,
 } from 'viem'
-import { EFPListMetadataABI } from 'scripts/abi/EFPListMetadata'
-import { EFPAccountMetadataABI } from './abi/EFPAccountMetadata'
-import { EFPListsABI } from 'scripts/abi/EFPLists'
 
-const anvilAccountPrivateKey = process.env.ANVIL_ACCOUNT_PRIVATE_KEY
-
-if (!isHex(anvilAccountPrivateKey)) {
-  throw new Error('ANVIL_ACCOUNT_PRIVATE_KEY env variable is not set. Check README.md')
+// Lets us use BigInts in JSON.stringify
+BigInt.prototype['toJSON'] = function () {
+  return this.toString()
 }
+
+const anvilAccountPrivateKey = process.env.PRIVATE_KEY
+
+if (!isHex(anvilAccountPrivateKey)) raise('ANVIL_ACCOUNT_PRIVATE_KEY env variable is not set. Check README.md')
 
 export const account: PrivateKeyAccount = privateKeyToAccount(anvilAccountPrivateKey)
 
-export const client = createTestClient({
-  chain: mainnet,
-  mode: 'anvil',
-  transport: http('http://0.0.0.0:8545'),
-  account,
-})
-  .extend(publicActions)
-  .extend(walletActions)
-
-const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-})
-
-// client.watchContractEvent({
-//   abi: [] as any[],
-//   address: '0x0000',
-//   args: [],
-//   onLogs: (log) => {
-
-//   },
-// })
-
-// EFPAccountMetadata
-// client
-//   .readContract({
-//     abi: EFPAccountMetadataABI,
-//     functionName: 'getValue',
-//     address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-//     args: ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', 'efp.list.primary'],
-//   })
-//   .then(console.log)
-// client
-//   .readContract({
-//     abi: EFPListMetadataABI,
-//     functionName: 'getValue',
-//     address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-//     args: [0n, 'efp.list.location'],
-//   })
-  // .then(console.log)
+export const clients = {
+  localhostAnvil: () =>
+    createTestClient({
+      chain: foundry,
+      mode: 'anvil',
+      transport: http('http://localhost:8545'),
+      account,
+    })
+      .extend(publicActions)
+      .extend(walletActions),
+  mainnetAnvil: () =>
+    createTestClient({
+      chain: mainnet,
+      mode: 'anvil',
+      transport: http('http://localhost:8545'),
+      account,
+    })
+      .extend(publicActions)
+      .extend(walletActions),
+  mainnet: () =>
+    createPublicClient({
+      key: 'mainnet-client',
+      name: 'Mainnet Client',
+      chain: mainnet,
+      transport: fallback(
+        [
+          http(`https://rpc.ankr.com/eth/${process.env.ANKR_ID}`),
+          http(`https://mainnet.infura.io/v3/${process.env.INFURA_ID}`),
+          http(`https://eth.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
+          http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.MAINNET_ALCHEMY_ID}`),
+          webSocket(`wss://eth-mainnet.g.alchemy.com/v2/${process.env.MAINNET_ALCHEMY_ID}`),
+          webSocket(`wss://eth.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
+          webSocket(`wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`),
+        ],
+        {
+          /**
+           * TODO: investigate why public actions hang when rank is enabled
+           * @link https://discord.com/channels/1156791276818157609/1156791519089541241/1178111399839399937
+           */
+          rank: false,
+        }
+      ),
+      batch: { multicall: true },
+    }).extend(walletActions),
+  optimism: () =>
+    createPublicClient({
+      key: 'optimism-client',
+      name: 'Optimism Client',
+      chain: optimism,
+      transport: fallback(
+        [
+          http(`https://rpc.ankr.com/optimism/${process.env.ANKR_ID}`),
+          http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.OPTIMISM_ALCHEMY_ID}`),
+          http(`https://optimism-mainnet.infura.io/v3/${process.env.INFURA_ID}`),
+          http(`https://optimism.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
+          webSocket(`wss://opt-mainnet.g.alchemy.com/v2/${process.env.OPTIMISM_ALCHEMY_ID}`),
+          webSocket(`wss://optimism.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
+        ],
+        { rank: true }
+      ),
+      batch: { multicall: true },
+    }).extend(walletActions),
+  sepolia: () =>
+    createPublicClient({
+      key: 'sepolia-client',
+      name: 'Sepolia Client',
+      chain: sepolia,
+      transport: fallback(
+        [
+          http(`https://rpc.ankr.com/eth_sepolia/${process.env.ANKR_ID}`),
+          http(`https://sepolia.infura.io/v3/${process.env.INFURA_ID}`),
+          http(`https://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_ALCHEMY_ID}`),
+          webSocket(`wss://sepolia.infura.io/ws/v3/${process.env.INFURA_ID}`),
+          webSocket(`wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_ALCHEMY_ID}`),
+        ],
+        { rank: true }
+      ),
+      batch: { multicall: true },
+    }).extend(walletActions),
+  optimismSepolia: () =>
+    createPublicClient({
+      key: 'op-sepolia-client',
+      name: 'OP Sepolia Client',
+      chain: optimismSepolia,
+      transport: fallback(
+        [
+          http(`https://optimism-sepolia.infura.io/v3/${process.env.INFURA_ID}`),
+          http('https://sepolia.optimism.io'),
+          http('https://sepolia-rollup.arbitrum.io/rpc'),
+        ],
+        { rank: true }
+      ),
+      batch: { multicall: true },
+    }).extend(walletActions),
+}

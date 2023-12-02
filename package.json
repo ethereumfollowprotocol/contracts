@@ -4,7 +4,6 @@
   "repository": "git@github.com:ethereumfollowprotocol/beta-contracts.git",
   "type": "module",
   "scripts": {
-    "deploy:anvil:ts": "bun ./scripts/deploy.ts",
     "deploy:anvil": "PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
     "format:sol": "prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
     "format:ts": "prettier --config .prettierrc --write 'scripts/**/*.ts'",
@@ -13,15 +12,13 @@
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
     "lint:ts": "eslint --config .eslintrc 'scripts/**/*.ts'",
     "mint:anvil": "PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
-    "watch": "bun ./scripts/watch.ts"
+    "watch": "bun --watch --hot ./scripts/watch.ts"
   },
   "dependencies": {
-    "@viem/anvil": "^0.0.6",
     "ethers": "^6.9.0",
     "viem": "2.0.0-beta.6"
   },
   "devDependencies": {
-
     "@types/node": "^20.10.2",
     "bun": "^1.0.14",
     "bun-types": "^1.0.14",
@@ -29,8 +26,6 @@
     "prettier": "^3.0.3",
     "prettier-plugin-solidity": "^1.2.0",
     "solhint": "^4.0.0",
-    "ts-node": "^10.9.1",
-    "tsx": "^4.6.1",
     "typescript": "^5.3.2"
   },
   "license": "UNLICENSED"
