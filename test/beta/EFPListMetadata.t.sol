@@ -5,8 +5,8 @@ import "forge-std/Test.sol";
 import {EFPListMetadata} from "../../src/beta/EFPListMetadata.sol";
 import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
 import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
+import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
 import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
-
 
 contract EFPListMetadataTest is Test {
     EFPListRegistry public registry;
@@ -16,7 +16,7 @@ contract EFPListMetadataTest is Test {
         registry = new EFPListRegistry();
         metadata = new EFPListMetadata();
         metadata.setEFPListRegistry(address(registry));
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+        registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
         registry.mint();
     }
 

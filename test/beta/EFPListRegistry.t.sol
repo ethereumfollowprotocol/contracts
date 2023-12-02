@@ -3,8 +3,8 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
+import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
 // import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
-
 
 contract EFPListRegistryTest is Test {
     uint8 constant VERSION = 1;
@@ -22,7 +22,11 @@ contract EFPListRegistryTest is Test {
         }
     }
 
-    function _bytesToStructOfUintAddressUint(bytes memory data) private pure returns (uint chainId, address contractAddress, uint nonce) {
+    function _bytesToStructOfUintAddressUint(bytes memory data)
+        private
+        pure
+        returns (uint256 chainId, address contractAddress, uint256 nonce)
+    {
         assembly {
             chainId := mload(add(data, 32))
             contractAddress := mload(add(data, 52))
@@ -31,14 +35,14 @@ contract EFPListRegistryTest is Test {
     }
 
     function test_CanSetMintState() public {
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+        registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
         EFPListRegistry.MintState mintState = registry.getMintState();
-        assertEq(uint(mintState), uint(EFPListRegistry.MintState.OwnerOnly));
+        assertEq(uint256(mintState), uint256(IEFPListRegistry.MintState.OwnerOnly));
     }
 
     function test_CanMint() public {
         assertEq(registry.totalSupply(), 0);
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+        registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
         registry.mint();
         assertEq(registry.totalSupply(), 1);
         assertEq(registry.balanceOf(address(this)), 1);
@@ -47,7 +51,7 @@ contract EFPListRegistryTest is Test {
 
     function test_CanMintTo() public {
         assertEq(registry.totalSupply(), 0);
-        registry.setMintState(EFPListRegistry.MintState.OwnerOnly);
+        registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
         registry.mintTo(address(this));
         assertEq(registry.totalSupply(), 1);
         assertEq(registry.balanceOf(address(this)), 1);
