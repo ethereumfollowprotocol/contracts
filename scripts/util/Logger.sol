@@ -38,7 +38,10 @@ library Logger {
         );
         s = string.concat(s, Colors.MAGENTA, StringUtils.byteToHexString(uint8(op.data[1])));
         s = string.concat(
-            s, Colors.CYAN, StringUtils.bytesToHexStringWithoutPrefix(BytesUtils.slice(op.data, 2, 20)), Colors.ENDC
+            s,
+            Colors.CYAN,
+            StringUtils.bytesToHexStringWithoutPrefix(BytesUtils.slice(op.data, 2, 20)),
+            Colors.ENDC
         );
         // see if there is anything after the first 22 bytes
         if (op.data.length > 22) {
@@ -79,10 +82,7 @@ library Logger {
     }
 
     // Modified for loop to print listOps in a tabular format
-    function logListOps(uint256 start, uint256 end, mapping(uint256 => ListOp[]) storage listOpsMapping)
-        internal
-        view
-    {
+    function logListOps(uint256 start, uint256 end, mapping(uint256 => ListOp[]) storage listOpsMapping) internal view {
         console.log();
         console.log(
             "--------------------------------------------------------------------------------------------------"

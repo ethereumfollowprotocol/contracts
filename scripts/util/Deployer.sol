@@ -12,11 +12,11 @@ import {EFPAccountMetadata} from "../../src/beta/EFPAccountMetadata.sol";
 import {EFPListMetadata} from "../../src/beta/EFPListMetadata.sol";
 import {EFPListMinter} from "../../src/beta/EFPListMinter.sol";
 import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {EFPLists} from "../../src/beta/EFPLists.sol";
+import {EFPListRecords} from "../../src/beta/EFPListRecords.sol";
 import {IEFPAccountMetadata} from "../../src/beta/IEFPAccountMetadata.sol";
 import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
 import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
-import {IEFPLists} from "../../src/beta/IEFPLists.sol";
+import {IEFPListRecords} from "../../src/beta/IEFPListRecords.sol";
 
 contract Deployer {
     /*
@@ -69,14 +69,14 @@ contract Deployer {
             console.log(Colors.GREEN, "EFPListMetadata    :", address(listMetadata), Colors.ENDC);
         }
 
-        // EFPLists
-        IEFPLists lists;
+        // EFPListRecords
+        IEFPListRecords listRecords;
         if (isContract(ContractConfigs.EFP_LISTS)) {
-            lists = EFPLists(ContractConfigs.EFP_LISTS);
-            console.log(" EFPLists           :", address(lists));
+            listRecords = EFPListRecords(ContractConfigs.EFP_LISTS);
+            console.log(" EFPListRecords     :", address(listRecords));
         } else {
-            lists = new EFPLists();
-            console.log(Colors.GREEN, "EFPLists           :", address(lists), Colors.ENDC);
+            listRecords = new EFPListRecords();
+            console.log(Colors.GREEN, "EFPListRecords     :", address(listRecords), Colors.ENDC);
         }
 
         // EFPListMinter
@@ -85,19 +85,24 @@ contract Deployer {
             listMinter = EFPListMinter(ContractConfigs.EFP_LIST_MINTER);
             console.log(" EFPListMinter      :", address(listMinter));
         } else {
-            listMinter =
-            new EFPListMinter(address(listRegistry), address(accountMetadata), address(listMetadata), address(lists));
+            listMinter = new EFPListMinter(
+                address(listRegistry),
+                address(accountMetadata),
+                address(listMetadata),
+                address(listRecords)
+            );
             console.log(Colors.GREEN, "EFPListMinter      :", address(listMinter), Colors.ENDC);
         }
 
         console.log();
-        return Contracts({
-            accountMetadata: address(accountMetadata),
-            listRegistry: address(listRegistry),
-            listMetadata: address(listMetadata),
-            lists: address(lists),
-            listMinter: address(listMinter)
-        });
+        return
+            Contracts({
+                accountMetadata: address(accountMetadata),
+                listRegistry: address(listRegistry),
+                listMetadata: address(listMetadata),
+                listRecords: address(listRecords),
+                listMinter: address(listMinter)
+            });
     }
 
     /**
@@ -161,12 +166,12 @@ contract Deployer {
             revert("EFPListMetadata not deployed");
         }
 
-        // Load EFPLists
+        // Load EFPListRecords
         if (isContract(ContractConfigs.EFP_LISTS)) {
-            contracts.lists = ContractConfigs.EFP_LISTS;
-            console.log(Colors.BLUE, "EFPLists           :", contracts.lists, Colors.ENDC);
+            contracts.listRecords = ContractConfigs.EFP_LISTS;
+            console.log(Colors.BLUE, "EFPListRecords           :", contracts.listRecords, Colors.ENDC);
         } else {
-            revert("EFPLists not deployed");
+            revert("EFPListRecords not deployed");
         }
 
         // Load EFPListMinter

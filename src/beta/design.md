@@ -1,12 +1,12 @@
 # Lists
 
-Multiple lists are stored in the `EFPLists` contract. Each list has a nonce.
+Multiple lists are stored in the `EFPListRecords` contract. Each list has a nonce.
 
 ## Nonce
 
 Nonces are claimed on a first-come-first-serve basis. The nonce is used to identify the list.
 
-Since the `EFPLists` contract can be deployed on multiple chains, the nonce allows users to claim a list and then reference it as the list location for their EFP NFT on mainnet Ethereum. Clients can read the nonce from the list location from the EFP NFT on Ethereum, and then use that nonce to find the list on the other chains.
+Since the `EFPListRecords` contract can be deployed on multiple chains, the nonce allows users to claim a list and then reference it as the list location for their EFP NFT on mainnet Ethereum. Clients can read the nonce from the list location from the EFP NFT on Ethereum, and then use that nonce to find the list on the other chains.
 
 ## Basic requirements
 

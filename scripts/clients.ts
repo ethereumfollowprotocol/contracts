@@ -29,7 +29,7 @@ export const clients = {
     createTestClient({
       chain: foundry,
       mode: 'anvil',
-      transport: http('http://localhost:8545'),
+      transport: http('http://0.0.0.0:8545'),
       account,
     })
       .extend(publicActions)
@@ -38,7 +38,7 @@ export const clients = {
     createTestClient({
       chain: mainnet,
       mode: 'anvil',
-      transport: http('http://localhost:8545'),
+      transport: http('http://0.0.0.0:8545'),
       account,
     })
       .extend(publicActions)

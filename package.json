@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "deploy:anvil": "forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
-    "format:sol": "prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
-    "format:ts": "prettier --config .prettierrc --write 'scripts/**/*.ts'",
+    "format:sol": "bunx prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
+    "format:ts": "bunx prettier --config .prettierrc --write 'scripts/**/*.ts'",
     "format": "bun format:ts && bun format:sol",
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
-    "lint:ts": "eslint --config .eslintrc 'scripts/**/*.ts'",
+    "lint:ts": "bunx eslint --config .eslintrc 'scripts/**/*.ts'",
     "mint:anvil": "forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
     "watch": "bun --watch --hot ./scripts/watch.ts"
   },

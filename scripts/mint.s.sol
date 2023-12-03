@@ -18,9 +18,9 @@ import {EFPAccountMetadata} from "../src/beta/EFPAccountMetadata.sol";
 import {EFPListMetadata} from "../src/beta/EFPListMetadata.sol";
 import {EFPListMinter} from "../src/beta/EFPListMinter.sol";
 import {EFPListRegistry} from "../src/beta/EFPListRegistry.sol";
-import {EFPLists} from "../src/beta/EFPLists.sol";
+import {EFPListRecords} from "../src/beta/EFPListRecords.sol";
 import {IEFPListRegistry} from "../src/beta/IEFPListRegistry.sol";
-import {IEFPLists} from "../src/beta/IEFPLists.sol";
+import {IEFPListRecords} from "../src/beta/IEFPListRecords.sol";
 import {ListOp} from "../src/beta/ListOp.sol";
 import {ListRecord} from "../src/beta/ListRecord.sol";
 
@@ -171,6 +171,7 @@ contract DeployScript is Script, Deployer {
 
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        console.log(deployerPrivateKey);
         vm.startBroadcast(deployerPrivateKey);
 
         // msg.sender will be set to the address derived from the private key
@@ -193,19 +194,19 @@ contract DeployScript is Script, Deployer {
         // console.log("totalRecords   :", totalRecords);
 
         parseListOps();
-        // add all list ops to Lists
+        // add all list ops to ListRecords
         uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         for (uint256 tid = totalSupply; tid <= lastTokenId; tid++) {
             EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(tid);
-            IEFPLists(contracts.lists).claimListManager(tid);
+            IEFPListRecords(contracts.listRecords).claimListManager(tid);
             ListOp[] memory listOps = listOpsMapping[tid];
-            uint256 currentListOpCount = IEFPLists(contracts.lists).getListOpCount(tid);
+            uint256 currentListOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tid);
             if (currentListOpCount == 0) {
                 bytes[] memory asBytes = new bytes[](listOps.length);
                 for (uint256 i = 0; i < listOps.length; i++) {
                     asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].code, listOps[i].data);
                 }
-                IEFPLists(contracts.lists).applyListOps(tid, asBytes);
+                IEFPListRecords(contracts.listRecords).applyListOps(tid, asBytes);
             }
         }
 

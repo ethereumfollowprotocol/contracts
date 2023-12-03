@@ -1,4 +1,4 @@
-export const EFPListsABI = [
+export const EFPListRecordsABI = [
   {
     type: 'function',
     name: 'applyListOp',

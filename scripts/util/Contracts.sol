@@ -5,6 +5,6 @@ struct Contracts {
     address accountMetadata;
     address listRegistry;
     address listMetadata;
-    address lists;
+    address listRecords;
     address listMinter;
 }

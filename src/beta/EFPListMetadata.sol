@@ -103,7 +103,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
     function getValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
         uint256 length = keys.length;
         bytes[] memory result = new bytes[](length);
-        for (uint256 i = 0; i < length;) {
+        for (uint256 i = 0; i < length; ) {
             string calldata key = keys[i];
             result[i] = values[tokenId][key];
             unchecked {
@@ -139,10 +139,11 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function setValue(uint256 tokenId, string calldata key, bytes calldata value)
-        external
-        onlyTokenOwnerOrProxy(tokenId)
-    {
+    function setValue(
+        uint256 tokenId,
+        string calldata key,
+        bytes calldata value
+    ) external onlyTokenOwnerOrProxy(tokenId) {
         _setValue(tokenId, key, value);
     }
 
@@ -203,7 +204,7 @@ contract EFPListMetadata is IEFPListMetadata, Ownable {
      */
     function setValues(uint256 tokenId, KeyValue[] calldata records) external onlyTokenOwnerOrProxy(tokenId) {
         uint256 length = records.length;
-        for (uint256 i = 0; i < length;) {
+        for (uint256 i = 0; i < length; ) {
             KeyValue calldata record = records[i];
             _setValue(tokenId, record.key, record.value);
             unchecked {

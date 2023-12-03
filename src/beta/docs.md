@@ -26,7 +26,7 @@ efpListRegistry.mintTo(<address>);
 
 # Lists
 
-Lists are stored in a contract `EFPLists` which may be deployed on Ethereum L1 or a supported L2 chain.
+Lists are stored in a contract `EFPListRecords` which may be deployed on Ethereum L1 or a supported L2 chain.
 
 A list is comprised of list records, which can be associated with a list of strings called "tags".
 
@@ -283,28 +283,28 @@ class LinkedList {
 //
 // other tradeoffs are possible but this is a simple implementation shown as an example
 class SocialGraph {
-    private lists: Map<TokenId, LinkedList>;
+    private listRecords: Map<TokenId, LinkedList>;
     private nodeMap: Map<ListRecord, LinkedListNode>; // To quickly find the node for a given record
     private tags: Map<TokenId, Map<LinkedListNode, Set<Tag>>>;
 
     constructor() {
-        this.lists = new Map();
+        this.listRecords = new Map();
         this.tags = new Map();
         this.nodeMap = new Map();
     }
 
     addRecord(listId: TokenId, record: ListRecord): void {
-        if (!this.lists.has(listId)) {
-            this.lists.set(listId, new LinkedList());
+        if (!this.listRecords.has(listId)) {
+            this.listRecords.set(listId, new LinkedList());
         }
-        const node = this.lists.get(listId).add(record);
+        const node = this.listRecords.get(listId).add(record);
         this.nodeMap.set(record, node);
     }
 
     removeRecord(listId: TokenId, record: ListRecord): void {
-        if (this.lists.has(listId) && this.nodeMap.has(record)) {
+        if (this.listRecords.has(listId) && this.nodeMap.has(record)) {
             const node = this.nodeMap.get(record);
-            this.lists.get(listId).remove(node);
+            this.listRecords.get(listId).remove(node);
             this.nodeMap.delete(record);
         }
     }
@@ -332,8 +332,8 @@ class SocialGraph {
     // O(n) time
     getRecords(listId: TokenId): ListRecord[] {
         const records: ListRecord[] = [];
-        if (this.lists.has(listId)) {
-            let node = this.lists.get(listId).head;
+        if (this.listRecords.has(listId)) {
+            let node = this.listRecords.get(listId).head;
             while (node) {
                 records.push(node.value);
                 node = node.next;

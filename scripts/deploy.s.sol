@@ -27,6 +27,7 @@ contract DeployScript is Script, Deployer {
      */
     function run() public {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        console.log(vm.envUint("PRIVATE_KEY"));
 
         // Deploy the contracts
         Contracts memory contracts = deployAll();

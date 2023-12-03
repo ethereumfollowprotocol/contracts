@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {IEFPLists} from "./IEFPLists.sol";
+import {IEFPListRecords} from "./IEFPListRecords.sol";
 
 /**
- * @title EFPLists
+ * @title EFPListRecords
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract EFPLists is IEFPLists {
+contract EFPListRecords is IEFPListRecords {
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ contract EFPLists is IEFPLists {
         }
 
         bytes[] memory ops = new bytes[](end - start);
-        for (uint256 i = start; i < end;) {
+        for (uint256 i = start; i < end; ) {
             ops[i - start] = listOps[nonce][i];
 
             unchecked {
@@ -155,7 +155,7 @@ contract EFPLists is IEFPLists {
      */
     function applyListOps(uint256 nonce, bytes[] calldata ops) public onlyListManager(nonce) {
         uint256 len = ops.length;
-        for (uint256 i = 0; i < len;) {
+        for (uint256 i = 0; i < len; ) {
             _applyListOp(nonce, ops[i]);
             unchecked {
                 ++i;
