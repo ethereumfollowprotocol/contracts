@@ -27,7 +27,7 @@ import {ListRecord} from "../src/beta/ListRecord.sol";
 /**
  * @notice This script deploys the EFP contracts and initializes them.
  */
-contract DeployScript is Script, Deployer {
+contract MintScript is Script, Deployer {
     using Strings for uint256;
 
     uint256 lastTokenId = 0;
@@ -39,7 +39,7 @@ contract DeployScript is Script, Deployer {
         // Any setup needed before deployment
     }
 
-    function initMint(Contracts memory contracts) public {
+    function ensurePublicMint(Contracts memory contracts) public {
         console.log(" totalSupply        :", IERC721Enumerable(contracts.listRegistry).totalSupply());
 
         IEFPListRegistry.MintState mintState = IEFPListRegistry(contracts.listRegistry).getMintState();
@@ -169,6 +169,58 @@ contract DeployScript is Script, Deployer {
         }
     }
 
+    function listOpsToBytes(ListOp[] memory listOps) public pure returns (bytes[] memory) {
+        bytes[] memory asBytes = new bytes[](listOps.length);
+        for (uint256 i = 0; i < listOps.length; i++) {
+            asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].code, listOps[i].data);
+        }
+        return asBytes;
+    }
+
+    function mints(Contracts memory contracts) public {
+        uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        for (uint256 tid = totalSupply; tid <= lastTokenId; tid++) {
+            console.log("minting token id %d with nonce %d", tid, tid);
+            EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(tid);
+            // IEFPListRecords(contracts.listRecords).claimListManager(tid);
+            ListOp[] memory listOps = listOpsMapping[tid];
+            uint256 currentListOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tid);
+            if (currentListOpCount == 0) {
+                IEFPListRecords(contracts.listRecords).applyListOps(tid, listOpsToBytes(listOps));
+            }
+        }
+    }
+
+    function mintOne(Contracts memory contracts) public {
+        uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        uint tokenId = totalSupply;
+        console.log("minting token id %d with nonce %d", totalSupply, totalSupply);
+        EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(totalSupply);
+        totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        lastTokenId = totalSupply;
+        // IEFPListRecords(contracts.listRecords).claimListManager(totalSupply);
+        // create a single list op to follow the zero address
+        ListRecord memory listRecordToFollow = ListRecord({
+            version: 0x01,
+            recordType: 0x01,
+            data: abi.encodePacked(address(0x0))
+        });
+        ListOp[] memory listOps = new ListOp[](1);
+        listOps[0] = ListOp({
+            version: 0x01,
+            code: 0x01,
+            data: abi.encodePacked(listRecordToFollow.version, listRecordToFollow.recordType, listRecordToFollow.data)
+        });
+        console.log(
+            "applying %d list op%s to token id %d",
+            listOps.length,
+            listOps.length == 1 ? "" : "s",
+            tokenId
+        );
+        IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOps));
+        totalRecords++;
+    }
+
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         console.log(deployerPrivateKey);
@@ -186,34 +238,27 @@ contract DeployScript is Script, Deployer {
 
         // initialize the contracts
         Contracts memory contracts = loadAll();
-        initMint(contracts);
+        ensurePublicMint(contracts);
         console.log();
 
+        // determine the total number of records
         loadCsv(vm.readFile("scripts/lists.csv"));
-        // console.log("lastTokenId    :", lastTokenId);
-        // console.log("totalRecords   :", totalRecords);
-
         parseListOps();
+
         // add all list ops to ListRecords
-        uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
-        for (uint256 tid = totalSupply; tid <= lastTokenId; tid++) {
-            EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(tid);
-            IEFPListRecords(contracts.listRecords).claimListManager(tid);
-            ListOp[] memory listOps = listOpsMapping[tid];
-            uint256 currentListOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tid);
-            if (currentListOpCount == 0) {
-                bytes[] memory asBytes = new bytes[](listOps.length);
-                for (uint256 i = 0; i < listOps.length; i++) {
-                    asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].code, listOps[i].data);
-                }
-                IEFPListRecords(contracts.listRecords).applyListOps(tid, asBytes);
-            }
+        uint256 initialTotalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        if (initialTotalSupply <= lastTokenId) {
+            mints(contracts);
+        } else {
+            // mint one more
+            mintOne(contracts);
         }
+        uint totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
 
         // // print all token ids and owners
-        Logger.logNFTs(contracts.listRegistry);
+        Logger.logNFTs(contracts.listRegistry, initialTotalSupply);
         console.log();
-        Logger.logListOps(0, lastTokenId, listOpsMapping);
+        Logger.logListOps(contracts, initialTotalSupply, totalSupply - 1);
 
         vm.stopBroadcast();
     }

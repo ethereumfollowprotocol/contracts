@@ -42,12 +42,30 @@ contract EFPListRecords is IEFPListRecords {
     /**
      * @notice Allows an address to claim management of an unclaimed list nonce.
      * @param nonce The nonce that the sender wishes to claim.
+     * @param manager The address to be set as the manager.
      * @dev This function establishes the first-come-first-serve basis for nonce claiming.
      */
+    function _claimListManager(uint256 nonce, address manager) internal {
+        require(managers[nonce] == address(0) || managers[nonce] == manager, "Nonce already claimed");
+        managers[nonce] = manager;
+        emit ListManagerChange(nonce, manager);
+    }
+
+    /**
+     * @notice Allows the sender to claim management of an unclaimed list nonce.
+     * @param nonce The nonce that the sender wishes to claim.
+     */
     function claimListManager(uint256 nonce) external {
-        require(managers[nonce] == address(0) || managers[nonce] == msg.sender, "Nonce already claimed");
-        managers[nonce] = msg.sender;
-        emit ListManagerChange(nonce, msg.sender);
+        _claimListManager(nonce, msg.sender);
+    }
+
+    /**
+     * @notice Allows the sender to transfer management of a list to a new address.
+     * @param nonce The list's unique identifier.
+     * @param manager The address to be set as the new manager.
+     */
+    function claimListManagerForAddress(uint256 nonce, address manager) external {
+        _claimListManager(nonce, manager);
     }
 
     /**

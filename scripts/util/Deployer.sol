@@ -169,7 +169,7 @@ contract Deployer {
         // Load EFPListRecords
         if (isContract(ContractConfigs.EFP_LISTS)) {
             contracts.listRecords = ContractConfigs.EFP_LISTS;
-            console.log(Colors.BLUE, "EFPListRecords           :", contracts.listRecords, Colors.ENDC);
+            console.log(Colors.BLUE, "EFPListRecords     :", contracts.listRecords, Colors.ENDC);
         } else {
             revert("EFPListRecords not deployed");
         }

@@ -22,4 +22,28 @@ library BytesUtils {
             destination[destinationStart + i] = source[sourceStart + i];
         }
     }
+
+    function toAddress(bytes memory data, uint start) internal pure returns (address) {
+        require(data.length >= start + 20, "BytesUtils: data is too short");
+        address result;
+        assembly {
+            // the layout of the bytes is as follows:
+            // first 32 bytes: length of bytes array
+            // second 32 bytes: offset at which the data starts
+            // ...
+            result := mload(add(add(data, 0x20), start))
+            // shift right to align the address correctly
+            result := shr(96, result)
+        }
+        return result;
+    }
+
+    function toUint256(bytes memory data, uint start) internal pure returns (uint256) {
+        require(data.length >= start + 32, "BytesUtils: data is too short");
+        uint256 result;
+        assembly {
+            result := mload(add(add(data, 0x20), start))
+        }
+        return result;
+    }
 }

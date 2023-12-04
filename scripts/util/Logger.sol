@@ -8,10 +8,13 @@ import {IERC721Enumerable} from "lib/openzeppelin-contracts/contracts/token/ERC7
 
 import {BytesUtils} from "./BytesUtils.sol";
 import {Colors} from "./Colors.sol";
+import {ListOpUtils} from "./ListOpUtils.sol";
 import {StringUtils} from "./StringUtils.sol";
+import {Contracts} from "./Contracts.sol";
 
 import {ListOp} from "../../src/beta/ListOp.sol";
-import {ListOpUtils} from "./ListOpUtils.sol";
+import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
+import {IEFPListRecords} from "../../src/beta/IEFPListRecords.sol";
 
 library Logger {
     using ListOpUtils for ListOp;
@@ -55,7 +58,7 @@ library Logger {
         return s;
     }
 
-    function logNFTs(address nftContract) internal view {
+    function logNFTs(address nftContract, uint256 start) internal view {
         IERC721Enumerable erc721 = IERC721Enumerable(nftContract);
 
         uint256 totalSupply = erc721.totalSupply();
@@ -67,7 +70,7 @@ library Logger {
         console.log("| Token ID |                    Owner                   |");
         console.log("---------------------------------------------------------");
 
-        for (uint256 j = 0; j < totalSupply; j++) {
+        for (uint256 j = start; j < totalSupply; j++) {
             address owner = erc721.ownerOf(j);
 
             // Formatting the output as a row in the table
@@ -81,8 +84,7 @@ library Logger {
         }
     }
 
-    // Modified for loop to print listOps in a tabular format
-    function logListOps(uint256 start, uint256 end, mapping(uint256 => ListOp[]) storage listOpsMapping) internal view {
+    function logListOps(Contracts memory contracts, uint256 start, uint256 end) internal view {
         console.log();
         console.log(
             "--------------------------------------------------------------------------------------------------"
@@ -100,34 +102,48 @@ library Logger {
             "--------------------------------------------------------------------------------------------------"
         );
 
-        for (uint256 n = start; n <= end; n++) {
-            ListOp[] memory listOps = listOpsMapping[n];
+        for (uint256 tokenId = start; tokenId <= end; tokenId++) {
+            bytes memory listLocation = IEFPListMetadata(contracts.listMetadata).getValue(tokenId, "efp.list.location");
+            require(listLocation[0] == 0x01, "Logger: invalid list location version");
+            require(listLocation[1] == 0x01, "Logger: invalid list location type");
+            // load next 20 bytes as an address type
+            address listLocationAddress = BytesUtils.toAddress(listLocation, 2);
+            require(contracts.listRecords == listLocationAddress, "Logger: invalid list address");
+            // now retrieve the 32-byte nonce at bytes 22-53
+            uint256 nonce = BytesUtils.toUint256(listLocation, 22);
 
-            for (uint256 i = 0; i < listOps.length; i++) {
-                ListOp memory listOp = listOps[i];
-                // nonce
-                string memory line = string.concat("|      #", Strings.toString(n), "    ", (n < 10 ? " |" : "|"));
+            // now we determine how many list ops are in the list
+            uint256 listOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tokenId);
 
-                // index
-                line = string.concat(line, "   ", Strings.toString(i), "  ", (i < 10 ? " |" : "|"));
-
-                // listOp
-                line = string.concat(line, " ", Logger.formatListOp(listOp), " ");
-                if (listOp.code == 0x01 || listOp.code == 0x02) {
-                    line = string.concat(line, "      |");
-                } else {
-                    line = string.concat(line, "|");
-                }
-
-                string memory desc = listOp.description();
-                line = string.concat(line, " ", desc, " |");
-
-                console.log(line);
+            for (uint256 i = 0; i < listOpCount; i++) {
+                bytes memory listOpBytes = IEFPListRecords(contracts.listRecords).getListOp(tokenId, i);
+                ListOp memory listOp = ListOpUtils.decode(listOpBytes);
+                logListOpTableRow(nonce, i, listOp);
             }
 
             console.log(
                 "--------------------------------------------------------------------------------------------------"
             );
         }
+    }
+
+    function logListOpTableRow(uint256 nonce, uint256 index, ListOp memory listOp) internal view {
+        string memory line = string.concat("|      #", Strings.toString(nonce), "    ", (nonce < 10 ? " |" : "|"));
+
+        // index
+        line = string.concat(line, "   ", Strings.toString(index), "  ", (index < 10 ? " |" : "|"));
+
+        // listOp
+        line = string.concat(line, " ", Logger.formatListOp(listOp), " ");
+        if (listOp.code == 0x01 || listOp.code == 0x02) {
+            line = string.concat(line, "      |");
+        } else {
+            line = string.concat(line, "|");
+        }
+
+        string memory desc = listOp.description();
+        line = string.concat(line, " ", desc, " |");
+
+        console.log(line);
     }
 }

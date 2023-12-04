@@ -47,4 +47,9 @@ library ListOpUtils {
         // extract the tag as a UTF-8 string starting from the 23rd byte (index 22-end)
         return string(slice(listOp.data, 22, listOp.data.length - 22));
     }
+
+    function decode(bytes memory data) internal pure returns (ListOp memory) {
+        require(data.length >= 2, "ListOpUtils: invalid data");
+        return ListOp(uint8(data[0]), uint8(data[1]), slice(data, 2, data.length - 2));
+    }
 }

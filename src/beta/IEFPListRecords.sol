@@ -12,6 +12,7 @@ interface IEFPListRecords {
 
     // List Manager Functions
     function claimListManager(uint256 nonce) external;
+    function claimListManagerForAddress(uint256 nonce, address manager) external;
     function setListManager(uint256 nonce, address manager) external;
     function getListManager(uint256 nonce) external view returns (address);
 

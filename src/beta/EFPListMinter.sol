@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import {IEFPAccountMetadata} from "./IEFPAccountMetadata.sol";
 import {IEFPListMetadata} from "./IEFPListMetadata.sol";
 import {IEFPListRegistry} from "./IEFPListRegistry.sol";
+import {IEFPListRecords} from "./IEFPListRecords.sol";
 
 interface IEFPListRegistry_ is IEFPListRegistry {
     function ownerOf(uint256 tokenId) external view returns (address);
@@ -14,32 +15,34 @@ contract EFPListMinter {
     IEFPListRegistry_ public registry;
     IEFPAccountMetadata public accountMetadata;
     IEFPListMetadata public listMetadata;
-    address public listsAddressL1;
+    IEFPListRecords public listRecordsL1;
 
     constructor(
         address _registryAddress,
         address _accountMetadataAddress,
         address _listMetadataAddress,
-        address _listsAddressL1
+        address _listRecordsL1
     ) {
         registry = IEFPListRegistry_(_registryAddress);
         accountMetadata = IEFPAccountMetadata(_accountMetadataAddress);
         listMetadata = IEFPListMetadata(_listMetadataAddress);
-        listsAddressL1 = _listsAddressL1;
+        listRecordsL1 = IEFPListRecords(_listRecordsL1);
     }
 
     function mintWithListLocationOnL1AndSetAsDefaultList(uint nonceL1) public payable {
         uint tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(msg.sender);
         _setDefaultListForAccount(msg.sender, tokenId);
-        _setListLocationL1(tokenId, listsAddressL1, nonceL1);
+        _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
+        listRecordsL1.claimListManagerForAddress(nonceL1, msg.sender);
     }
 
     function mintToWithListLocationOnL1AndSetAsDefaultList(address to, uint nonceL1) public payable {
         uint tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(to);
         _setDefaultListForAccount(to, tokenId);
-        _setListLocationL1(tokenId, listsAddressL1, nonceL1);
+        _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
+        listRecordsL1.claimListManagerForAddress(nonceL1, to);
     }
 
     function mintWithListLocationOnL2AndSetAsDefaultList(uint chainId, address addressL2, uint nonceL2) public payable {
