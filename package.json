@@ -4,14 +4,14 @@
   "repository": "git@github.com:ethereumfollowprotocol/beta-contracts.git",
   "type": "module",
   "scripts": {
-    "deploy:anvil": "forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
+    "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
     "format:sol": "bunx prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
     "format:ts": "bunx prettier --config .prettierrc --write 'scripts/**/*.ts'",
     "format": "bun format:ts && bun format:sol",
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
     "lint:ts": "bunx eslint --config .eslintrc 'scripts/**/*.ts'",
-    "mint:anvil": "forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
+    "mint:localhost": "forge script scripts/mint.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
     "watch": "bun --watch --hot ./scripts/watch.ts"
   },
   "dependencies": {
