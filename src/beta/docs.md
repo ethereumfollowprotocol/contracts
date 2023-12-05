@@ -63,14 +63,17 @@ There is only one record type defined at this time:
 
 | Type | Description | Data            |
 | ---- | ----------- | --------------- |
-| 1    | Raw address | 20-byte address |
+| 1    | Address     | 20-byte address |
 
 To illustrate the design, however, consider a few hypothetical list record types:
 
 - a subscription to another EFP List, where the `data` field would contain the 32-byte token ID of the corresponding EFP NFT.
+- an encrypted list record, where the `data` field would contain a list record encrypted with the public key of the list owner/manager/user (for privacy).
 - an ERC-721 NFT token, where the `data` field would contain the 20-byte address of the ERC-721 contract, and the 32-byte token ID.
 - an ERC-1155 token, where the `data` field would contain the 20-byte address of the ERC-1155 contract, the 32-byte token ID (exclude token amount).
-- an ENS name, where the `data` field would contain the 32-byte hash of the ENS name OR possibly the normalized string of the ENS name.
+- an ENS name, where the `data` field would contain the normalized string of the ENS name.
+- a DID record, where the `data` field would contain the DID string.
+- a DNS name, where the `data` field would contain the normalized string of the DNS name.
 
 ## Tag
 
