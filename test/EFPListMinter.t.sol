@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {EFPAccountMetadata} from "../../src/beta/EFPAccountMetadata.sol";
-import {EFPListMetadata} from "../../src/beta/EFPListMetadata.sol";
-import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {EFPListRecords} from "../../src/beta/EFPListRecords.sol";
-import {EFPListMinter} from "../../src/beta/EFPListMinter.sol";
-import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
+import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
+import {EFPListMetadata} from "../src/EFPListMetadata.sol";
+import {EFPListRegistry} from "../src/EFPListRegistry.sol";
+import {EFPListRecords} from "../src/EFPListRecords.sol";
+import {EFPListMinter} from "../src/EFPListMinter.sol";
+import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
 
 contract EFPListMinterTest is Test {
     EFPAccountMetadata public accountMetadata;

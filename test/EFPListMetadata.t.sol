@@ -2,11 +2,11 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {EFPListMetadata} from "../../src/beta/EFPListMetadata.sol";
-import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
-import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
-import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
+import {EFPListMetadata} from "../src/EFPListMetadata.sol";
+import {EFPListRegistry} from "../src/EFPListRegistry.sol";
+import {IEFPListMetadata} from "../src/IEFPListMetadata.sol";
+import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
+import {ListStorageLocation} from "../src/ListStorageLocation.sol";
 
 contract EFPListMetadataTest is Test {
     EFPListRegistry public registry;

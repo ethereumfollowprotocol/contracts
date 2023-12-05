@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {EFPAccountMetadata} from "../../src/beta/EFPAccountMetadata.sol";
-import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {IEFPAccountMetadata} from "../../src/beta/IEFPAccountMetadata.sol";
-import {ListStorageLocation} from "../../src/beta/ListStorageLocation.sol";
+import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
+import {EFPListRegistry} from "../src/EFPListRegistry.sol";
+import {IEFPAccountMetadata} from "../src/IEFPAccountMetadata.sol";
+import {ListStorageLocation} from "../src/ListStorageLocation.sol";
 
 
 contract EFPAccountMetadataTest is Test {

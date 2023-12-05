@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Colors} from "./Colors.sol";
 
-import {ListOp} from "../../src/beta/ListOp.sol";
+import {ListOp} from "../../src/ListOp.sol";
 
 library ListOpUtils {
     function slice(bytes memory data, uint256 start, uint256 length) internal pure returns (bytes memory) {

@@ -8,15 +8,15 @@ import {ContractConfigs} from "./ContractConfigs.sol";
 import {Contracts} from "./Contracts.sol";
 import {StringUtils} from "./StringUtils.sol";
 
-import {EFPAccountMetadata} from "../../src/beta/EFPAccountMetadata.sol";
-import {EFPListMetadata} from "../../src/beta/EFPListMetadata.sol";
-import {EFPListMinter} from "../../src/beta/EFPListMinter.sol";
-import {EFPListRegistry} from "../../src/beta/EFPListRegistry.sol";
-import {EFPListRecords} from "../../src/beta/EFPListRecords.sol";
-import {IEFPAccountMetadata} from "../../src/beta/IEFPAccountMetadata.sol";
-import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
-import {IEFPListRegistry} from "../../src/beta/IEFPListRegistry.sol";
-import {IEFPListRecords} from "../../src/beta/IEFPListRecords.sol";
+import {EFPAccountMetadata} from "../../src/EFPAccountMetadata.sol";
+import {EFPListMetadata} from "../../src/EFPListMetadata.sol";
+import {EFPListMinter} from "../../src/EFPListMinter.sol";
+import {EFPListRegistry} from "../../src/EFPListRegistry.sol";
+import {EFPListRecords} from "../../src/EFPListRecords.sol";
+import {IEFPAccountMetadata} from "../../src/IEFPAccountMetadata.sol";
+import {IEFPListMetadata} from "../../src/IEFPListMetadata.sol";
+import {IEFPListRegistry} from "../../src/IEFPListRegistry.sol";
+import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
 
 contract Deployer {
     /*

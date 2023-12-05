@@ -14,15 +14,15 @@ import {Deployer} from "./util/Deployer.sol";
 import {Logger} from "./util/Logger.sol";
 import {StringUtils} from "./util/StringUtils.sol";
 
-import {EFPAccountMetadata} from "../src/beta/EFPAccountMetadata.sol";
-import {EFPListMetadata} from "../src/beta/EFPListMetadata.sol";
-import {EFPListMinter} from "../src/beta/EFPListMinter.sol";
-import {EFPListRegistry} from "../src/beta/EFPListRegistry.sol";
-import {EFPListRecords} from "../src/beta/EFPListRecords.sol";
-import {IEFPListRegistry} from "../src/beta/IEFPListRegistry.sol";
-import {IEFPListRecords} from "../src/beta/IEFPListRecords.sol";
-import {ListOp} from "../src/beta/ListOp.sol";
-import {ListRecord} from "../src/beta/ListRecord.sol";
+import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
+import {EFPListMetadata} from "../src/EFPListMetadata.sol";
+import {EFPListMinter} from "../src/EFPListMinter.sol";
+import {EFPListRegistry} from "../src/EFPListRegistry.sol";
+import {EFPListRecords} from "../src/EFPListRecords.sol";
+import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
+import {IEFPListRecords} from "../src/IEFPListRecords.sol";
+import {ListOp} from "../src/ListOp.sol";
+import {ListRecord} from "../src/ListRecord.sol";
 
 /**
  * @notice This script deploys the EFP contracts and initializes them.

@@ -12,9 +12,9 @@ import {ListOpUtils} from "./ListOpUtils.sol";
 import {StringUtils} from "./StringUtils.sol";
 import {Contracts} from "./Contracts.sol";
 
-import {ListOp} from "../../src/beta/ListOp.sol";
-import {IEFPListMetadata} from "../../src/beta/IEFPListMetadata.sol";
-import {IEFPListRecords} from "../../src/beta/IEFPListRecords.sol";
+import {ListOp} from "../../src/ListOp.sol";
+import {IEFPListMetadata} from "../../src/IEFPListMetadata.sol";
+import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
 
 library Logger {
     using ListOpUtils for ListOp;
