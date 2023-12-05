@@ -61,9 +61,9 @@ struct ListRecord {
 
 There is only one record type defined at this time:
 
-| Type | Description | Data            |
-| ---- | ----------- | --------------- |
-| 1    | Address     | 20-byte address |
+| Type | Description | Data            | Length |
+| ---- | ----------- | --------------- | ------ |
+| 1    | Address     | 20-byte address | 20     |
 
 To illustrate the design, however, consider a few hypothetical list record types:
 
@@ -74,6 +74,26 @@ To illustrate the design, however, consider a few hypothetical list record types
 - an ENS name, where the `data` field would contain the normalized string of the ENS name.
 - a DID record, where the `data` field would contain the DID string.
 - a DNS name, where the `data` field would contain the normalized string of the DNS name.
+- an RSS feed, where the `data` field would contain the string URL of the RSS feed.
+- an Atom feed, where the `data` field would contain the string URL of the Atom feed.
+- a git repository URL, where the `data` field would contain the git remote URL string.
+- an IP address, where the `data` field would contain the IP address string.
+- an email address, where the `data` field would contain the email address string.
+- a torrent magnet link, where the `data` field would contain the magnet link string.
+- a custom record, where the `data` field would contain arbitrary or custom data.
+
+Clients may support some or all of these record types depending on use case (once more than one record type is defined).
+
+### Decoding
+
+Managers have permissions to upload arbitrary list record data, so clients should be prepared to handle unexpected data.
+
+When decoding a `ListRecord`, the `version` and `recordType` fields should be checked to ensure compatibility.
+
+The length of the `data` field should be checked to ensure it is the expected length for the given `recordType`.
+
+If the length of the `data` field is unexpected, the `ListRecord` should be generally ignored and not processed.
+
 
 ## Tag
 
