@@ -4,6 +4,7 @@
   "repository": "git@github.com:ethereumfollowprotocol/beta-contracts.git",
   "type": "module",
   "scripts": {
+    "build": "forge build --sizes && bun ./scripts/generate-abi-ts.ts",
     "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url http://localhost:8545 --broadcast --private-key $PRIVATE_KEY",
     "format:sol": "bunx prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol'",
     "format:ts": "bunx prettier --config .prettierrc --write 'scripts/**/*.ts'",
