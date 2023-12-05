@@ -71,8 +71,8 @@ contract Deployer {
 
         // EFPListRecords
         IEFPListRecords listRecords;
-        if (isContract(ContractConfigs.EFP_LISTS)) {
-            listRecords = EFPListRecords(ContractConfigs.EFP_LISTS);
+        if (isContract(ContractConfigs.EFP_LIST_RECORDS)) {
+            listRecords = EFPListRecords(ContractConfigs.EFP_LIST_RECORDS);
             console.log(" EFPListRecords     :", address(listRecords));
         } else {
             listRecords = new EFPListRecords();
@@ -167,8 +167,8 @@ contract Deployer {
         }
 
         // Load EFPListRecords
-        if (isContract(ContractConfigs.EFP_LISTS)) {
-            contracts.listRecords = ContractConfigs.EFP_LISTS;
+        if (isContract(ContractConfigs.EFP_LIST_RECORDS)) {
+            contracts.listRecords = ContractConfigs.EFP_LIST_RECORDS;
             console.log(Colors.BLUE, "EFPListRecords     :", contracts.listRecords, Colors.ENDC);
         } else {
             revert("EFPListRecords not deployed");

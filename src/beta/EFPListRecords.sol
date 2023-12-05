@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IEFPListRecords} from "./IEFPListRecords.sol";
 
 /**
@@ -8,7 +9,7 @@ import {IEFPListRecords} from "./IEFPListRecords.sol";
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-contract EFPListRecords is IEFPListRecords {
+contract EFPListRecords is IEFPListRecords, Ownable {
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////

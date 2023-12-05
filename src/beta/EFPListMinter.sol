@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IEFPAccountMetadata} from "./IEFPAccountMetadata.sol";
 import {IEFPListMetadata} from "./IEFPListMetadata.sol";
 import {IEFPListRegistry} from "./IEFPListRegistry.sol";
@@ -11,7 +12,7 @@ interface IEFPListRegistry_ is IEFPListRegistry {
     function totalSupply() external view returns (uint);
 }
 
-contract EFPListMinter {
+contract EFPListMinter is Ownable {
     IEFPListRegistry_ public registry;
     IEFPAccountMetadata public accountMetadata;
     IEFPListMetadata public listMetadata;

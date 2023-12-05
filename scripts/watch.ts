@@ -1,14 +1,13 @@
-import './types.ts'
 import { decodeEventLog } from 'viem'
-import { clients } from './clients.ts'
-import { parseAbiItem } from 'viem/utils'
 import {
   EFPAccountMetadataABI,
   EFPListMetadataABI,
   EFPListMinterABI,
-  EFPListRegistryABI,
   EFPListRecordsABI,
+  EFPListRegistryABI,
 } from './abi'
+import { clients } from './clients.ts'
+import './types.ts'
 
 console.log('watch.ts')
 
@@ -18,12 +17,12 @@ main().catch((error) => {
 })
 
 /**
-   Deployer           : 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38 
-   EFPAccountMetadata : 0x5FbDB2315678afecb367f032d93F642f64180aa3 
-   EFPListRegistry    : 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 
-   EFPListMetadata    : 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0 
-   EFPListRecords           : 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9 
-   EFPListMinter      : 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707 
+   Deployer           : 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38
+   EFPAccountMetadata : 0x5FbDB2315678afecb367f032d93F642f64180aa3
+   EFPListRegistry    : 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+   EFPListMetadata    : 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+   EFPListRecords     : 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+   EFPListMinter      : 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
  */
 
 async function main() {
@@ -122,7 +121,7 @@ async function main() {
 
   client.watchContractEvent({
     abi: EFPListMinterABI,
-    address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707',
+    address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
     onError: (error) => {
       console.log('EFPListMinterABI error:', error)
     },

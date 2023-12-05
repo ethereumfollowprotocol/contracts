@@ -211,12 +211,7 @@ contract MintScript is Script, Deployer {
             code: 0x01,
             data: abi.encodePacked(listRecordToFollow.version, listRecordToFollow.recordType, listRecordToFollow.data)
         });
-        console.log(
-            "applying %d list op%s to token id %d",
-            listOps.length,
-            listOps.length == 1 ? "" : "s",
-            tokenId
-        );
+        console.log("applying %d list op%s to token id %d", listOps.length, listOps.length == 1 ? "" : "s", tokenId);
         IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOps));
         totalRecords++;
     }
