@@ -59,15 +59,21 @@ struct ListRecord {
 
 ### Record Types
 
-There is only one record type defined at this time:
+There are only two record types defined at this time:
 
-| Type | Description | Data            | Length |
-| ---- | ----------- | --------------- | ------ |
-| 1    | Address     | 20-byte address | 20     |
+| Type   | Description           | Data             | Length |
+| ------ | --------------------- | ---------------- | ------ |
+| 0      | Reserved              | N/A              | N/A    |
+| 1      | EFP List Subscription | 32-byte token id | 32     |
+| 2-9    | Reserved              | N/A              | N/A    |
+| 10     | Address               | 20-byte address  | 20     |
+| 11-255 | Reserved              | N/A              | N/A    |
 
-To illustrate the design, however, consider a few hypothetical list record types:
+Record types 0, 2-9, and 11-255 are reserved for future use.
 
-- a subscription to another EFP List, where the `data` field would contain the 32-byte token ID of the corresponding EFP NFT.
+To illustrate the design, however, consider hypothetical list record types:
+
+<!-- - a subscription to another EFP List, where the `data` field would contain the 32-byte token ID of the corresponding EFP NFT. -->
 - an encrypted list record, where the `data` field would contain a list record encrypted with the public key of the list owner/manager/user (for privacy).
 - an ERC-721 NFT token, where the `data` field would contain the 20-byte address of the ERC-721 contract, and the 32-byte token ID.
 - an ERC-1155 token, where the `data` field would contain the 20-byte address of the ERC-1155 contract, the 32-byte token ID (exclude token amount).
@@ -92,7 +98,7 @@ When decoding a `ListRecord`, the `version` and `recordType` fields should be ch
 
 The length of the `data` field should be checked to ensure it is the expected length for the given `recordType`.
 
-If the length of the `data` field is unexpected, the `ListRecord` should be generally ignored and not processed.
+If the length of the `data` field is unexpected, the `ListRecord` should generally be ignored and not processed.
 
 
 ## Tag
