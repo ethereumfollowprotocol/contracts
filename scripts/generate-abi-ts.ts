@@ -1,23 +1,17 @@
 // this file takes the compiler output for solidity in out/ContractName.sol/ContractName.json
 // and takes the abi and copies it into a typescript file of the form:
 // ```
-// import type { Abi } from 'viem'
-//
-// export const ContractNameABI: Abi = [
+// export const ContractNameABI = [
 // ...
 // ] as const
 // ```
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs'
+import path from 'node:path'
 
-const contractNames = [
-    'EFPAccountMetadata',
-    'EFPListMetadata',
-    'EFPListMinter',
-    'EFPListRecords',
-    'EFPListRegistry'
-]
+const contractNames = ['EFPAccountMetadata', 'EFPListMetadata', 'EFPListMinter', 'EFPListRecords', 'EFPListRegistry']
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 const projectDir = path.resolve(__dirname, '..')
 const inputDir = '../out'
@@ -26,25 +20,25 @@ const outputDir = '../out'
 // _dirname is the directory of the current file
 
 for (const contractName of contractNames) {
-    const contract = require(`${inputDir}/${contractName}.sol/${contractName}.json`)
-    const abi = JSON.stringify(contract.abi, null, 2)
-    const output = `import type { Abi } from 'viem'\n\nexport const ${contractName}ABI: Abi = ${abi} as const\n`
-    const relPath = `${outputDir}/${contractName}.ts`
-    const absOutputFilePath = `${__dirname}/${relPath}`
-    // in order to remove the "foo/../bar" and replace to "/bar"
-    // we can use the function path.resolve
-    const realPath = path.resolve(absOutputFilePath)
-    console.log(`${realPath}`)
-    fs.writeFileSync(realPath, output)
+  const contract = require(`${inputDir}/${contractName}.sol/${contractName}.json`)
+  const abi = JSON.stringify(contract.abi, null, 2)
+  const output = `export const ${contractName}ABI = ${abi} as const\n`
+  const relPath = `${outputDir}/${contractName}.ts`
+  const absOutputFilePath = `${__dirname}/${relPath}`
+  // in order to remove the "foo/../bar" and replace to "/bar"
+  // we can use the function path.resolve
+  const realPath = path.resolve(absOutputFilePath)
+  console.log(`${realPath}`)
+  fs.writeFileSync(realPath, output)
 
-    // copy ABI definition to the indexer project
-    const indexerProjectDir = path.resolve(projectDir, '..', 'indexer')
-    const indexerOutputDir = path.resolve(indexerProjectDir, 'src/abi/generated')
-    const indexerOutputFilePath = path.resolve(indexerOutputDir, `${contractName}.ts`)
-    console.log(`${indexerOutputFilePath}`)
-    fs.writeFileSync(indexerOutputFilePath, output)
+  // copy ABI definition to the indexer project
+  const indexerProjectDir = path.resolve(projectDir, '..', 'indexer')
+  const indexerOutputDir = path.resolve(indexerProjectDir, 'src/abi/generated')
+  const indexerOutputFilePath = path.resolve(indexerOutputDir, `${contractName}.ts`)
+  console.log(`${indexerOutputFilePath}`)
+  fs.writeFileSync(indexerOutputFilePath, output)
 
-    console.log()
+  console.log()
 }
 
 // generate index.ts in the indexer project
@@ -57,5 +51,5 @@ for (const contractName of contractNames) {
 const indexerOutputDir = path.resolve(projectDir, '..', 'indexer', 'src/abi/generated')
 const indexerOutputFilePath = path.resolve(indexerOutputDir, `index.ts`)
 console.log(`${indexerOutputFilePath}`)
-const indexerOutput = contractNames.map(name => `export * from './${name}'`).join('\n')
+const indexerOutput = contractNames.map((name) => `export * from './${name}'`).join('\n')
 fs.writeFileSync(indexerOutputFilePath, indexerOutput)

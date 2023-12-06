@@ -88,6 +88,25 @@ export const EFPListMetadataABI = [
   },
   {
     type: 'function',
+    name: 'isProxy',
+    inputs: [
+      {
+        name: 'proxy',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'owner',
     inputs: [],
     outputs: [

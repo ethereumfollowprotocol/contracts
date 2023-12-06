@@ -81,7 +81,7 @@ export const EFPListRegistryABI = [
       {
         name: '',
         type: 'uint8',
-        internalType: 'enum EFPListRegistry.MintState',
+        internalType: 'enum IEFPListRegistry.MintState',
       },
     ],
     stateMutability: 'view',
@@ -315,7 +315,7 @@ export const EFPListRegistryABI = [
       {
         name: '_mintState',
         type: 'uint8',
-        internalType: 'enum EFPListRegistry.MintState',
+        internalType: 'enum IEFPListRegistry.MintState',
       },
     ],
     outputs: [],
@@ -591,7 +591,7 @@ export const EFPListRegistryABI = [
         name: 'mintState',
         type: 'uint8',
         indexed: false,
-        internalType: 'enum EFPListRegistry.MintState',
+        internalType: 'enum IEFPListRegistry.MintState',
       },
     ],
     anonymous: false,

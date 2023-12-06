@@ -50,6 +50,24 @@ export const EFPListRecordsABI = [
   },
   {
     type: 'function',
+    name: 'claimListManagerForAddress',
+    inputs: [
+      {
+        name: 'nonce',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'manager',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'getAllListOps',
     inputs: [
       {
@@ -203,6 +221,26 @@ export const EFPListRecordsABI = [
   },
   {
     type: 'function',
+    name: 'owner',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'renounceOwnership',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     name: 'setListManager',
     inputs: [
       {
@@ -212,6 +250,19 @@ export const EFPListRecordsABI = [
       },
       {
         name: 'manager',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'transferOwnership',
+    inputs: [
+      {
+        name: 'newOwner',
         type: 'address',
         internalType: 'address',
       },
@@ -253,6 +304,25 @@ export const EFPListRecordsABI = [
         type: 'bytes',
         indexed: false,
         internalType: 'bytes',
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: 'event',
+    name: 'OwnershipTransferred',
+    inputs: [
+      {
+        name: 'previousOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'newOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
       },
     ],
     anonymous: false,
