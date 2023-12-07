@@ -18,7 +18,7 @@ const inputDir = '../out'
 
 const outputDirs = [
   path.resolve(projectDir, 'generated/abi'),
-  path.resolve(projectDir, '..', 'indexer/src/abi/generated')
+  path.resolve(projectDir, '..', 'indexer/packages/indexer/src/abi/generated')
 ]
 
 for (const contractName of contractNames) {
