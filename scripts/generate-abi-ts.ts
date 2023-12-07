@@ -42,7 +42,7 @@ for (const contractName of contractNames) {
 // export * from './EFPListRegistry'
 // export * from './EFPListRecords'
 
-const contents = contractNames.map(name => `export * from './${name}'`).join('\n')
+const contents = `${contractNames.map(name => `export * from './${name}'`).join('\n')}\n`
 for (const outputDir of outputDirs) {
   const abiOutputFilePath = path.resolve(outputDir, `index.ts`)
   console.log(`${abiOutputFilePath}`)
