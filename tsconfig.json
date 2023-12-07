@@ -14,7 +14,6 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "baseUrl": ".",
     "allowArbitraryExtensions": true,
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
@@ -23,6 +22,11 @@
       "node",
       "bun-types"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "#/*": ["src/*"],
+      "#/generated/*": ["generated/*"],
+    },
   },
   "include": [
     "scripts",
