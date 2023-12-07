@@ -22,21 +22,17 @@ const outputDir = '../out'
 for (const contractName of contractNames) {
   const contract = require(`${inputDir}/${contractName}.sol/${contractName}.json`)
   const abi = JSON.stringify(contract.abi, null, 2)
-  const output = `export const ${contractName}ABI = ${abi} as const\n`
-  const relPath = `${outputDir}/${contractName}.ts`
-  const absOutputFilePath = `${__dirname}/${relPath}`
-  // in order to remove the "foo/../bar" and replace to "/bar"
-  // we can use the function path.resolve
-  const realPath = path.resolve(absOutputFilePath)
-  console.log(`${realPath}`)
-  fs.writeFileSync(realPath, output)
+  const contents = `export const ${contractName}ABI = ${abi} as const\n`
+  const outputFile = path.resolve(`${__dirname}/${outputDir}/${contractName}.ts`)
+  console.log(outputFile)
+  fs.writeFileSync(outputFile, contents)
 
   // copy ABI definition to the indexer project
   const indexerProjectDir = path.resolve(projectDir, '..', 'indexer')
   const indexerOutputDir = path.resolve(indexerProjectDir, 'src/abi/generated')
   const indexerOutputFilePath = path.resolve(indexerOutputDir, `${contractName}.ts`)
   console.log(`${indexerOutputFilePath}`)
-  fs.writeFileSync(indexerOutputFilePath, output)
+  fs.writeFileSync(indexerOutputFilePath, contents)
 
   console.log()
 }
@@ -51,5 +47,5 @@ for (const contractName of contractNames) {
 const indexerOutputDir = path.resolve(projectDir, '..', 'indexer', 'src/abi/generated')
 const indexerOutputFilePath = path.resolve(indexerOutputDir, `index.ts`)
 console.log(`${indexerOutputFilePath}`)
-const indexerOutput = contractNames.map((name) => `export * from './${name}'`).join('\n')
+const indexerOutput = contractNames.map(name => `export * from './${name}'`).join('\n')
 fs.writeFileSync(indexerOutputFilePath, indexerOutput)
