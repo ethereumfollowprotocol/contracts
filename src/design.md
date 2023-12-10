@@ -24,6 +24,8 @@ The simplest design is to store all records and tags in logs.
 
 This is **rejected** because it is desirable to be able to read the list via contract calls without having to reconstruct the list from logs.
 
+Many frontend Ethereum libraries are focused on contract calls and lack support for retrieving event logs.
+
 ### Rejected design - merkle root
 
 We could store just the merkle root of all the records and their tags.
