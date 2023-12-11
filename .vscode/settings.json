@@ -9,5 +9,10 @@
   "solidity.formatter": "forge",
   "solidity.compileUsingRemoteVersion": "v0.8.20",
   "solidity.packageDefaultDependenciesContractsDirectory": "src",
-  "solidity.packageDefaultDependenciesDirectory": "lib"
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/package-lock.json": true,
+    "**/lib": true,
+  }
 }
