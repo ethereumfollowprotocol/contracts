@@ -28,7 +28,7 @@ contract EFPListMinterTest is Test {
         listRecords = new EFPListRecords();
         listMetadata.setEFPListRegistry(address(registry));
         registry.setMintState(IEFPListRegistry.MintState.PublicMint);
-        registry.mint();
+        registry.mint(new bytes(0));
 
         minter =
             new EFPListMinter(address(registry), address(accountMetadata), address(listMetadata), address(listRecords));

@@ -32,7 +32,7 @@ contract EFPListMinter is Ownable {
 
     function mintWithListLocationOnL1AndSetAsDefaultList(uint nonceL1) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mintTo{value: msg.value}(msg.sender);
+        registry.mintTo{value: msg.value}(msg.sender, new bytes(0));
         _setDefaultListForAccount(msg.sender, tokenId);
         _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
         listRecordsL1.claimListManagerForAddress(nonceL1, msg.sender);
@@ -40,7 +40,7 @@ contract EFPListMinter is Ownable {
 
     function mintToWithListLocationOnL1AndSetAsDefaultList(address to, uint nonceL1) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mintTo{value: msg.value}(to);
+        registry.mintTo{value: msg.value}(to, new bytes(0));
         _setDefaultListForAccount(to, tokenId);
         _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
         listRecordsL1.claimListManagerForAddress(nonceL1, to);
@@ -48,7 +48,7 @@ contract EFPListMinter is Ownable {
 
     function mintWithListLocationOnL2AndSetAsDefaultList(uint chainId, address addressL2, uint nonceL2) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mintTo{value: msg.value}(msg.sender);
+        registry.mintTo{value: msg.value}(msg.sender, new bytes(0));
         _setDefaultListForAccount(msg.sender, tokenId);
         _setListLocationL2(tokenId, chainId, addressL2, nonceL2);
     }
@@ -60,7 +60,7 @@ contract EFPListMinter is Ownable {
         uint nonceL2
     ) public payable {
         uint tokenId = registry.totalSupply();
-        registry.mintTo{value: msg.value}(to);
+        registry.mintTo{value: msg.value}(to, new bytes(0));
         _setDefaultListForAccount(to, tokenId);
         _setListLocationL2(tokenId, chainId, addressL2, nonceL2);
     }

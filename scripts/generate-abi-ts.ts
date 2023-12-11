@@ -18,7 +18,7 @@ const inputDir = '../out'
 
 const outputDirs = [
   path.resolve(projectDir, 'generated/abi'),
-  path.resolve(projectDir, '..', 'indexer/packages/indexer/src/abi/generated')
+  path.resolve(projectDir, '..', 'indexer/packages/indexer/src/abi/generated'),
 ]
 
 for (const contractName of contractNames) {
@@ -42,7 +42,7 @@ for (const contractName of contractNames) {
 // export * from './EFPListRegistry'
 // export * from './EFPListRecords'
 
-const contents = `${contractNames.map(name => `export * from './${name}'`).join('\n')}\n`
+const contents = `${contractNames.map((name) => `export * from './${name}'`).join('\n')}\n`
 for (const outputDir of outputDirs) {
   const abiOutputFilePath = path.resolve(outputDir, `index.ts`)
   console.log(`${abiOutputFilePath}`)

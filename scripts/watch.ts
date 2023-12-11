@@ -3,7 +3,7 @@ import {
   EFPListMetadataABI,
   EFPListMinterABI,
   EFPListRecordsABI,
-  EFPListRegistryABI
+  EFPListRegistryABI,
 } from '#/generated/abi'
 import { decodeEventLog } from 'viem'
 import { clients } from './clients.ts'
@@ -11,7 +11,7 @@ import './types.ts'
 
 console.log('watch.ts')
 
-main().catch(error => {
+main().catch((error) => {
   console.error('watch.ts error:', error instanceof Error ? error.message : error)
   process.exit(1)
 })
@@ -43,98 +43,98 @@ async function main() {
     abi: EFPAccountMetadataABI,
     address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     // eventName: 'ValueSet',
-    onError: error => {
+    onError: (error) => {
       console.log('EFPAccountMetadataABI error:', error)
     },
-    onLogs: logs => {
+    onLogs: (logs) => {
       console.log('\n--- EFPAccountMetadata ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
           abi: EFPAccountMetadataABI,
           data,
-          topics
+          topics,
         })
         console.log('[EFPAccountMetadata] Decoded topics:', JSON.stringify(_topics, undefined, 2))
       })
-    }
+    },
   })
 
   client.watchContractEvent({
     abi: EFPListRegistryABI,
     address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
     // eventName: 'Transfer',
-    onError: error => {
+    onError: (error) => {
       console.log('EFPListRegistryABI error:', error)
     },
-    onLogs: logs => {
+    onLogs: (logs) => {
       console.log('\n--- EFPListRegistry ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
           abi: EFPListRegistryABI,
           data,
-          topics
+          topics,
         })
         console.log('[EFPListRegistry] Decoded topics:', JSON.stringify(_topics, undefined, 2))
       })
-    }
+    },
   })
 
   client.watchContractEvent({
     abi: EFPListMetadataABI,
     address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
     // eventName: 'OwnershipTransferred',
-    onError: error => {
+    onError: (error) => {
       console.log('EFPListMetadataABI error:', error)
     },
-    onLogs: logs => {
+    onLogs: (logs) => {
       console.log('\n--- EFPListMetadata ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
           abi: EFPListMetadataABI,
           data,
-          topics
+          topics,
         })
         console.log('[EFPListMetadata] Decoded topics:', JSON.stringify(_topics, undefined, 2))
       })
-    }
+    },
   })
 
   client.watchContractEvent({
     abi: EFPListRecordsABI,
     address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
     // eventName: 'ListOperation',
-    onError: error => {
+    onError: (error) => {
       console.log('EFPListRecordsABI error:', error)
     },
-    onLogs: logs => {
+    onLogs: (logs) => {
       console.log('\n--- EFPListRecords ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
           abi: EFPListRecordsABI,
           data,
-          topics
+          topics,
         })
         console.log('[EFPListRecords] Decoded topics:', JSON.stringify(_topics, undefined, 2))
       })
-    }
+    },
   })
 
   client.watchContractEvent({
     abi: EFPListMinterABI,
     address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
-    onError: error => {
+    onError: (error) => {
       console.log('EFPListMinterABI error:', error)
     },
-    onLogs: logs => {
+    onLogs: (logs) => {
       console.log('\n--- EFPListMinter ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
           abi: EFPListMinterABI,
           data,
-          topics
+          topics,
         })
         console.log('[EFPListMinter] Decoded topics:', JSON.stringify(_topics, undefined, 2))
       })
-    }
+    },
   })
 }

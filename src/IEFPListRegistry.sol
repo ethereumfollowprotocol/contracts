@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {ListStorageLocation} from "./ListStorageLocation.sol";
-
 /**
  * @title EFPListRegistry
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
@@ -24,10 +22,15 @@ interface IEFPListRegistry {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Emitted when a list storage location is set
-    event ListStorageLocationChange(uint256 indexed tokenId, ListStorageLocation listStorageLocation);
+    event ListStorageLocationChange(uint256 indexed tokenId, bytes listStorageLocation);
 
-    /// @notice Emitted when a list user is set
-    event ListUserChange(uint256 indexed tokenId, address listUser);
+    ///////////////////////////////////////////////////////////////////////////
+    // ListStorageLocation
+    ///////////////////////////////////////////////////////////////////////////
+
+    function getListStorageLocation(uint256 tokenId) external view returns (bytes memory);
+
+    function setListStorageLocation(uint256 tokenId, bytes calldata listStorageLocation) external;
 
     ///////////////////////////////////////////////////////////////////////////
     // Mint
@@ -48,13 +51,13 @@ interface IEFPListRegistry {
     function setMaxMintBatchSize(uint256 _maxMintBatchSize) external;
 
     /// @notice Mints a new token.
-    function mint() external payable;
+    function mint(bytes calldata listStorageLocation) external payable;
 
     /**
      * @notice Mints a new token to the given address.
      * @param to The address to mint the token to.
      */
-    function mintTo(address to) external payable;
+    function mintTo(address to, bytes calldata listStorageLocation) external payable;
 
     /// @notice Mints a new token to the given address.
     function mintBatch(uint256 quantity) external payable;

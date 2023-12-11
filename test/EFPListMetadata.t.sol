@@ -17,7 +17,7 @@ contract EFPListMetadataTest is Test {
         metadata = new EFPListMetadata();
         metadata.setEFPListRegistry(address(registry));
         registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
-        registry.mint();
+        registry.mint(new bytes(0));
     }
 
     function test_CanSetValue() public {

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
+
 import {ERC721A} from "lib/ERC721A/contracts/ERC721A.sol";
 import {IEFPListRegistry} from "./IEFPListRegistry.sol";
 import {IEFPListPriceOracle} from "./IEFPListPriceOracle.sol";
-import {ListStorageLocation} from "./ListStorageLocation.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
 /**
@@ -28,15 +28,18 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
 
-    // mapping(uint => ListStorageLocation) private tokenIdToListStorageLocation;
-
-    // mapping(uint => address) private tokenIdToListUser;
-
+    /// @notice The state of minting.
     MintState private mintState = MintState.Disabled;
 
+    /// @notice The maximum number of tokens that can be minted in a single batch.
     uint private maxMintBatchSize = 10000;
 
+    /// @notice The price oracle. If set, the price oracle is used to determine
+    /// the price of minting.
     IEFPListPriceOracle private priceOracle;
+
+    /// @notice The list storage location associated with a token.
+    mapping(uint => bytes) private tokenIdToListStorageLocation;
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -95,6 +98,41 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // ListStorageLocation
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Fetches the list location associated with a specific token.
+     * @param tokenId The ID of the token.
+     * @return The list location.
+     */
+    function getListStorageLocation(uint tokenId) external view override returns (bytes memory) {
+        return tokenIdToListStorageLocation[tokenId];
+    }
+
+    /**
+     * @notice Associates a token with a list storage location.
+     * @param tokenId The ID of the token.
+     * @param listStorageLocation The list storage location to be associated with the token.
+     */
+    function setListStorageLocation(
+        uint tokenId,
+        bytes calldata listStorageLocation
+    ) external override onlyTokenOwner(tokenId) {
+        _setListStorageLocation(tokenId, listStorageLocation);
+    }
+
+    /**
+     * @notice Associates a token with a list storage location.
+     * @param tokenId The ID of the token.
+     * @param listStorageLocation The list storage location to be associated with the token.
+     */
+    function _setListStorageLocation(uint tokenId, bytes calldata listStorageLocation) internal {
+        tokenIdToListStorageLocation[tokenId] = listStorageLocation;
+        emit ListStorageLocationChange(tokenId, listStorageLocation);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Mint
     ///////////////////////////////////////////////////////////////////////////
 
@@ -122,23 +160,31 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         emit MaxMintBatchSizeChange(_maxMintBatchSize);
     }
 
-    /// @notice Mints a new token.
-    function mint() public payable mintAllowed {
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
+    /**
+     * @notice Mints a new token.
+     * @param listStorageLocation The list storage location to be associated with the token.
+     */
+    function mint(bytes calldata listStorageLocation) public payable mintAllowed {
+        uint tokenId = totalSupply();
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
         require(msg.value >= price, "insufficient funds");
 
         _mint(msg.sender, 1);
+        _setListStorageLocation(tokenId, listStorageLocation);
     }
 
     /**
      * @notice Mints a new token to the given address.
      * @param to The address to mint the token to.
+     * @param listStorageLocation The list storage location to be associated with the token.
      */
-    function mintTo(address to) public payable mintAllowed {
-        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), 1) : 0;
+    function mintTo(address to, bytes calldata listStorageLocation) public payable mintAllowed {
+        uint tokenId = totalSupply();
+        uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
         require(msg.value >= price, "insufficient funds");
 
         _mint(to, 1);
+        _setListStorageLocation(tokenId, listStorageLocation);
     }
 
     /// @notice Mints a batch of new tokens.
@@ -150,6 +196,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         require(msg.value >= price, "insufficient funds");
 
         _mint(msg.sender, quantity);
+        // leave tokenIdToListStorageLocation unset for these tokens
     }
 
     /// @notice Mints a batch of new tokens.
@@ -162,55 +209,6 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         require(msg.value >= price, "insufficient funds");
 
         _mint(to, quantity);
+        // leave tokenIdToListStorageLocation unset for these tokens
     }
-
-    // ///////////////////////////////////////////////////////////////////////////
-    // // List Location
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // /**
-    //  * @notice Fetches the list location associated with a specific token.
-    //  * @param tokenId The ID of the token.
-    //  * @return The list location.
-    //  */
-    // function getListStorageLocation(uint tokenId) external view returns (ListStorageLocation memory) {
-    //     return tokenIdToListStorageLocation[tokenId];
-    // }
-
-    // /**
-    //  * @notice Associates a token with a list storage location.
-    //  * @param tokenId The ID of the token.
-    //  * @param listStorageLocation The list storage location to be associated with the token.
-    //  */
-    // function setListStorageLocation(uint tokenId, ListStorageLocation calldata listStorageLocation) external onlyTokenOwner(tokenId) {
-    //     tokenIdToListStorageLocation[tokenId] = listStorageLocation;
-    //     emit ListStorageLocationChange(tokenId, listStorageLocation);
-    // }
-
-    // ///////////////////////////////////////////////////////////////////////////
-    // // User
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // /**
-    //  * @notice Fetches the user associated with a specific token.
-    //  * @param tokenId The ID of the token.
-    //  * @return The Ethereum address of the user.
-    //  */
-    // function getUser(uint tokenId) external view returns (address) {
-    //     address user = tokenIdToListUser[tokenId];
-
-    //     // distinguish from 0x0000...0000 address
-    //     return (user != address(0)) ? user : ownerOf(tokenId);
-    // }
-
-    // /**
-    //  * @notice Sets the user for a specific token.
-    //  * @param tokenId The ID of the token.
-    //  * @param userAddress The Ethereum address of the user.
-    //  */
-    // function setUser(uint tokenId, address userAddress) external onlyTokenOwner(tokenId) {
-    //     require(ownerOf(tokenId) == msg.sender, "EFP: caller is not the manager");
-    //     tokenIdToListUser[tokenId] = userAddress;
-    //     emit ListUserChange(tokenId, userAddress);
-    // }
 }
