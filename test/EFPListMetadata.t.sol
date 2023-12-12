@@ -19,13 +19,13 @@ contract EFPListMetadataTest is Test {
     }
 
     function test_CanSetMetadataValue() public {
-      listRecords.claimListManager(NONCE);
+        listRecords.claimListManager(NONCE);
         listRecords.setMetadataValue(NONCE, "key", "value");
         assertEq(listRecords.getMetadataValue(NONCE, "key"), "value");
     }
 
     function test_CanSetMetadataValues() public {
-      listRecords.claimListManager(NONCE);
+        listRecords.claimListManager(NONCE);
         // array of key-values to pass in
         IEFPListMetadata.KeyValue[] memory records = new IEFPListMetadata.KeyValue[](2);
         records[0] = IEFPListMetadata.KeyValue("key1", "value1");

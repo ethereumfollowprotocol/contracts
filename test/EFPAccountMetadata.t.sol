@@ -7,7 +7,6 @@ import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 import {IEFPAccountMetadata} from "../src/IEFPAccountMetadata.sol";
 import {ListStorageLocation} from "../src/ListStorageLocation.sol";
 
-
 contract EFPAccountMetadataTest is Test {
     EFPAccountMetadata public metadata;
 

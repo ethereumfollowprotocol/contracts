@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
 
+
 contract EFPListRegistryTest is Test {
     uint8 constant VERSION = 1;
     uint8 constant LIST_LOCATION_TYPE = 1;
@@ -22,11 +23,9 @@ contract EFPListRegistryTest is Test {
         }
     }
 
-    function _bytesToStructOfUintAddressUint(bytes memory data)
-        private
-        pure
-        returns (uint256 chainId, address contractAddress, uint256 nonce)
-    {
+    function _bytesToStructOfUintAddressUint(
+        bytes memory data
+    ) private pure returns (uint256 chainId, address contractAddress, uint256 nonce) {
         assembly {
             chainId := mload(add(data, 32))
             contractAddress := mload(add(data, 52))
@@ -72,6 +71,30 @@ contract EFPListRegistryTest is Test {
         assertEq(registry.getListStorageLocation(0), makeListStorageLocation(0));
     }
 
+    function test_CanMintBatch() public {
+        assertEq(registry.totalSupply(), 0);
+        registry.setMintState(IEFPListRegistry.MintState.PublicMint);
+        registry.mintBatch(2);
+        assertEq(registry.totalSupply(), 2);
+        assertEq(registry.balanceOf(address(this)), 2);
+        assertEq(registry.ownerOf(0), address(this));
+        assertEq(registry.ownerOf(1), address(this));
+        assertEq(registry.getListStorageLocation(0), new bytes(0));
+        assertEq(registry.getListStorageLocation(1), new bytes(0));
+    }
+
+    function test_CanMintBatchTo() public {
+        assertEq(registry.totalSupply(), 0);
+        registry.setMintState(IEFPListRegistry.MintState.PublicMint);
+        registry.mintBatchTo(address(this), 2);
+        assertEq(registry.totalSupply(), 2);
+        assertEq(registry.balanceOf(address(this)), 2);
+        assertEq(registry.ownerOf(0), address(this));
+        assertEq(registry.ownerOf(1), address(this));
+        assertEq(registry.getListStorageLocation(0), new bytes(0));
+        assertEq(registry.getListStorageLocation(1), new bytes(0));
+    }
+
     function test_CanSetListStorageLocation() public {
         registry.setMintState(IEFPListRegistry.MintState.PublicMint);
         registry.mint(makeListStorageLocation(0));
@@ -91,5 +114,14 @@ contract EFPListRegistryTest is Test {
         vm.expectRevert("EFP: caller is not the owner");
         registry.setListStorageLocation(0, newListStorageLocation);
         console.logBytes(registry.getListStorageLocation(0));
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external pure returns (bytes4) {
+        return bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
     }
 }

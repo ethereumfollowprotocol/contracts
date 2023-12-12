@@ -169,7 +169,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
         require(msg.value >= price, "insufficient funds");
 
-        _mint(msg.sender, 1);
+        _safeMint(msg.sender, 1);
         _setListStorageLocation(tokenId, listStorageLocation);
     }
 
@@ -183,7 +183,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
         require(msg.value >= price, "insufficient funds");
 
-        _mint(to, 1);
+        _safeMint(to, 1);
         _setListStorageLocation(tokenId, listStorageLocation);
     }
 
@@ -195,7 +195,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
         require(msg.value >= price, "insufficient funds");
 
-        _mint(msg.sender, quantity);
+        _safeMint(msg.sender, quantity);
         // leave tokenIdToListStorageLocation unset for these tokens
     }
 
@@ -208,7 +208,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
         uint price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
         require(msg.value >= price, "insufficient funds");
 
-        _mint(to, quantity);
+        _safeMint(to, quantity);
         // leave tokenIdToListStorageLocation unset for these tokens
     }
 }
