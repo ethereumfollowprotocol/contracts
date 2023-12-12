@@ -18,7 +18,7 @@ interface IEFPListManager {
  * @title IEFPListMetadata
  */
 interface IEFPListMetadata is IEFPListManager {
-    event ValueSet(uint256 indexed nonce, string key, bytes value);
+    event NewListMetadataValue(uint256 indexed nonce, string key, bytes value);
 
     struct KeyValue {
         string key;

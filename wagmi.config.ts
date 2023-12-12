@@ -8,7 +8,7 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 /**
  * docs: https://beta.wagmi.sh
- * 
+ *
  * Runs forge build then generates a single typescript file containing all ABIs
  *
  * Usage:

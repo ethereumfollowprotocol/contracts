@@ -11,7 +11,7 @@ interface IEFPAccountMetadata {
 
     function isProxy(address proxy) external view returns (bool);
 
-    event ValueSet(address indexed addr, string key, bytes value);
+    event NewAccountMetadataValue(address indexed addr, string key, bytes value);
 
     /**
      * @title Key-value Record

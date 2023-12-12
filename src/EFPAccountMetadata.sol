@@ -108,7 +108,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
      */
     function _setValue(address addr, string calldata key, bytes calldata value) internal {
         values[addr][key] = value;
-        emit ValueSet(addr, key, value);
+        emit NewAccountMetadataValue(addr, key, value);
     }
 
     /**

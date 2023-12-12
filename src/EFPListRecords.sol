@@ -154,7 +154,7 @@ abstract contract ListMetadata is IEFPListMetadata, ListManager {
      */
     function _setMetadataValue(uint256 nonce, string calldata key, bytes calldata value) internal {
         values[nonce][key] = value;
-        emit ValueSet(nonce, key, value);
+        emit NewListMetadataValue(nonce, key, value);
     }
 
     /**
