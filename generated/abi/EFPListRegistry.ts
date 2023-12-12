@@ -160,49 +160,13 @@ export const EFPListRegistryABI = [
         "type": "uint256"
       },
       {
-        "components": [
-          {
-            "internalType": "uint8",
-            "name": "version",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "locationType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
         "indexed": false,
-        "internalType": "struct ListStorageLocation",
+        "internalType": "bytes",
         "name": "listStorageLocation",
-        "type": "tuple"
+        "type": "bytes"
       }
     ],
     "name": "ListStorageLocationChange",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "listUser",
-        "type": "address"
-      }
-    ],
-    "name": "ListUserChange",
     "type": "event"
   },
   {
@@ -345,6 +309,25 @@ export const EFPListRegistryABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getListStorageLocation",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getMaxMintBatchSize",
     "outputs": [
@@ -408,7 +391,13 @@ export const EFPListRegistryABI = [
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "listStorageLocation",
+        "type": "bytes"
+      }
+    ],
     "name": "mint",
     "outputs": [],
     "stateMutability": "payable",
@@ -451,6 +440,11 @@ export const EFPListRegistryABI = [
         "internalType": "address",
         "name": "to",
         "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "listStorageLocation",
+        "type": "bytes"
       }
     ],
     "name": "mintTo",
@@ -575,6 +569,24 @@ export const EFPListRegistryABI = [
       }
     ],
     "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "listStorageLocation",
+        "type": "bytes"
+      }
+    ],
+    "name": "setListStorageLocation",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

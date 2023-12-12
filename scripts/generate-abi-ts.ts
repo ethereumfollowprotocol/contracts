@@ -9,7 +9,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const contractNames = ['EFPAccountMetadata', 'EFPListMetadata', 'EFPListMinter', 'EFPListRecords', 'EFPListRegistry']
+const contractNames = ['EFPAccountMetadata', 'EFPListMinter', 'EFPListRecords', 'EFPListRegistry']
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -18,7 +18,7 @@ const inputDir = '../out'
 
 const outputDirs = [
   path.resolve(projectDir, 'generated/abi'),
-  path.resolve(projectDir, '..', 'indexer/packages/indexer/src/abi/generated'),
+  path.resolve(projectDir, '..', 'indexer/src/abi/generated'),
 ]
 
 for (const contractName of contractNames) {
@@ -37,7 +37,6 @@ for (const contractName of contractNames) {
 
 // generate index.ts
 // export * from './EFPAccountMetadata'
-// export * from './EFPListMetadata'
 // export * from './EFPListMinter'
 // export * from './EFPListRegistry'
 // export * from './EFPListRecords'
