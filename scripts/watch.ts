@@ -1,10 +1,4 @@
-import {
-  EFPAccountMetadataABI,
-  EFPListMetadataABI,
-  EFPListMinterABI,
-  EFPListRecordsABI,
-  EFPListRegistryABI,
-} from '#/generated/abi'
+import { EFPAccountMetadataABI, EFPListMinterABI, EFPListRecordsABI, EFPListRegistryABI } from '#/generated/abi'
 import { decodeEventLog } from 'viem'
 import { clients } from './clients.ts'
 import './types.ts'

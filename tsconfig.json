@@ -18,17 +18,13 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "types": [
-      "node",
-      "bun-types"
-    ],
+    "types": ["node", "bun-types"],
     "baseUrl": ".",
     "paths": {
       "#/*": ["src/*"],
-      "#/generated/*": ["generated/*"],
-    },
+      "#/generated/*": ["generated/*"]
+    }
   },
-  "include": [
-    "scripts",
-  ]
+  "include": ["scripts", "generated"],
+  "files": ["./wagmi.config.ts"]
 }
