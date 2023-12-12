@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {console} from "lib/forge-std/src/console.sol";
+import "forge-std/console.sol";
 
 import {Colors} from "./Colors.sol";
 import {ContractConfigs} from "./ContractConfigs.sol";
@@ -9,12 +9,10 @@ import {Contracts} from "./Contracts.sol";
 import {StringUtils} from "./StringUtils.sol";
 
 import {EFPAccountMetadata} from "../../src/EFPAccountMetadata.sol";
-import {EFPListMetadata} from "../../src/EFPListMetadata.sol";
 import {EFPListMinter} from "../../src/EFPListMinter.sol";
 import {EFPListRegistry} from "../../src/EFPListRegistry.sol";
 import {EFPListRecords} from "../../src/EFPListRecords.sol";
 import {IEFPAccountMetadata} from "../../src/IEFPAccountMetadata.sol";
-import {IEFPListMetadata} from "../../src/IEFPListMetadata.sol";
 import {IEFPListRegistry} from "../../src/IEFPListRegistry.sol";
 import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
 
@@ -59,16 +57,6 @@ contract Deployer {
             console.log(Colors.GREEN, "EFPListRegistry    :", address(listRegistry), Colors.ENDC);
         }
 
-        // EFPListMetadata
-        IEFPListMetadata listMetadata;
-        if (isContract(ContractConfigs.EFP_LIST_METADATA)) {
-            listMetadata = EFPListMetadata(ContractConfigs.EFP_LIST_METADATA);
-            console.log(" EFPListMetadata    :", address(listMetadata));
-        } else {
-            listMetadata = new EFPListMetadata();
-            console.log(Colors.GREEN, "EFPListMetadata    :", address(listMetadata), Colors.ENDC);
-        }
-
         // EFPListRecords
         IEFPListRecords listRecords;
         if (isContract(ContractConfigs.EFP_LIST_RECORDS)) {
@@ -88,7 +76,7 @@ contract Deployer {
             listMinter = new EFPListMinter(
                 address(listRegistry),
                 address(accountMetadata),
-                address(listMetadata),
+                // address(listMetadata),
                 address(listRecords)
             );
             console.log(Colors.GREEN, "EFPListMinter      :", address(listMinter), Colors.ENDC);
@@ -99,7 +87,7 @@ contract Deployer {
             Contracts({
                 accountMetadata: address(accountMetadata),
                 listRegistry: address(listRegistry),
-                listMetadata: address(listMetadata),
+                // listMetadata: address(listMetadata),
                 listRecords: address(listRecords),
                 listMinter: address(listMinter)
             });
@@ -109,29 +97,12 @@ contract Deployer {
      * @notice Performs initial configuration for the deployed EFP contracts.
      */
     function initContracts(Contracts memory contracts) public {
-        // Set the list registry address in the account metadata contract
-        address listRegistryAddress = IEFPListMetadata(contracts.listMetadata).getEFPListRegistry();
-        if (listRegistryAddress != contracts.listRegistry) {
-            console.log(Colors.GREEN, "Setting EFPListRegistry address in EFPListMetadata", Colors.ENDC);
-            require(listRegistryAddress == address(0), "List registry already set incorrectly");
-            IEFPListMetadata(contracts.listMetadata).setEFPListRegistry(contracts.listRegistry);
-        } else {
-            console.log(" EFPListRegistry address already set in EFPListMetadata");
-        }
-
         // Add the minter as a proxy for accountMetadata and listMetadata
         if (!IEFPAccountMetadata(contracts.accountMetadata).isProxy(contracts.listMinter)) {
             console.log(Colors.GREEN, "Adding EFPListMinter as proxy for EFPAccountMetadata", Colors.ENDC);
             IEFPAccountMetadata(contracts.accountMetadata).addProxy(contracts.listMinter);
         } else {
             console.log(" EFPListMinter address already a proxy for EFPAccountMetadata");
-        }
-
-        if (!IEFPListMetadata(contracts.listMetadata).isProxy(contracts.listMinter)) {
-            console.log(Colors.GREEN, "Adding EFPListMinter as proxy for EFPListMetadata", Colors.ENDC);
-            IEFPListMetadata(contracts.listMetadata).addProxy(contracts.listMinter);
-        } else {
-            console.log(" EFPListMinter address already a proxy for EFPListMetadata");
         }
     }
 
@@ -156,14 +127,6 @@ contract Deployer {
             console.log(Colors.BLUE, "EFPListRegistry    :", contracts.listRegistry, Colors.ENDC);
         } else {
             revert("EFPListRegistry not deployed");
-        }
-
-        // Load EFPListMetadata
-        if (isContract(ContractConfigs.EFP_LIST_METADATA)) {
-            contracts.listMetadata = ContractConfigs.EFP_LIST_METADATA;
-            console.log(Colors.BLUE, "EFPListMetadata    :", contracts.listMetadata, Colors.ENDC);
-        } else {
-            revert("EFPListMetadata not deployed");
         }
 
         // Load EFPListRecords

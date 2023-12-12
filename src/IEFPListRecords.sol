@@ -2,19 +2,42 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title IEFPListRecords
- * @notice Interface for the ListRecords contract.
+ * @title IEFPListManager
  */
-interface IEFPListRecords {
-    // Events
+interface IEFPListManager {
     event ListManagerChange(uint256 indexed nonce, address manager);
-    event ListOperation(uint256 indexed nonce, bytes op);
 
     // List Manager Functions
     function claimListManager(uint256 nonce) external;
     function claimListManagerForAddress(uint256 nonce, address manager) external;
     function setListManager(uint256 nonce, address manager) external;
     function getListManager(uint256 nonce) external view returns (address);
+}
+
+/**
+ * @title IEFPListMetadata
+ */
+interface IEFPListMetadata is IEFPListManager {
+    event ValueSet(uint256 indexed nonce, string key, bytes value);
+
+    struct KeyValue {
+        string key;
+        bytes value;
+    }
+
+    function getMetadataValue(uint256 nonce, string calldata key) external view returns (bytes memory);
+    function getMetadataValues(uint256 nonce, string[] calldata keys) external view returns (bytes[] memory);
+    function setMetadataValue(uint256 nonce, string calldata key, bytes calldata value) external;
+    function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external;
+}
+
+/**
+ * @title IEFPListRecords
+ * @notice Interface for the ListRecords contract.
+ */
+interface IEFPListRecords is IEFPListMetadata {
+    // Events
+    event ListOperation(uint256 indexed nonce, bytes op);
 
     // List Operation Functions - Read
     function getListOpCount(uint256 nonce) external view returns (uint256);

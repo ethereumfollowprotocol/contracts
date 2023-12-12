@@ -2,60 +2,60 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {EFPListMetadata} from "../src/EFPListMetadata.sol";
-import {EFPListRegistry} from "../src/EFPListRegistry.sol";
-import {IEFPListMetadata} from "../src/IEFPListMetadata.sol";
-import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
-import {ListStorageLocation} from "../src/ListStorageLocation.sol";
+import {EFPListRecords} from "../src/EFPListRecords.sol";
+import {IEFPListMetadata, IEFPListRecords} from "../src/IEFPListRecords.sol";
 
 contract EFPListMetadataTest is Test {
-    EFPListRegistry public registry;
-    EFPListMetadata public metadata;
+    uint256 constant NONCE = 0;
+    EFPListRecords public listRecords;
 
     function setUp() public {
-        registry = new EFPListRegistry();
-        metadata = new EFPListMetadata();
-        metadata.setEFPListRegistry(address(registry));
-        registry.setMintState(IEFPListRegistry.MintState.OwnerOnly);
-        registry.mint(new bytes(0));
+        listRecords = new EFPListRecords();
     }
 
-    function test_CanSetValue() public {
-        metadata.setValue(0, "key", "value");
-        assertEq(metadata.getValue(0, "key"), "value");
+    function test_CanClaimListManager() public {
+        listRecords.claimListManager(NONCE);
+        assertEq(listRecords.getListManager(NONCE), address(this));
     }
 
-    function test_CanSetValues() public {
+    function test_CanSetMetadataValue() public {
+      listRecords.claimListManager(NONCE);
+        listRecords.setMetadataValue(NONCE, "key", "value");
+        assertEq(listRecords.getMetadataValue(NONCE, "key"), "value");
+    }
+
+    function test_CanSetMetadataValues() public {
+      listRecords.claimListManager(NONCE);
         // array of key-values to pass in
         IEFPListMetadata.KeyValue[] memory records = new IEFPListMetadata.KeyValue[](2);
         records[0] = IEFPListMetadata.KeyValue("key1", "value1");
         records[1] = IEFPListMetadata.KeyValue("key2", "value2");
-        metadata.setValues(0, records);
-        assertEq(metadata.getValue(0, "key1"), "value1");
-        assertEq(metadata.getValue(0, "key2"), "value2");
+        listRecords.setMetadataValues(NONCE, records);
+        assertEq(listRecords.getMetadataValue(NONCE, "key1"), "value1");
+        assertEq(listRecords.getMetadataValue(NONCE, "key2"), "value2");
         string[] memory keys = new string[](2);
         keys[0] = "key1";
         keys[1] = "key2";
-        bytes[] memory values = metadata.getValues(0, keys);
+        bytes[] memory values = listRecords.getMetadataValues(NONCE, keys);
         assertEq(values[0], "value1");
         assertEq(values[1], "value2");
     }
 
-    function test_RevertIf_SetValueFromNonTokenOwner() public {
+    function test_RevertIf_SetMetadataValueFromNonManager() public {
         // cannot set value if don't own token
         // try calling from another address
         vm.prank(address(1));
-        vm.expectRevert("not token owner");
-        metadata.setValue(0, "key", "value");
+        vm.expectRevert("not manager");
+        listRecords.setMetadataValue(NONCE, "key", "value");
     }
 
-    function test_RevertIf_SetValuesFromNonTokenOwner() public {
+    function test_RevertIf_SetMetadataValuesFromNonManager() public {
         IEFPListMetadata.KeyValue[] memory records = new IEFPListMetadata.KeyValue[](2);
         records[0] = IEFPListMetadata.KeyValue("key1", "value1");
         records[1] = IEFPListMetadata.KeyValue("key2", "value2");
 
         vm.prank(address(1));
-        vm.expectRevert("not token owner");
-        metadata.setValues(0, records);
+        vm.expectRevert("not manager");
+        listRecords.setMetadataValues(NONCE, records);
     }
 }

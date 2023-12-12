@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import "forge-std/console.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IEFPListRecords} from "./IEFPListRecords.sol";
+import {IEFPListManager, IEFPListMetadata, IEFPListRecords} from "./IEFPListRecords.sol";
 
 /**
- * @title EFPListRecords
- * @notice Manages a dynamic list of records associated with EFP List NFTs.
- *         Provides functionalities for list managers to apply operations to their lists.
+ * @title ListManager
+ * @notice Manages ownership and access control for dynamic lists with unique nonces.
+ *         Supports claiming, transferring, and retrieving list management rights.
+ *         Each list is uniquely identified by a nonce, and only authorized entities
+ *         can perform actions on their lists.
  */
-contract EFPListRecords is IEFPListRecords, Ownable {
+abstract contract ListManager is IEFPListManager {
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
@@ -17,10 +20,6 @@ contract EFPListRecords is IEFPListRecords, Ownable {
     /// @notice Maps each nonce to the address of its managing entity.
     /// @dev Nonces are unique identifiers for lists; each list has one manager.
     mapping(uint256 => address) public managers;
-
-    /// @notice Stores a sequence of operations for each list identified by its nonce.
-    /// @dev Each list can have multiple operations performed over time.
-    mapping(uint256 => bytes[]) public listOps;
 
     ///////////////////////////////////////////////////////////////////////////
     // Modifiers
@@ -32,12 +31,25 @@ contract EFPListRecords is IEFPListRecords, Ownable {
      * @dev Used to restrict function access to the list's manager.
      */
     modifier onlyListManager(uint256 nonce) {
-        require(managers[nonce] == msg.sender, "Not manager");
+        require(managers[nonce] == msg.sender, "not manager");
         _;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // List Manager Functions
+    // List Manager - Read
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Retrieves the address of the manager for a specified list nonce.
+     * @param nonce The list's unique identifier.
+     * @return The address of the manager.
+     */
+    function getListManager(uint256 nonce) external view returns (address) {
+        return managers[nonce];
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Manager - Write
     ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -79,15 +91,119 @@ contract EFPListRecords is IEFPListRecords, Ownable {
         managers[nonce] = manager;
         emit ListManagerChange(nonce, manager);
     }
+}
+
+/**
+ * @title ListMetadata
+ *
+ * @notice Manages key-value pairs associated with EFP List NFTs.
+ *         Provides functionalities for list managers to set and retrieve metadata for their lists.
+ */
+abstract contract ListMetadata is IEFPListMetadata, ListManager {
+    ///////////////////////////////////////////////////////////////////////////
+    // Data Structures
+    ///////////////////////////////////////////////////////////////////////////
+
+    /// @dev The key-value set for each token ID
+    mapping(uint256 => mapping(string => bytes)) private values;
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Getters
+    /////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @notice Retrieves the address of the manager for a specified list nonce.
-     * @param nonce The list's unique identifier.
-     * @return The address of the manager.
+     * @dev Retrieves metadata value for token ID and key.
+     * @param tokenId The token Id to query.
+     * @param key The key to query.
+     * @return The associated value.
      */
-    function getListManager(uint256 nonce) external view returns (address) {
-        return managers[nonce];
+    function getMetadataValue(uint256 tokenId, string calldata key) external view returns (bytes memory) {
+        return values[tokenId][key];
     }
+
+    /**
+     * @dev Retrieves metadata values for token ID and keys.
+     * @param tokenId The token Id to query.
+     * @param keys The keys to query.
+     * @return The associated values.
+     */
+    function getMetadataValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
+        uint256 length = keys.length;
+        bytes[] memory result = new bytes[](length);
+        for (uint256 i = 0; i < length; ) {
+            string calldata key = keys[i];
+            result[i] = values[tokenId][key];
+            unchecked {
+                ++i;
+            }
+        }
+        return result;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Setters
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @dev Sets metadata records for token ID with the unique key key to value,
+     * overwriting anything previously stored for token ID and key. To clear a
+     * field, set it to the empty string.
+     * @param nonce The nonce corresponding to the list to update.
+     * @param key The key to set.
+     * @param value The value to set.
+     */
+    function _setMetadataValue(uint256 nonce, string calldata key, bytes calldata value) internal {
+        values[nonce][key] = value;
+        emit ValueSet(nonce, key, value);
+    }
+
+    /**
+     * @dev Sets metadata records for token ID with the unique key key to value,
+     * overwriting anything previously stored for token ID and key. To clear a
+     * field, set it to the empty string. Only callable by the list manager.
+     * @param nonce The nonce corresponding to the list to update.
+     * @param key The key to set.
+     * @param value The value to set.
+     */
+    function setMetadataValue(
+        uint256 nonce,
+        string calldata key,
+        bytes calldata value
+    ) external onlyListManager(nonce) {
+        _setMetadataValue(nonce, key, value);
+    }
+
+    /**
+     * @dev Sets an array of metadata records for a token ID. Each record is a
+     * key/value pair. Only callable by the list manager.
+     * @param nonce The nonce corresponding to the list to update.
+     * @param records The records to set.
+     */
+    function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external onlyListManager(nonce) {
+        uint256 length = records.length;
+        for (uint256 i = 0; i < length; ) {
+            KeyValue calldata record = records[i];
+            _setMetadataValue(nonce, record.key, record.value);
+            unchecked {
+                ++i;
+            }
+        }
+    }
+}
+
+/**
+ * @title EFPListRecords
+ * @notice Manages a dynamic list of records associated with EFP List NFTs.
+ *         Provides functionalities for list managers to apply operations to their lists.
+ */
+abstract contract ListRecords is IEFPListRecords, ListManager {
+    ///////////////////////////////////////////////////////////////////////////
+    // Data Structures
+    ///////////////////////////////////////////////////////////////////////////
+
+    /// @notice Stores a sequence of operations for each list identified by its nonce.
+    /// @dev Each list can have multiple operations performed over time.
+    mapping(uint256 => bytes[]) public listOps;
 
     ///////////////////////////////////////////////////////////////////////////
     // List Operation Functions -  Read
@@ -182,3 +298,5 @@ contract EFPListRecords is IEFPListRecords, Ownable {
         }
     }
 }
+
+contract EFPListRecords is ListRecords, ListMetadata, Ownable {}

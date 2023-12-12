@@ -16,7 +16,7 @@ contract EFPListRecordsTest is Test {
     address ADDRESS_1 = 0x0000000000000000000000000000000000AbC123;
     address ADDRESS_2 = 0x0000000000000000000000000000000000DeF456;
     address ADDRESS_3 = 0x0000000000000000000000000000000000789AbC;
-    uint256 constant TOKEN_ID = 0;
+    uint256 constant NONCE = 0;
 
     function setUp() public {
         listRecords = new EFPListRecords();
@@ -24,19 +24,19 @@ contract EFPListRecordsTest is Test {
 
     function test_CanClaimListManager() public {
         vm.prank(ADDRESS_1);
-        listRecords.claimListManager(TOKEN_ID);
+        listRecords.claimListManager(NONCE);
 
-        assertEq(listRecords.getListManager(TOKEN_ID), ADDRESS_1, "Manager1 should be the manager of list 1");
+        assertEq(listRecords.getListManager(NONCE), ADDRESS_1, "Manager1 should be the manager of list 1");
     }
 
     function test_CanSetListManager() public {
         vm.prank(ADDRESS_1);
-        listRecords.claimListManager(TOKEN_ID);
+        listRecords.claimListManager(NONCE);
 
         vm.prank(ADDRESS_1);
-        listRecords.setListManager(TOKEN_ID, ADDRESS_2);
+        listRecords.setListManager(NONCE, ADDRESS_2);
 
-        assertEq(listRecords.getListManager(TOKEN_ID), ADDRESS_2, "Manager2 should now be the manager of list 1");
+        assertEq(listRecords.getListManager(NONCE), ADDRESS_2, "Manager2 should now be the manager of list 1");
     }
 
     function test_CanApplyListOpToAddRecord() public {
@@ -56,30 +56,30 @@ contract EFPListRecordsTest is Test {
     }
 
     function helper_CanApplyListOp(uint8 opType) internal {
-        assertEq(listRecords.getListOpCount(TOKEN_ID), 0);
+        assertEq(listRecords.getListOpCount(NONCE), 0);
 
-        listRecords.claimListManager(TOKEN_ID);
+        listRecords.claimListManager(NONCE);
 
         bytes memory listOp = encodeListOp(opType);
-        listRecords.applyListOp(TOKEN_ID, listOp);
+        listRecords.applyListOp(NONCE, listOp);
 
-        assertEq(listRecords.getListOpCount(TOKEN_ID), 1);
-        assertBytesEqual(listRecords.getListOp(TOKEN_ID, 0), listOp);
+        assertEq(listRecords.getListOpCount(NONCE), 1);
+        assertBytesEqual(listRecords.getListOp(NONCE, 0), listOp);
     }
 
     function test_CanApplyMultipleListOpsAtOnce() public {
-        assertEq(listRecords.getListOpCount(TOKEN_ID), 0);
+        assertEq(listRecords.getListOpCount(NONCE), 0);
 
-        listRecords.claimListManager(TOKEN_ID);
+        listRecords.claimListManager(NONCE);
 
         bytes[] memory listOps = new bytes[](2);
         listOps[0] = encodeListOp(LIST_OP_TYPE_ADD_RECORD);
         listOps[1] = encodeListOp(LIST_OP_TYPE_REMOVE_RECORD);
-        listRecords.applyListOps(TOKEN_ID, listOps);
+        listRecords.applyListOps(NONCE, listOps);
 
-        assertEq(listRecords.getListOpCount(TOKEN_ID), 2);
-        assertBytesEqual(listRecords.getListOp(TOKEN_ID, 0), listOps[0]);
-        assertBytesEqual(listRecords.getListOp(TOKEN_ID, 1), listOps[1]);
+        assertEq(listRecords.getListOpCount(NONCE), 2);
+        assertBytesEqual(listRecords.getListOp(NONCE, 0), listOps[0]);
+        assertBytesEqual(listRecords.getListOp(NONCE, 1), listOps[1]);
     }
 
     function encodeListOp(uint8 opType) internal view returns (bytes memory) {

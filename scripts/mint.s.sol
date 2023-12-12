@@ -15,7 +15,6 @@ import {Logger} from "./util/Logger.sol";
 import {StringUtils} from "./util/StringUtils.sol";
 
 import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
-import {EFPListMetadata} from "../src/EFPListMetadata.sol";
 import {EFPListMinter} from "../src/EFPListMinter.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 import {EFPListRecords} from "../src/EFPListRecords.sol";
@@ -177,11 +176,28 @@ contract MintScript is Script, Deployer {
         return asBytes;
     }
 
+    function getChainId() external view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
+        }
+        return id;
+    }
+
+    function makeListStorageLocation(address listRecordsAddress, uint nonce) private view returns (bytes memory) {
+        uint8 VERSION = 1;
+        uint8 LIST_LOCATION_TYPE = 1;
+        return abi.encodePacked(VERSION, LIST_LOCATION_TYPE, this.getChainId(), listRecordsAddress, nonce);
+    }
+
     function mints(Contracts memory contracts) public {
         uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         for (uint256 tid = totalSupply; tid <= lastTokenId; tid++) {
             console.log("minting token id %d with nonce %d", tid, tid);
-            EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(tid);
+            bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, tid);
+            EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
+            // claim list manager
+            EFPListRecords(contracts.listRecords).claimListManager(tid);
             // IEFPListRecords(contracts.listRecords).claimListManager(tid);
             ListOp[] memory listOps = listOpsMapping[tid];
             uint256 currentListOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tid);
@@ -195,7 +211,9 @@ contract MintScript is Script, Deployer {
         uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         uint tokenId = totalSupply;
         console.log("minting token id %d with nonce %d", totalSupply, totalSupply);
-        EFPListMinter(contracts.listMinter).mintWithListLocationOnL1AndSetAsDefaultList(totalSupply);
+        bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
+        EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
+        EFPListRecords(contracts.listRecords).claimListManager(totalSupply);
         totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         lastTokenId = totalSupply;
         // IEFPListRecords(contracts.listRecords).claimListManager(totalSupply);

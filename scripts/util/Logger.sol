@@ -13,7 +13,7 @@ import {StringUtils} from "./StringUtils.sol";
 import {Contracts} from "./Contracts.sol";
 
 import {ListOp} from "../../src/ListOp.sol";
-import {IEFPListMetadata} from "../../src/IEFPListMetadata.sol";
+import {IEFPListRegistry} from "../../src/IEFPListRegistry.sol";
 import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
 
 library Logger {
@@ -103,14 +103,17 @@ library Logger {
         );
 
         for (uint256 tokenId = start; tokenId <= end; tokenId++) {
-            bytes memory listLocation = IEFPListMetadata(contracts.listMetadata).getValue(tokenId, "efp.list.location");
-            require(listLocation[0] == 0x01, "Logger: invalid list location version");
-            require(listLocation[1] == 0x01, "Logger: invalid list location type");
-            // load next 20 bytes as an address type
-            address listLocationAddress = BytesUtils.toAddress(listLocation, 2);
-            require(contracts.listRecords == listLocationAddress, "Logger: invalid list address");
-            // now retrieve the 32-byte nonce at bytes 22-53
-            uint256 nonce = BytesUtils.toUint256(listLocation, 22);
+            bytes memory listStorageLocation = IEFPListRegistry(contracts.listRegistry).getListStorageLocation(tokenId);
+            require(listStorageLocation.length > 0, "Logger: invalid list storage location");
+            require(listStorageLocation[0] == 0x01, "Logger: invalid list location version");
+            require(listStorageLocation[1] == 0x01, "Logger: invalid list location type");
+            // load the next 32 bytes as chain id, bytes 2-33
+            uint256 chainId = BytesUtils.toUint256(listStorageLocation, 2);
+            // load next 20 bytes as an address type, bytes 34-53
+            address listStorageLocationAddress = BytesUtils.toAddress(listStorageLocation, 34);
+            require(contracts.listRecords == listStorageLocationAddress, "Logger: invalid list address");
+            // now retrieve the 32-byte nonce at bytes 54-85
+            uint256 nonce = BytesUtils.toUint256(listStorageLocation, 54);
 
             // now we determine how many list ops are in the list
             uint256 listOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tokenId);
