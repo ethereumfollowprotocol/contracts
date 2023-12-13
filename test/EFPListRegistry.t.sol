@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
 
-
 contract EFPListRegistryTest is Test {
     uint8 constant VERSION = 1;
     uint8 constant LIST_LOCATION_TYPE = 1;

@@ -38,11 +38,11 @@ library ListOpUtils {
             }
             s = string.concat(Colors.DARK_GREEN, s, Colors.ENDC);
         } else if (listOp.code == 0x04) {
-          s = string.concat("untag '", decodeTag(listOp), "'");
-          while (bytes(s).length < 13) {
-              s = string.concat(s, " ");
-          }
-          s = string.concat(Colors.DARK_RED, s, Colors.ENDC);
+            s = string.concat("untag '", decodeTag(listOp), "'");
+            while (bytes(s).length < 13) {
+                s = string.concat(s, " ");
+            }
+            s = string.concat(Colors.DARK_RED, s, Colors.ENDC);
         }
         while (bytes(s).length < 16) {
             s = string.concat(s, " ");

@@ -58,29 +58,54 @@ library Logger {
         return s;
     }
 
-    function logNFTs(address nftContract, uint256 start) internal view {
-        IERC721Enumerable erc721 = IERC721Enumerable(nftContract);
+    function logNFTs(Contracts memory contracts, uint256 start) internal view {
+        IERC721Enumerable erc721 = IERC721Enumerable(contracts.listRegistry);
 
         uint256 totalSupply = erc721.totalSupply();
-
         console.log();
-        console.log("---------------------------------------------------------");
-        console.log("|                     EFP List NFTs                     |");
-        console.log("---------------------------------------------------------");
-        console.log("| Token ID |                    Owner                   |");
-        console.log("---------------------------------------------------------");
+        console.log(
+            "---------------------------------------------------------------------------------------------------------------------------------------------------"
+        );
+        console.log(
+            "|                                                            EFP List NFTs                                                                       |"
+        );
+        console.log(
+            "---------------------------------------------------------------------------------------------------------------------------------------------------"
+        );
+        console.log(
+            "| Token ID |                    Owner                   |                   Manager                  |                    User                    |"
+        );
+        console.log(
+            "---------------------------------------------------------------------------------------------------------------------------------------------------"
+        );
 
         for (uint256 j = start; j < totalSupply; j++) {
             address owner = erc721.ownerOf(j);
+            address listManager = IEFPListRecords(contracts.listRecords).getListManager(j);
+            bytes memory userBytes = IEFPListRecords(contracts.listRecords).getMetadataValue(j, "user");
+            require(userBytes.length == 20, "Logger: invalid user bytes");
+            // this line isn't working?
+            address listUser = BytesUtils.toAddress(userBytes, 0);
 
             // Formatting the output as a row in the table
             string memory s = string.concat("|    #", Strings.toString(j), "   ");
             if (j < 10) {
                 s = string.concat(s, " ");
             }
-
-            console.log("%s| %s |", s, Strings.toHexString(uint256(uint160(owner)), 20));
-            console.log("---------------------------------------------------------");
+            s = string.concat(
+                s,
+                "| ",
+                StringUtils.addressToString(owner),
+                " | ",
+                StringUtils.addressToString(listManager),
+                " | ",
+                StringUtils.addressToString(listUser),
+                " |"
+            );
+            console.log(s);
+            console.log(
+                "---------------------------------------------------------------------------------------------------------------------------------------------------"
+            );
         }
     }
 
@@ -108,7 +133,7 @@ library Logger {
             require(listStorageLocation[0] == 0x01, "Logger: invalid list location version");
             require(listStorageLocation[1] == 0x01, "Logger: invalid list location type");
             // load the next 32 bytes as chain id, bytes 2-33
-            uint256 chainId = BytesUtils.toUint256(listStorageLocation, 2);
+            // uint256 chainId = BytesUtils.toUint256(listStorageLocation, 2);
             // load next 20 bytes as an address type, bytes 34-53
             address listStorageLocationAddress = BytesUtils.toAddress(listStorageLocation, 34);
             require(contracts.listRecords == listStorageLocationAddress, "Logger: invalid list address");
