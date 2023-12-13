@@ -87,19 +87,19 @@ library Logger {
     function logListOps(Contracts memory contracts, uint256 start, uint256 end) internal view {
         console.log();
         console.log(
-            "--------------------------------------------------------------------------------------------------"
+            "----------------------------------------------------------------------------------------------------"
         );
         console.log(
-            "|                                           EFP Lists                                            |"
+            "|                                            EFP Lists                                             |"
         );
         console.log(
-            "--------------------------------------------------------------------------------------------------"
+            "----------------------------------------------------------------------------------------------------"
         );
         console.log(
-            "|    Nonce    | Index | ListOp                                                   | Description   |"
+            "|    Nonce    | Index | ListOp                                                     | Description   |"
         );
         console.log(
-            "--------------------------------------------------------------------------------------------------"
+            "----------------------------------------------------------------------------------------------------"
         );
 
         for (uint256 tokenId = start; tokenId <= end; tokenId++) {
@@ -125,7 +125,7 @@ library Logger {
             }
 
             console.log(
-                "--------------------------------------------------------------------------------------------------"
+                "----------------------------------------------------------------------------------------------------"
             );
         }
     }
@@ -139,11 +139,12 @@ library Logger {
         // listOp
         line = string.concat(line, " ", Logger.formatListOp(listOp), " ");
         if (listOp.code == 0x01 || listOp.code == 0x02) {
-            line = string.concat(line, "      |");
-        } else {
+            line = string.concat(line, "        |");
+        } else if (listOp.code == 0x03 || listOp.code == 0x04) {
             line = string.concat(line, "|");
         }
 
+        // description
         string memory desc = listOp.description();
         line = string.concat(line, " ", desc, " |");
 

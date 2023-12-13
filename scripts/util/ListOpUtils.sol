@@ -32,9 +32,17 @@ library ListOpUtils {
         } else if (listOp.code == 0x02) {
             s = string.concat(Colors.RED, "remove record", Colors.ENDC);
         } else if (listOp.code == 0x03) {
-            s = string.concat(Colors.DARK_GREEN, "tag '", decodeTag(listOp), "'    ", Colors.ENDC);
+            s = string.concat("tag '", decodeTag(listOp), "'");
+            while (bytes(s).length < 13) {
+                s = string.concat(s, " ");
+            }
+            s = string.concat(Colors.DARK_GREEN, s, Colors.ENDC);
         } else if (listOp.code == 0x04) {
-            s = string.concat(Colors.DARK_RED, "untag '", decodeTag(listOp), "' ", Colors.ENDC);
+          s = string.concat("untag '", decodeTag(listOp), "'");
+          while (bytes(s).length < 13) {
+              s = string.concat(s, " ");
+          }
+          s = string.concat(Colors.DARK_RED, s, Colors.ENDC);
         }
         while (bytes(s).length < 16) {
             s = string.concat(s, " ");

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import "forge-std/console.sol";
+
 library StringUtils {
     function substring(string memory str, uint256 startIndex, uint256 endIndex) public pure returns (string memory) {
         bytes memory strBytes = bytes(str);
@@ -38,6 +40,37 @@ library StringUtils {
     function bytesToHexStringWithoutPrefix(bytes memory data) public pure returns (string memory) {
         string memory hexString = bytesToHexString(data);
         return substring(hexString, 2, bytes(hexString).length);
+    }
+
+    function hexStringToBytes(string memory s) internal view returns (bytes memory) {
+      // s is of form "0x1234..."
+      // need to first check the leading two characters
+      require(bytes(s)[0] == "0" && bytes(s)[1] == "x", "hexstringToBytes: string must be of form 0x1234...");
+
+      // should have even number of characters minus the leading "0x"
+      require(bytes(s).length % 2 == 0, "hexstringToBytes: string must have even number of characters");
+
+      // now iterate through each pair of characters, converting
+      bytes memory bytes_array = new bytes((bytes(s).length - 2) / 2);
+      for (uint256 i = 2; i < bytes(s).length; i += 2) {
+          uint8 msb = uint8(bytes(s)[i]);
+          uint8 lsb = uint8(bytes(s)[i + 1]);
+          bytes_array[i / 2 - 1] = bytes1(16 * _hexCharToUint(msb) + _hexCharToUint(lsb));
+      }
+      return bytes_array;
+    }
+
+    function _hexCharToUint(uint8 c) internal pure returns (uint8) {
+      if (bytes1(c) >= bytes1("0") && bytes1(c) <= bytes1("9")) {
+          return c - uint8(bytes1("0"));
+      }
+      if (bytes1(c) >= bytes1("a") && bytes1(c) <= bytes1("f")) {
+          return 10 + c - uint8(bytes1("a"));
+      }
+      if (bytes1(c) >= bytes1("A") && bytes1(c) <= bytes1("F")) {
+          return 10 + c - uint8(bytes1("A"));
+      }
+      revert("hexCharToUint: invalid character");
     }
 
     function stringToUint(string memory s) internal pure returns (uint256) {

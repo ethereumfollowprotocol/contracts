@@ -6,6 +6,7 @@ import {Script} from "lib/forge-std/src/Script.sol";
 import {Strings} from "lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 import {IERC721Enumerable} from "lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
+import {BytesUtils} from "./util/BytesUtils.sol";
 import {Colors} from "./util/Colors.sol";
 import {ContractConfigs} from "./util/ContractConfigs.sol";
 import {Contracts} from "./util/Contracts.sol";
@@ -31,7 +32,7 @@ contract MintScript is Script, Deployer {
 
     uint256 lastTokenId = 0;
     uint256 totalRecords = 0;
-    mapping(uint256 => ListRecord[]) public recordsMapping;
+    // mapping(uint256 => ListRecord[]) public recordsMapping;
     mapping(uint256 => ListOp[]) public listOpsMapping;
 
     function setUp() public {
@@ -77,7 +78,9 @@ contract MintScript is Script, Deployer {
             }
             string[] memory values = CSVUtils.split(lines[i], ",");
 
-            uint256 efp_nft_token_id = StringUtils.stringToUint(values[0]);
+            // uint256 efp_nft_token_id = StringUtils.stringToUint(values[0]);
+            uint256 nonce = StringUtils.stringToUint(values[0]);
+            // require(efp_nft_token_id == nonce, "efp_nft_token_id does not match nonce");
 
             // console.log(
             //     'i=%d, require(efp_nft_token_id=%d >= %d=lastTokenId, "tokenIds are not monotonically increasing");',
@@ -85,86 +88,27 @@ contract MintScript is Script, Deployer {
             //     efp_nft_token_id,
             //     lastTokenId
             // );
-            require(efp_nft_token_id >= lastTokenId, "tokenIds are not monotonically increasing");
+            require(nonce >= lastTokenId, "tokenIds are not monotonically increasing");
 
-            uint256 nonce = StringUtils.stringToUint(values[1]);
-            uint256 record_num = StringUtils.stringToUint(values[2]);
 
-            require(efp_nft_token_id == nonce, "efp_nft_token_id does not match nonce");
-            require(record_num == recordsMapping[efp_nft_token_id].length, "record_num is not sequential");
+            string memory listOpHex = values[1];
 
-            uint8 version = uint8(StringUtils.stringToUint(values[3]));
-            uint8 list_record_type = uint8(StringUtils.stringToUint(values[4]));
-            bytes memory data = abi.encodePacked(StringUtils.stringToAddress(values[5]));
+            bytes memory listOpBytes = StringUtils.hexStringToBytes(listOpHex);
+            uint8 listOpVersion = uint8(listOpBytes[0]);
+            uint8 listOpCode = uint8(listOpBytes[1]);
+            bytes memory listOpData = BytesUtils.slice(listOpBytes, 2, listOpBytes.length - 2);
+            ListOp memory listOp = ListOp({
+                version: listOpVersion,
+                code: listOpCode,
+                data: listOpData
+            });
 
-            ListRecord memory record = ListRecord({version: version, recordType: list_record_type, data: data});
-
-            recordsMapping[efp_nft_token_id].push(record);
+            listOpsMapping[nonce].push(listOp);
             // console.log(
             //     "LOADED EFP NFT #%d record #%d as %s", efp_nft_token_id, record_num, StringUtils.bytesToHexString(data)
             // );
 
-            lastTokenId = efp_nft_token_id; // Update lastTokenId after processing the line
-        }
-    }
-
-    function parseListOps() public {
-        // ListOp[] memory listOps = new ListOp[](totalRecords);
-        // fill in listOpsMapping
-        for (uint256 tokenId = 0; tokenId <= lastTokenId; tokenId++) {
-            ListRecord[] memory records = recordsMapping[tokenId];
-
-            // convert each record to a list op (add record) and add to listOps
-            for (uint256 i = 0; i < records.length; i++) {
-                ListRecord memory record = records[i];
-                listOpsMapping[tokenId].push(
-                    ListOp({
-                        version: 0x01,
-                        code: 0x01,
-                        data: abi.encodePacked(record.version, record.recordType, record.data)
-                    })
-                );
-                // now we do classical foo bar tagging
-                // if mod 3 == 0, add foo
-                // else if mod 5 == 0, add bar
-                // else if mod 3 == 0 && mod 5 == 0, add foobar
-                if (i % 3 == 0) {
-                    listOpsMapping[tokenId].push(
-                        ListOp({
-                            version: 0x01,
-                            code: 0x03,
-                            data: abi.encodePacked(record.version, record.recordType, record.data, "foo")
-                        })
-                    );
-                } else if (i % 5 == 0) {
-                    listOpsMapping[tokenId].push(
-                        ListOp({
-                            version: 0x01,
-                            code: 0x03,
-                            data: abi.encodePacked(record.version, record.recordType, record.data, "bar")
-                        })
-                    );
-                } else if (i % 3 == 0 && i % 5 == 0) {
-                    listOpsMapping[tokenId].push(
-                        ListOp({
-                            version: 0x01,
-                            code: 0x03,
-                            data: abi.encodePacked(record.version, record.recordType, record.data, "foobar")
-                        })
-                    );
-                }
-
-                // if i is 6, add a remove record op
-                if (i == 6) {
-                    listOpsMapping[tokenId].push(
-                        ListOp({
-                            version: 0x01,
-                            code: 0x02,
-                            data: abi.encodePacked(record.version, record.recordType, record.data)
-                        })
-                    );
-                }
-            }
+            lastTokenId = nonce; // Update lastTokenId after processing the line
         }
     }
 
@@ -255,8 +199,8 @@ contract MintScript is Script, Deployer {
         console.log();
 
         // determine the total number of records
-        loadCsv(vm.readFile("scripts/lists.csv"));
-        parseListOps();
+        loadCsv(vm.readFile("scripts/data/fizzbuzz.csv"));
+        // parseListOps();
 
         // add all list ops to ListRecords
         uint256 initialTotalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
