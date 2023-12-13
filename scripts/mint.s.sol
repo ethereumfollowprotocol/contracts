@@ -138,9 +138,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     }
 
     function run() public {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        console.log(deployerPrivateKey);
-        vm.startBroadcast(deployerPrivateKey);
+        vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
         // msg.sender will be set to the address derived from the private key
         // you're using for the transaction, specified in the
