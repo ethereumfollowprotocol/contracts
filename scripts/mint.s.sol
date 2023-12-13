@@ -144,10 +144,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         // you're using for the transaction, specified in the
         // vm.startBroadcast(deployerPrivateKey) call.
         console.log(Colors.GREEN, "Deployer           :", msg.sender, Colors.ENDC);
-        // address(this) refers to the address of the currently executing
-        // contract. In your deployment script, this refers to the instance
-        // of the DeployScript contract.
-        // console.log(GREEN, "address(this)      :", address(this), Colors.ENDC);
+        console.log(" nonce              :", vm.getNonce(msg.sender));
         console.log();
 
         // initialize the contracts
