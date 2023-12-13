@@ -1,0 +1,16 @@
+# ignore everything
+*
+# except for
+!.gitmodules
+!bun.lockb
+!foundry.toml
+!package.json
+!solhint.json
+!tsconfig.json
+!generated/
+!lib/
+!scripts/
+!src/
+
+# needed for forge
+!.git
