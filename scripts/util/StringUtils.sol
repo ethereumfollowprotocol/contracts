@@ -83,7 +83,7 @@ library StringUtils {
         return result;
     }
 
-    function stringToAddress(string memory s) internal view returns (address) {
+    function stringToAddress(string memory s) internal pure returns (address) {
         require(bytes(s).length == 42, "invalid address length");
         require(bytes(s)[0] == "0" && bytes(s)[1] == "x", "invalid address prefix");
         bytes memory b = hexStringToBytes(s);
