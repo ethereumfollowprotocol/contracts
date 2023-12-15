@@ -2,9 +2,9 @@
 pragma solidity ^0.8.20;
 
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IEFPAccountMetadata} from "./IEFPAccountMetadata.sol";
-import {IEFPListRegistry} from "./IEFPListRegistry.sol";
-import {IEFPListRecords} from "./IEFPListRecords.sol";
+import {IEFPAccountMetadata} from "./interfaces/IEFPAccountMetadata.sol";
+import {IEFPListRegistry} from "./interfaces/IEFPListRegistry.sol";
+import {IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
 
 interface IEFPListRegistry_ERC721 is IEFPListRegistry {
     function ownerOf(uint256 tokenId) external view returns (address);

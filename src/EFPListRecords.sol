@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IEFPListManager, IEFPListMetadata, IEFPListRecords} from "./IEFPListRecords.sol";
+import {IEFPListManager, IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
 
 /**
  * @title ListManager

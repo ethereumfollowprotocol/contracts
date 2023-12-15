@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {IERC721} from "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IEFPAccountMetadata} from "./IEFPAccountMetadata.sol";
+import {IEFPAccountMetadata} from "./interfaces/IEFPAccountMetadata.sol";
 
 /**
  * @title EFPListMetadata

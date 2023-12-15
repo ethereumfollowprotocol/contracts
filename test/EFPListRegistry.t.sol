@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
-import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
+import {IEFPListRegistry} from "../src/interfaces/IEFPListRegistry.sol";
 
 contract EFPListRegistryTest is Test {
     uint8 constant VERSION = 1;

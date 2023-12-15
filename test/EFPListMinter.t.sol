@@ -7,7 +7,7 @@ pragma solidity ^0.8.20;
 // import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 // import {EFPListRecords} from "../src/EFPListRecords.sol";
 // import {EFPListMinter} from "../src/EFPListMinter.sol";
-// import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
+// import {IEFPListRegistry} from "../src/interfaces/IEFPListRegistry.sol";
 
 // contract EFPListMinterTest is Test {
 //     EFPAccountMetadata public accountMetadata;

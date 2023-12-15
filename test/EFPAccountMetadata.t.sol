@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import "forge-std/Test.sol";
 import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
-import {IEFPAccountMetadata} from "../src/IEFPAccountMetadata.sol";
-import {ListStorageLocation} from "../src/ListStorageLocation.sol";
+import {IEFPAccountMetadata} from "../src/interfaces/IEFPAccountMetadata.sol";
+import {ListStorageLocation} from "../src/types/ListStorageLocation.sol";
 
 contract EFPAccountMetadataTest is Test {
     EFPAccountMetadata public metadata;

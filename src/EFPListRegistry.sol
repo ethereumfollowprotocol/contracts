@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import {ERC721A} from "lib/ERC721A/contracts/ERC721A.sol";
-import {IEFPListRegistry} from "./IEFPListRegistry.sol";
-import {IEFPListPriceOracle} from "./IEFPListPriceOracle.sol";
+import {IEFPListRegistry} from "./interfaces/IEFPListRegistry.sol";
+import {IEFPListPriceOracle} from "./interfaces/IEFPListPriceOracle.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 
 /**
