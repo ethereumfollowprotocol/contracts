@@ -13,7 +13,7 @@ struct ListOp {
     /// @dev Represents the operation code (opcode) for the list operation.
     ///      It's a byte-sized identifier for the type of operation to be performed.
     ///      For example, different byte values could signify add, remove, update, etc.
-    uint8 code;
+    uint8 opcode;
     /// @dev Contains the data or parameters associated with the list operation.
     ///      This is a dynamic byte array, allowing flexibility in the amount and type of
     ///      data that can be included. The structure and interpretation of this data

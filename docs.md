@@ -10,18 +10,19 @@ TOOD: confirm non-rentrancy
 
 Any address can mint an EFP List NFT but only one EFP List can be minted per transaction.
 
-To mint an EFP List, simply call the `mint` function on the `EFPListRegistry` contract.
+To mint an EFP List, simply call the `mint` function on the `EFPListRegistry` contract
+with a provided list storage location (TODO link docs).
 
 ```solidity
 // mint an EFP List
-efpListRegistry.mint();
+efpListRegistry.mint(<list_storage_location>);
 ```
 
 To mint to a specific address, call the `mintTo` function on the `EFPListRegistry` contract.
 
 ```solidity
 // mint an EFP List to a specific address
-efpListRegistry.mintTo(<address>);
+efpListRegistry.mintTo(<address>, <list_storage_location>);
 ```
 
 # Lists
@@ -49,7 +50,54 @@ A `ListRecord` is a fundamental data structure representing a record in a list. 
 - `recordType`: A `uint8` indicating the type of record. This serves as an identifier for the kind of data the record holds.
 - `data`: A `bytes` array containing the actual data of the record. The structure of this data depends on the `recordType`.
 
+Onchain, list records are packed into byte arrays with the version and record type prepended:
+
+```
++------------------+---------------------+------------------------+
+|                  |                     |                        |
+| version (1 byte) | recordType (1 byte) | data (variable length) |
+|                  |                     |                        |
++------------------+---------------------+------------------------+
+```
+
+Off-chain, use a dedicated type for processing list records:
+```typescript
+// TypeScript
+type ListRecord = {
+    version: number; // 0-255
+    recordType: number; // 0-255
+    data: Uint8Array;
+}
+```
+```rust
+// Rust
+struct ListRecord {
+    version: u8,
+    record_type: u8,
+    data: Vec<u8>,
+}
+```
+```python
+# Python
+class ListRecord:
+    version: int # 0-255
+    record_type: int # 0-255
+    data: bytes
+```
+```go
+// Go
+type ListRecord struct {
+    Version    uint8
+    RecordType uint8
+    Data       []byte
+}
+```
 ```solidity
+// Solidity
+//
+// the EFP contracts don't use this struct; they only store list ops as `bytes`
+// but this struct can be useful for offchain processing with foundry or other
+// Solidity tooling
 struct ListRecord {
     uint8 version;
     uint8 recordType;
@@ -100,7 +148,6 @@ The length of the `data` field should be checked to ensure it is the expected le
 
 If the length of the `data` field is unexpected, the `ListRecord` should generally be ignored and not processed.
 
-
 ## Tag
 
 A `Tag` is a string associated with a `ListRecord` in a list. A `ListRecord` can have multiple tags associated with it. A `Tag` is represented as a string.
@@ -116,13 +163,13 @@ Tags should be normalized before they are encoded into a `ListOp`.
 A `ListOp` is a structure used to encapsulate an operation to be performed on a list. It includes the following fields:
 
 - `version`: A `uint8` representing the version of the `ListOp`. This is used to ensure compatibility and facilitate future upgrades.
-- `code`: A `uint8` indicating the operation code. This defines the action to be taken using the `ListOp`.
+- `opcode`: A `uint8` indicating the operation code. This defines the action to be taken using the `ListOp`.
 - `data`: A `bytes` array which holds the operation-specific data. For instance, if the operation involves adding a `ListRecord`, this field would contain the encoded `ListRecord`.
 
 ```solidity
 struct ListOp {
     uint8 version;
-    uint8 code;
+    uint8 opcode;
     bytes data;
 }
 ```
