@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import {Colors} from "./Colors.sol";
 
-import {ListOp} from "../../src/ListOp.sol";
+import {ListOp} from "../../src/types/ListOp.sol";
 
 library ListOpUtils {
     function slice(bytes memory data, uint256 start, uint256 length) internal pure returns (bytes memory) {
@@ -17,7 +17,7 @@ library ListOpUtils {
     function encode(ListOp memory listOp) internal pure returns (bytes memory) {
         bytes memory result = new bytes(2 + listOp.data.length);
         result[0] = bytes1(listOp.version);
-        result[1] = bytes1(listOp.code);
+        result[1] = bytes1(listOp.opcode);
         for (uint256 i = 0; i < listOp.data.length; i++) {
             result[2 + i] = listOp.data[i];
         }
@@ -27,17 +27,17 @@ library ListOpUtils {
     function description(ListOp memory listOp) internal pure returns (string memory desc) {
         string memory s;
 
-        if (listOp.code == 0x01) {
+        if (listOp.opcode == 0x01) {
             s = string.concat(Colors.GREEN, "add record   ", Colors.ENDC);
-        } else if (listOp.code == 0x02) {
+        } else if (listOp.opcode == 0x02) {
             s = string.concat(Colors.RED, "remove record", Colors.ENDC);
-        } else if (listOp.code == 0x03) {
+        } else if (listOp.opcode == 0x03) {
             s = string.concat("tag '", decodeTag(listOp), "'");
             while (bytes(s).length < 13) {
                 s = string.concat(s, " ");
             }
             s = string.concat(Colors.DARK_GREEN, s, Colors.ENDC);
-        } else if (listOp.code == 0x04) {
+        } else if (listOp.opcode == 0x04) {
             s = string.concat("untag '", decodeTag(listOp), "'");
             while (bytes(s).length < 13) {
                 s = string.concat(s, " ");
@@ -51,7 +51,7 @@ library ListOpUtils {
     }
 
     function decodeTag(ListOp memory listOp) internal pure returns (string memory) {
-        require(listOp.code == 0x03 || listOp.code == 0x04, "ListOpUtils: invalid code");
+        require(listOp.opcode == 0x03 || listOp.opcode == 0x04, "ListOpUtils: invalid code");
         // extract the tag as a UTF-8 string starting from the 23rd byte (index 22-end)
         return string(slice(listOp.data, 22, listOp.data.length - 22));
     }

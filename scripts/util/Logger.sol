@@ -12,21 +12,21 @@ import {ListOpUtils} from "./ListOpUtils.sol";
 import {StringUtils} from "./StringUtils.sol";
 import {Contracts} from "./Contracts.sol";
 
-import {ListOp} from "../../src/ListOp.sol";
-import {IEFPListRegistry} from "../../src/IEFPListRegistry.sol";
-import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
+import {ListOp} from "../../src/types/ListOp.sol";
+import {IEFPListRegistry} from "../../src/interfaces/IEFPListRegistry.sol";
+import {IEFPListRecords} from "../../src/interfaces/IEFPListRecords.sol";
 
 library Logger {
     using ListOpUtils for ListOp;
 
     function formatListOp(ListOp memory op) internal pure returns (string memory) {
         // Directly use op.data[0] and op.data[1] in the string.concat to reduce local variables
-        string memory codeColor = op.code == 0x01
+        string memory codeColor = op.opcode == 0x01
             ? Colors.GREEN
             : (
-                op.code == 0x02
+                op.opcode == 0x02
                     ? Colors.RED
-                    : (op.code == 0x03 ? Colors.DARK_GREEN : (op.code == 0x04 ? Colors.DARK_RED : Colors.MAGENTA))
+                    : (op.opcode == 0x03 ? Colors.DARK_GREEN : (op.opcode == 0x04 ? Colors.DARK_RED : Colors.MAGENTA))
             );
 
         // Minimize the creation of new variables by directly manipulating and passing parameters
@@ -35,7 +35,7 @@ library Logger {
             Colors.YELLOW,
             StringUtils.byteToHexString(op.version),
             codeColor,
-            StringUtils.byteToHexString(op.code),
+            StringUtils.byteToHexString(op.opcode),
             Colors.YELLOW,
             StringUtils.byteToHexString(uint8(op.data[0]))
         );
@@ -163,9 +163,9 @@ library Logger {
 
         // listOp
         line = string.concat(line, " ", Logger.formatListOp(listOp), " ");
-        if (listOp.code == 0x01 || listOp.code == 0x02) {
+        if (listOp.opcode == 0x01 || listOp.opcode == 0x02) {
             line = string.concat(line, "        |");
-        } else if (listOp.code == 0x03 || listOp.code == 0x04) {
+        } else if (listOp.opcode == 0x03 || listOp.opcode == 0x04) {
             line = string.concat(line, "|");
         }
 

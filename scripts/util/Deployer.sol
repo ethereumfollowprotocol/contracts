@@ -12,9 +12,9 @@ import {EFPAccountMetadata} from "../../src/EFPAccountMetadata.sol";
 import {EFPListMinter} from "../../src/EFPListMinter.sol";
 import {EFPListRegistry} from "../../src/EFPListRegistry.sol";
 import {EFPListRecords} from "../../src/EFPListRecords.sol";
-import {IEFPAccountMetadata} from "../../src/IEFPAccountMetadata.sol";
-import {IEFPListRegistry} from "../../src/IEFPListRegistry.sol";
-import {IEFPListRecords} from "../../src/IEFPListRecords.sol";
+import {IEFPAccountMetadata} from "../../src/interfaces/IEFPAccountMetadata.sol";
+import {IEFPListRegistry} from "../../src/interfaces/IEFPListRegistry.sol";
+import {IEFPListRecords} from "../../src/interfaces/IEFPListRecords.sol";
 
 contract Deployer {
     /*

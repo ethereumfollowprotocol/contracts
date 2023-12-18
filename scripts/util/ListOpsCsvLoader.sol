@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {BytesUtils} from "../util/BytesUtils.sol";
 import {CSVUtils} from "../util/CSVUtils.sol";
 import {StringUtils} from "../util/StringUtils.sol";
-import {ListOp} from "../../src/ListOp.sol";
+import {ListOp} from "../../src/types/ListOp.sol";
 
 contract ListOpsCsvLoader {
     mapping(uint256 => ListOp[]) public loadedListOpsMapping;
@@ -27,7 +27,7 @@ contract ListOpsCsvLoader {
             uint8 listOpVersion = uint8(listOpBytes[0]);
             uint8 listOpCode = uint8(listOpBytes[1]);
             bytes memory listOpData = BytesUtils.slice(listOpBytes, 2, listOpBytes.length - 2);
-            ListOp memory listOp = ListOp({version: listOpVersion, code: listOpCode, data: listOpData});
+            ListOp memory listOp = ListOp({version: listOpVersion, opcode: listOpCode, data: listOpData});
 
             loadedListOpsMapping[nonce].push(listOp);
         }

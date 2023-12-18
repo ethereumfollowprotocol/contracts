@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "forge-std/console.sol";
-
 library StringUtils {
     function substring(string memory str, uint256 startIndex, uint256 endIndex) public pure returns (string memory) {
         bytes memory strBytes = bytes(str);

@@ -74,7 +74,7 @@ async function main() {
   })
 
   client.watchContractEvent({
-    abi: EFPListMetadataABI,
+    abi: EFPListRecordsABI,
     address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
     // eventName: 'OwnershipTransferred',
     onError: (error) => {
@@ -84,7 +84,7 @@ async function main() {
       console.log('\n--- EFPListMetadata ---\n')
       logs.map(({ data, topics }) => {
         const _topics = decodeEventLog({
-          abi: EFPListMetadataABI,
+          abi: EFPListRecordsABI,
           data,
           topics,
         })

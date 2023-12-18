@@ -19,10 +19,10 @@ import {EFPAccountMetadata} from "../src/EFPAccountMetadata.sol";
 import {EFPListMinter} from "../src/EFPListMinter.sol";
 import {EFPListRegistry} from "../src/EFPListRegistry.sol";
 import {EFPListRecords} from "../src/EFPListRecords.sol";
-import {IEFPListRegistry} from "../src/IEFPListRegistry.sol";
-import {IEFPListRecords} from "../src/IEFPListRecords.sol";
-import {ListOp} from "../src/ListOp.sol";
-import {ListRecord} from "../src/ListRecord.sol";
+import {IEFPListRegistry} from "../src/interfaces/IEFPListRegistry.sol";
+import {IEFPListRecords} from "../src/interfaces/IEFPListRecords.sol";
+import {ListOp} from "../src/types/ListOp.sol";
+import {ListRecord} from "../src/types/ListRecord.sol";
 
 import {ListNFTsCsvLoader} from "./util/ListNFTsCsvLoader.sol";
 import {ListOpsCsvLoader} from "./util/ListOpsCsvLoader.sol";
@@ -65,7 +65,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     function listOpsToBytes(ListOp[] memory listOps) public pure returns (bytes[] memory) {
         bytes[] memory asBytes = new bytes[](listOps.length);
         for (uint256 i = 0; i < listOps.length; i++) {
-            asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].code, listOps[i].data);
+            asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].opcode, listOps[i].data);
         }
         return asBytes;
     }
@@ -130,7 +130,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         ListOp[] memory listOps = new ListOp[](1);
         listOps[0] = ListOp({
             version: 0x01,
-            code: 0x01,
+            opcode: 0x01,
             data: abi.encodePacked(listRecordToFollow.version, listRecordToFollow.recordType, listRecordToFollow.data)
         });
         console.log("applying %d list op%s to token id %d", listOps.length, listOps.length == 1 ? "" : "s", tokenId);
