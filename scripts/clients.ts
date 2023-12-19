@@ -1,4 +1,3 @@
-import { raise } from 'scripts/utilities.ts'
 import { privateKeyToAccount } from 'viem/accounts'
 import { foundry, mainnet, optimism, optimismSepolia, sepolia } from 'viem/chains'
 import {
@@ -20,8 +19,9 @@ BigInt.prototype['toJSON'] = function () {
 
 const anvilAccountPrivateKey = process.env.PRIVATE_KEY
 
-if (!isHex(anvilAccountPrivateKey)) raise('ANVIL_ACCOUNT_PRIVATE_KEY env variable is not set. Check README.md')
-
+if (!isHex(anvilAccountPrivateKey)) {
+  throw new Error('ANVIL_ACCOUNT_PRIVATE_KEY env variable is not set. Check README.md')
+}
 export const account: PrivateKeyAccount = privateKeyToAccount(anvilAccountPrivateKey)
 
 export const clients = {
