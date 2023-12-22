@@ -1,21 +1,17 @@
+import './types.ts'
 import { privateKeyToAccount } from 'viem/accounts'
 import { foundry, mainnet, optimism, optimismSepolia, sepolia } from 'viem/chains'
 import {
   http,
   isHex,
+  fallback,
+  webSocket,
   publicActions,
   walletActions,
   createTestClient,
   createPublicClient,
   type PrivateKeyAccount,
-  fallback,
-  webSocket,
 } from 'viem'
-
-// Lets us use BigInts in JSON.stringify
-BigInt.prototype['toJSON'] = function () {
-  return this.toString()
-}
 
 const anvilAccountPrivateKey = process.env.PRIVATE_KEY
 

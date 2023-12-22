@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import url from 'node:url'
 import path from 'node:path'
 import { defineConfig } from '@wagmi/cli'
-import { foundry } from '@wagmi/cli/plugins'
+import { foundry, actions } from '@wagmi/cli/plugins'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
@@ -26,7 +26,7 @@ const artifacts = fs
   .map((item) => `${item}/**`)
 
 export default defineConfig({
-  out: outPath ?? path.join(__dirname, 'generated', 'abi.ts'),
+  out: outPath ?? path.join(__dirname, 'generated', 'wagmi.ts'),
   plugins: [
     foundry({
       artifacts: 'out/',
@@ -37,5 +37,6 @@ export default defineConfig({
         rebuild: true,
       },
     }),
+    actions(),
   ],
 })

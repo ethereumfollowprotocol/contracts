@@ -1,145 +1,145 @@
 export const EFPListMinterABI = [
   {
+    type: 'constructor',
     inputs: [
       {
-        internalType: 'address',
         name: '_registryAddress',
         type: 'address',
+        internalType: 'address',
       },
       {
-        internalType: 'address',
         name: '_accountMetadataAddress',
         type: 'address',
+        internalType: 'address',
       },
       {
-        internalType: 'address',
         name: '_listRecordsL1',
         type: 'address',
+        internalType: 'address',
       },
     ],
     stateMutability: 'nonpayable',
-    type: 'constructor',
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferred',
-    type: 'event',
-  },
-  {
-    inputs: [],
+    type: 'function',
     name: 'accountMetadata',
-    outputs: [
-      {
-        internalType: 'contract IEFPAccountMetadata',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
-    name: 'listRecordsL1',
     outputs: [
       {
-        internalType: 'contract IEFPListRecords',
         name: '',
         type: 'address',
+        internalType: 'contract IEFPAccountMetadata',
       },
     ],
     stateMutability: 'view',
-    type: 'function',
   },
   {
+    type: 'function',
+    name: 'listRecordsL1',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'address',
+        internalType: 'contract IEFPListRecords',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'mintAndSetAsDefaultList',
     inputs: [
       {
-        internalType: 'bytes',
         name: 'listStorageLocation',
         type: 'bytes',
+        internalType: 'bytes',
       },
     ],
-    name: 'mintAndSetAsDefaultList',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
   },
   {
+    type: 'function',
+    name: 'mintToAndSetAsDefaultList',
     inputs: [
       {
-        internalType: 'address',
         name: 'to',
         type: 'address',
+        internalType: 'address',
       },
       {
-        internalType: 'bytes',
         name: 'listStorageLocation',
         type: 'bytes',
+        internalType: 'bytes',
       },
     ],
-    name: 'mintToAndSetAsDefaultList',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
   },
   {
-    inputs: [],
+    type: 'function',
     name: 'owner',
+    inputs: [],
     outputs: [
       {
+        name: '',
+        type: 'address',
         internalType: 'address',
-        name: '',
-        type: 'address',
       },
     ],
     stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
+    type: 'function',
     name: 'registry',
+    inputs: [],
     outputs: [
       {
-        internalType: 'contract IEFPListRegistry_ERC721',
         name: '',
         type: 'address',
+        internalType: 'contract IEFPListRegistry_ERC721',
       },
     ],
     stateMutability: 'view',
-    type: 'function',
   },
   {
-    inputs: [],
+    type: 'function',
     name: 'renounceOwnership',
+    inputs: [],
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
   },
   {
+    type: 'function',
+    name: 'transferOwnership',
     inputs: [
       {
-        internalType: 'address',
         name: 'newOwner',
         type: 'address',
+        internalType: 'address',
       },
     ],
-    name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
+  },
+  {
+    type: 'event',
+    name: 'OwnershipTransferred',
+    inputs: [
+      {
+        name: 'previousOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+      {
+        name: 'newOwner',
+        type: 'address',
+        indexed: true,
+        internalType: 'address',
+      },
+    ],
+    anonymous: false,
   },
 ] as const

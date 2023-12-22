@@ -1,7 +1,7 @@
 {
   "name": "beta-contracts",
   "version": "1.0.0",
-  "repository": "git@github.com:ethereumfollowprotocol/beta-contracts.git",
+  "repository": "github:ethereumfollowprotocol/beta-contractst",
   "type": "module",
   "scripts": {
     "build": "forge build --sizes && bun ./scripts/generate-abi-ts.ts && bun format:ts",
@@ -13,13 +13,12 @@
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
     "lint:ts": "bunx eslint --config .eslintrc 'scripts/**/*.ts'",
-    "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}",
-    "watch": "bun --watch --hot ./scripts/watch.ts"
+    "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}"
   },
   "dependencies": {
     "viem": "2.0.0-beta.16",
-    "@wagmi/cli": "2.0.0-beta.8",
-    "wagmi": "^2.0.0-beta.8"
+    "@wagmi/cli": "2.0.0-beta.10",
+    "wagmi": "2.0.0-beta.10"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
