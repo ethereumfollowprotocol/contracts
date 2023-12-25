@@ -4,7 +4,7 @@
   "repository": "github:ethereumfollowprotocol/beta-contractst",
   "type": "module",
   "scripts": {
-    "build": "forge build --sizes && bun ./scripts/generate-abi-ts.ts && bun format:ts",
+    "build": "wagmi generate && bun format:ts",
     "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}",
     "format:sol": "bunx prettier --config .prettierrc --write 'scripts/**/*.sol' 'src/**/*.sol' 'test/**/*.sol'",
     "format:ts": "prettier --config .prettierrc --write ./scripts/**/*.ts ./generated wagmi.config.ts",

@@ -26,7 +26,7 @@ const artifacts = fs
   .map((item) => `${item}/**`)
 
 export default defineConfig({
-  out: outPath ?? path.join(__dirname, 'generated', 'wagmi.ts'),
+  out: outPath ?? path.join(__dirname, 'generated', 'abi.ts'),
   plugins: [
     foundry({
       artifacts: 'out/',
