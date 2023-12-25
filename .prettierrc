@@ -3,14 +3,16 @@
   "semi": false,
   "singleQuote": true,
   "tabWidth": 2,
-  "trailingComma": "es5",
+  "trailingComma": "none",
   "useTabs": false,
   "overrides": [
     {
       "files": "*.sol",
       "options": {
         "parser": "solidity-parse",
-        "plugins": ["prettier-plugin-solidity"],
+        "plugins": [
+          "prettier-plugin-solidity"
+        ],
         "bracketSpacing": false,
         "printWidth": 120,
         "singleQuote": false,

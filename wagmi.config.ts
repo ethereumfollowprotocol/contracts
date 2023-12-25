@@ -34,8 +34,8 @@ export default defineConfig({
       project: __dirname,
       forge: {
         build: true,
-        rebuild: true,
-      },
-    }),
-  ],
+        rebuild: true
+      }
+    })
+  ]
 })

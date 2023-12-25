@@ -10,7 +10,7 @@ import {
   walletActions,
   createTestClient,
   createPublicClient,
-  type PrivateKeyAccount,
+  type PrivateKeyAccount
 } from 'viem'
 
 const anvilAccountPrivateKey = process.env.PRIVATE_KEY
@@ -26,7 +26,7 @@ export const clients = {
       chain: foundry,
       mode: 'anvil',
       transport: http('http://0.0.0.0:8545'),
-      account,
+      account
     })
       .extend(publicActions)
       .extend(walletActions),
@@ -35,7 +35,7 @@ export const clients = {
       chain: mainnet,
       mode: 'anvil',
       transport: http('http://0.0.0.0:8545'),
-      account,
+      account
     })
       .extend(publicActions)
       .extend(walletActions),
@@ -52,17 +52,17 @@ export const clients = {
           http(`https://eth-mainnet.g.alchemy.com/v2/${process.env.MAINNET_ALCHEMY_ID}`),
           webSocket(`wss://eth-mainnet.g.alchemy.com/v2/${process.env.MAINNET_ALCHEMY_ID}`),
           webSocket(`wss://eth.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
-          webSocket(`wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`),
+          webSocket(`wss://mainnet.infura.io/ws/v3/${process.env.INFURA_ID}`)
         ],
         {
           /**
            * TODO: investigate why public actions hang when rank is enabled
            * @link https://discord.com/channels/1156791276818157609/1156791519089541241/1178111399839399937
            */
-          rank: false,
+          rank: false
         }
       ),
-      batch: { multicall: true },
+      batch: { multicall: true }
     }).extend(walletActions),
   optimism: () =>
     createPublicClient({
@@ -76,11 +76,11 @@ export const clients = {
           http(`https://optimism-mainnet.infura.io/v3/${process.env.INFURA_ID}`),
           http(`https://optimism.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
           webSocket(`wss://opt-mainnet.g.alchemy.com/v2/${process.env.OPTIMISM_ALCHEMY_ID}`),
-          webSocket(`wss://optimism.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`),
+          webSocket(`wss://optimism.llamarpc.com/rpc/${process.env.LLAMAFOLIO_ID}`)
         ],
         { rank: true }
       ),
-      batch: { multicall: true },
+      batch: { multicall: true }
     }).extend(walletActions),
   sepolia: () =>
     createPublicClient({
@@ -93,11 +93,11 @@ export const clients = {
           http(`https://sepolia.infura.io/v3/${process.env.INFURA_ID}`),
           http(`https://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_ALCHEMY_ID}`),
           webSocket(`wss://sepolia.infura.io/ws/v3/${process.env.INFURA_ID}`),
-          webSocket(`wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_ALCHEMY_ID}`),
+          webSocket(`wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_ALCHEMY_ID}`)
         ],
         { rank: true }
       ),
-      batch: { multicall: true },
+      batch: { multicall: true }
     }).extend(walletActions),
   optimismSepolia: () =>
     createPublicClient({
@@ -108,10 +108,10 @@ export const clients = {
         [
           http(`https://optimism-sepolia.infura.io/v3/${process.env.INFURA_ID}`),
           http('https://sepolia.optimism.io'),
-          http('https://sepolia-rollup.arbitrum.io/rpc'),
+          http('https://sepolia-rollup.arbitrum.io/rpc')
         ],
         { rank: true }
       ),
-      batch: { multicall: true },
-    }).extend(walletActions),
+      batch: { multicall: true }
+    }).extend(walletActions)
 }
