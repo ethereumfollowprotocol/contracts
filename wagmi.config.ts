@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import url from 'node:url'
 import path from 'node:path'
 import { defineConfig } from '@wagmi/cli'
-import { foundry, actions } from '@wagmi/cli/plugins'
+import { foundry } from '@wagmi/cli/plugins'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
@@ -37,6 +37,5 @@ export default defineConfig({
         rebuild: true,
       },
     }),
-    actions(),
   ],
 })
