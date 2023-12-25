@@ -18,7 +18,7 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "types": ["node", "bun-types"],
+    "types": ["node", "bun"],
     "baseUrl": ".",
     "paths": {
       "#/*": ["src/*"],
