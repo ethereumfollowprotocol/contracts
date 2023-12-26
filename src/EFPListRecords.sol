@@ -302,7 +302,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
      */
     function _applyListOp(uint256 nonce, bytes calldata op) internal {
         listOps[nonce].push(op);
-        emit ListOperation(nonce, op);
+        emit ListOp(nonce, op);
     }
 
     /**

@@ -495,7 +495,7 @@ export const efpListRecordsAbi = [
       },
       { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false },
     ],
-    name: 'ListOperation',
+    name: 'ListOp',
   },
   {
     type: 'event',
@@ -1470,7 +1470,7 @@ export const listRecordsAbi = [
       },
       { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false },
     ],
-    name: 'ListOperation',
+    name: 'ListOp',
   },
   {
     type: 'event',

@@ -90,7 +90,7 @@ Rather than try to index the records and tags, we simply store the operations th
 ```Solidity
 function applyListOp(uint nonce, bytes calldata op) public onlyListManager(nonce) {
     listOps[nonce].push(op);
-    emit ListOperation(nonce, op);
+    emit ListOp(nonce, op);
 }
 ```
 

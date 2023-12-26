@@ -265,13 +265,13 @@ for each list in lists:
 
 ### Via Logs
 
-The contract defines a `ListOperation` event as:
+The contract defines a `ListOp` event as:
 
 ```solidity
-event ListOperation(uint indexed nonce, bytes op);
+event ListOp(uint indexed nonce, bytes op);
 ```
 
-So, the social graph can be constructed by iterating through the `ListOperation` events emitted by the EFP NFT contract.
+So, the social graph can be constructed by iterating through the `ListOp` events emitted by the EFP NFT contract.
 
 ### Via Contract Calls
 

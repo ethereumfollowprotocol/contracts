@@ -34,7 +34,7 @@ interface IEFPListMetadata {
  */
 interface IEFPListRecords is IEFPListMetadata {
     // Events
-    event ListOperation(uint256 indexed nonce, bytes op);
+    event ListOp(uint256 indexed nonce, bytes op);
 
     // List Operation Functions - Read
     function getListOpCount(uint256 nonce) external view returns (uint256);
