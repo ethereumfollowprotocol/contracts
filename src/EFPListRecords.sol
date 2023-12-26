@@ -3,95 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IEFPListManager, IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
-
-/**
- * @title ListManager
- * @notice Manages ownership and access control for dynamic lists with unique nonces.
- *         Supports claiming, transferring, and retrieving list management rights.
- *         Each list is uniquely identified by a nonce, and only authorized entities
- *         can perform actions on their lists.
- */
-abstract contract ListManager is IEFPListManager {
-    ///////////////////////////////////////////////////////////////////////////
-    // Data Structures
-    ///////////////////////////////////////////////////////////////////////////
-
-    /// @notice Maps each nonce to the address of its managing entity.
-    /// @dev Nonces are unique identifiers for lists; each list has one manager.
-    mapping(uint256 => address) public managers;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Modifiers
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @notice Ensures that the caller is the manager of the specified list.
-     * @param nonce The unique identifier of the list.
-     * @dev Used to restrict function access to the list's manager.
-     */
-    modifier onlyListManager(uint256 nonce) {
-        require(managers[nonce] == msg.sender, "not manager");
-        _;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // List Manager - Read
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @notice Retrieves the address of the manager for a specified list nonce.
-     * @param nonce The list's unique identifier.
-     * @return The address of the manager.
-     */
-    function getListManager(uint256 nonce) external view returns (address) {
-        return managers[nonce];
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // List Manager - Write
-    ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @notice Allows an address to claim management of an unclaimed list nonce.
-     * @param nonce The nonce that the sender wishes to claim.
-     * @param manager The address to be set as the manager.
-     * @dev This function establishes the first-come-first-serve basis for nonce claiming.
-     */
-    function _claimListManager(uint256 nonce, address manager) internal {
-        require(managers[nonce] == address(0) || managers[nonce] == manager, "Nonce already claimed");
-        managers[nonce] = manager;
-        emit ListManagerChange(nonce, manager);
-    }
-
-    /**
-     * @notice Allows the sender to claim management of an unclaimed list nonce.
-     * @param nonce The nonce that the sender wishes to claim.
-     */
-    function claimListManager(uint256 nonce) external {
-        _claimListManager(nonce, msg.sender);
-    }
-
-    /**
-     * @notice Allows the sender to transfer management of a list to a new address.
-     * @param nonce The list's unique identifier.
-     * @param manager The address to be set as the new manager.
-     */
-    function claimListManagerForAddress(uint256 nonce, address manager) external {
-        _claimListManager(nonce, manager);
-    }
-
-    /**
-     * @notice Allows the current manager to transfer management of a list to a new address.
-     * @param nonce The list's unique identifier.
-     * @param manager The address to be set as the new manager.
-     * @dev Only the current manager can transfer their management role.
-     */
-    function setListManager(uint256 nonce, address manager) external onlyListManager(nonce) {
-        managers[nonce] = manager;
-        emit ListManagerChange(nonce, manager);
-    }
-}
+import {IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
 
 /**
  * @title ListMetadata
@@ -99,13 +11,26 @@ abstract contract ListManager is IEFPListManager {
  * @notice Manages key-value pairs associated with EFP List NFTs.
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
  */
-abstract contract ListMetadata is IEFPListMetadata, ListManager {
+abstract contract ListMetadata is IEFPListMetadata {
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
 
     /// @dev The key-value set for each token ID
     mapping(uint256 => mapping(string => bytes)) private values;
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Helpers
+    /////////////////////////////////////////////////////////////////////////////
+
+    function bytesToAddress(bytes memory b) internal pure returns (address) {
+        require(b.length == 20, "Invalid length");
+        address addr;
+        assembly {
+            addr := mload(add(b, 20))
+        }
+        return addr;
+    }
 
     /////////////////////////////////////////////////////////////////////////////
     // Getters
@@ -152,7 +77,7 @@ abstract contract ListMetadata is IEFPListMetadata, ListManager {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function _setMetadataValue(uint256 nonce, string calldata key, bytes calldata value) internal {
+    function _setMetadataValue(uint256 nonce, string memory key, bytes memory value) internal {
         values[nonce][key] = value;
         emit NewListMetadataValue(nonce, key, value);
     }
@@ -189,6 +114,112 @@ abstract contract ListMetadata is IEFPListMetadata, ListManager {
             }
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Modifiers
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Ensures that the caller is the manager of the specified list.
+     * @param nonce The unique identifier of the list.
+     * @dev Used to restrict function access to the list's manager.
+     */
+    modifier onlyListManager(uint256 nonce) {
+        bytes memory existing = values[nonce]["manager"];
+        require(existing.length == 20 && keccak256(existing) == keccak256(abi.encodePacked(msg.sender)), "not manager");
+        _;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Manager - Claim
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Allows an address to claim management of an unclaimed list nonce.
+     * @param nonce The nonce that the sender wishes to claim.
+     * @param manager The address to be set as the manager.
+     * @dev This function establishes the first-come-first-serve basis for nonce claiming.
+     */
+    function _claimListManager(uint256 nonce, address manager) internal {
+        bytes memory existing = values[nonce]["manager"];
+        require(existing.length != 20 || bytesToAddress(existing) == manager, "nonce already claimed");
+        _setMetadataValue(nonce, "manager", abi.encodePacked(manager));
+    }
+
+    /**
+     * @notice Allows the sender to claim management of an unclaimed list nonce.
+     * @param nonce The nonce that the sender wishes to claim.
+     */
+    function claimListManager(uint256 nonce) external {
+        _claimListManager(nonce, msg.sender);
+    }
+
+    /**
+     * @notice Allows the sender to transfer management of a list to a new address.
+     * @param nonce The list's unique identifier.
+     * @param manager The address to be set as the new manager.
+     */
+    function claimListManagerForAddress(uint256 nonce, address manager) external {
+        _claimListManager(nonce, manager);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Manager - Read
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Retrieves the address of the manager for a specified list nonce.
+     * @param nonce The list's unique identifier.
+     * @return The address of the manager.
+     */
+    function getListManager(uint256 nonce) external view returns (address) {
+        bytes memory existing = values[nonce]["manager"];
+        return existing.length != 20 ? address(0) : bytesToAddress(existing);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Manager - Write
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Allows the current manager to transfer management of a list to a new address.
+     * @param nonce The list's unique identifier.
+     * @param manager The address to be set as the new manager.
+     * @dev Only the current manager can transfer their management role.
+     */
+    function setListManager(uint256 nonce, address manager) external onlyListManager(nonce) {
+        _setMetadataValue(nonce, "manager", abi.encodePacked(manager));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List User - Read
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Retrieves the address of the list user for a specified list
+     *         nonce.
+     * @param nonce The list's unique identifier.
+     * @return The address of the list user.
+     */
+    function getListUser(uint256 nonce) external view returns (address) {
+        bytes memory existing = values[nonce]["user"];
+        return existing.length != 20 ? address(0) : bytesToAddress(existing);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // List Manager - Write
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Allows the current manager to change the list user to a new
+     *         address.
+     * @param nonce The list's unique identifier.
+     * @param user The address to be set as the new list user.
+     * @dev Only the current manager can change the list user.
+     */
+    function setListUser(uint256 nonce, address user) external onlyListManager(nonce) {
+        _setMetadataValue(nonce, "user", abi.encodePacked(user));
+    }
 }
 
 /**
@@ -196,7 +227,7 @@ abstract contract ListMetadata is IEFPListMetadata, ListManager {
  * @notice Manages a dynamic list of records associated with EFP List NFTs.
  *         Provides functionalities for list managers to apply operations to their lists.
  */
-abstract contract ListRecords is IEFPListRecords, ListManager {
+abstract contract ListRecords is IEFPListRecords, ListMetadata {
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
@@ -299,4 +330,4 @@ abstract contract ListRecords is IEFPListRecords, ListManager {
     }
 }
 
-contract EFPListRecords is ListRecords, ListMetadata, Ownable {}
+contract EFPListRecords is IEFPListRecords, ListRecords, Ownable {}

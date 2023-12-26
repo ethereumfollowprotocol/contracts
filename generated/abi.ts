@@ -379,6 +379,13 @@ export const efpListRecordsAbi = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
+    name: 'getListUser',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
@@ -409,13 +416,6 @@ export const efpListRecordsAbi = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'managers',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
     inputs: [],
     name: 'owner',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
@@ -435,6 +435,16 @@ export const efpListRecordsAbi = [
       { name: 'manager', internalType: 'address', type: 'address' },
     ],
     name: 'setListManager',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'setListUser',
     outputs: [],
   },
   {
@@ -472,25 +482,6 @@ export const efpListRecordsAbi = [
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
     outputs: [],
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'nonce',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-      {
-        name: 'manager',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'ListManagerChange',
   },
   {
     type: 'event',
@@ -1207,6 +1198,13 @@ export const listMetadataAbi = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
+    name: 'getListUser',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
@@ -1225,13 +1223,6 @@ export const listMetadataAbi = [
     outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
   },
   {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'managers',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -1239,6 +1230,16 @@ export const listMetadataAbi = [
       { name: 'manager', internalType: 'address', type: 'address' },
     ],
     name: 'setListManager',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'setListUser',
     outputs: [],
   },
   {
@@ -1269,25 +1270,6 @@ export const listMetadataAbi = [
     ],
     name: 'setMetadataValues',
     outputs: [],
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'nonce',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-      {
-        name: 'manager',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'ListManagerChange',
   },
   {
     type: 'event',
@@ -1393,8 +1375,15 @@ export const listRecordsAbi = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
+    name: 'getListUser',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
-      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
     ],
     name: 'getMetadataValue',
@@ -1404,7 +1393,7 @@ export const listRecordsAbi = [
     stateMutability: 'view',
     type: 'function',
     inputs: [
-      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
       { name: 'keys', internalType: 'string[]', type: 'string[]' },
     ],
     name: 'getMetadataValues',
@@ -1421,13 +1410,6 @@ export const listRecordsAbi = [
     outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
   },
   {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'managers',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -1435,6 +1417,16 @@ export const listRecordsAbi = [
       { name: 'manager', internalType: 'address', type: 'address' },
     ],
     name: 'setListManager',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'setListUser',
     outputs: [],
   },
   {
@@ -1465,25 +1457,6 @@ export const listRecordsAbi = [
     ],
     name: 'setMetadataValues',
     outputs: [],
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'nonce',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-      {
-        name: 'manager',
-        internalType: 'address',
-        type: 'address',
-        indexed: false,
-      },
-    ],
-    name: 'ListManagerChange',
   },
   {
     type: 'event',

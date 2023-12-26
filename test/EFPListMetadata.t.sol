@@ -13,6 +13,10 @@ contract EFPListMetadataTest is Test {
         listRecords = new EFPListRecords();
     }
 
+    function test_ListManagerInitializesToZeroAddress() public {
+        assertEq(listRecords.getListManager(NONCE), address(0));
+    }
+
     function test_CanClaimListManager() public {
         listRecords.claimListManager(NONCE);
         assertEq(listRecords.getListManager(NONCE), address(this));
@@ -41,6 +45,14 @@ contract EFPListMetadataTest is Test {
         assertEq(values[1], "value2");
     }
 
+    function test_CanSetMetadataValueAfterChangeListManager() public {
+        listRecords.claimListManager(NONCE);
+        listRecords.setListManager(NONCE, address(1));
+        vm.prank(address(1));
+        listRecords.setMetadataValue(NONCE, "key", "value");
+        assertEq(listRecords.getMetadataValue(NONCE, "key"), "value");
+    }
+
     function test_RevertIf_SetMetadataValueFromNonManager() public {
         // cannot set value if don't own token
         // try calling from another address
@@ -57,5 +69,31 @@ contract EFPListMetadataTest is Test {
         vm.prank(address(1));
         vm.expectRevert("not manager");
         listRecords.setMetadataValues(NONCE, records);
+    }
+
+    function test_CanSetListManager() public {
+        listRecords.claimListManager(NONCE);
+        listRecords.setListManager(NONCE, address(1));
+        assertEq(listRecords.getListManager(NONCE), address(1));
+    }
+
+    function test_RevertIf_SetListManagerFromNonManager() public {
+        listRecords.claimListManager(NONCE);
+        vm.prank(address(1));
+        vm.expectRevert("not manager");
+        listRecords.setListManager(NONCE, address(1));
+    }
+
+    function test_CanSetListUser() public {
+        listRecords.claimListManager(NONCE);
+        listRecords.setListUser(NONCE, address(1));
+        assertEq(listRecords.getListUser(NONCE), address(1));
+    }
+
+    function test_RevertIf_SetListUserFromNonManager() public {
+        listRecords.claimListManager(NONCE);
+        vm.prank(address(1));
+        vm.expectRevert("not manager");
+        listRecords.setListUser(NONCE, address(1));
     }
 }
