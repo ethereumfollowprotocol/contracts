@@ -26,15 +26,10 @@ jobs:
         with:
           version: nightly
 
-      - name: Run Forge fmt
+      - name: Run Forge fmt check
         run: |
           forge fmt --check
         id: fmt
-
-      - name: Run Forge geiger
-        run: |
-          forge geiger --check
-        id: geiger
 
       - name: Run Forge build
         run: |
