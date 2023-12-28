@@ -33,6 +33,7 @@ export default defineConfig({
       include: artifacts,
       project: __dirname,
       forge: {
+        clean: true,
         build: true,
         rebuild: true
       }

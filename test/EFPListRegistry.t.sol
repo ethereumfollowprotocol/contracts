@@ -22,9 +22,11 @@ contract EFPListRegistryTest is Test {
         }
     }
 
-    function _bytesToStructOfUintAddressUint(
-        bytes memory data
-    ) private pure returns (uint256 chainId, address contractAddress, uint256 nonce) {
+    function _bytesToStructOfUintAddressUint(bytes memory data)
+        private
+        pure
+        returns (uint256 chainId, address contractAddress, uint256 nonce)
+    {
         assembly {
             chainId := mload(add(data, 32))
             contractAddress := mload(add(data, 52))
@@ -40,7 +42,7 @@ contract EFPListRegistryTest is Test {
         return id;
     }
 
-    function makeListStorageLocation(uint nonce) private view returns (bytes memory) {
+    function makeListStorageLocation(uint256 nonce) private view returns (bytes memory) {
         return abi.encodePacked(VERSION, LIST_LOCATION_TYPE, this.getChainId(), MOCK_LIST_ADDRESS, nonce);
     }
 
@@ -115,12 +117,11 @@ contract EFPListRegistryTest is Test {
         console.logBytes(registry.getListStorageLocation(0));
     }
 
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external pure returns (bytes4) {
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data)
+        external
+        pure
+        returns (bytes4)
+    {
         return bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
     }
 }

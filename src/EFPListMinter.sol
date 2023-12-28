@@ -8,7 +8,7 @@ import {IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
 
 interface IEFPListRegistry_ERC721 is IEFPListRegistry {
     function ownerOf(uint256 tokenId) external view returns (address);
-    function totalSupply() external view returns (uint);
+    function totalSupply() external view returns (uint256);
 }
 
 contract EFPListMinter is Ownable {
@@ -23,7 +23,7 @@ contract EFPListMinter is Ownable {
     }
 
     function mintAndSetAsDefaultList(bytes calldata listStorageLocation) public payable {
-        uint tokenId = registry.totalSupply();
+        uint256 tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
         _setDefaultListForAccount(msg.sender, tokenId);
         // _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
@@ -31,14 +31,14 @@ contract EFPListMinter is Ownable {
     }
 
     function mintToAndSetAsDefaultList(address to, bytes calldata listStorageLocation) public payable {
-        uint tokenId = registry.totalSupply();
+        uint256 tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(to, listStorageLocation);
         _setDefaultListForAccount(to, tokenId);
         // _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
         // listRecordsL1.claimListManagerForAddress(nonceL1, to);
     }
 
-    function _setDefaultListForAccount(address to, uint tokenId) internal {
+    function _setDefaultListForAccount(address to, uint256 tokenId) internal {
         accountMetadata.setValueForAddress(to, "efp.list.primary", abi.encodePacked(tokenId));
     }
 }

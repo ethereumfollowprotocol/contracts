@@ -55,7 +55,7 @@ abstract contract ListMetadata is IEFPListMetadata {
     function getMetadataValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
         uint256 length = keys.length;
         bytes[] memory result = new bytes[](length);
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i = 0; i < length;) {
             string calldata key = keys[i];
             result[i] = values[tokenId][key];
             unchecked {
@@ -90,11 +90,10 @@ abstract contract ListMetadata is IEFPListMetadata {
      * @param key The key to set.
      * @param value The value to set.
      */
-    function setMetadataValue(
-        uint256 nonce,
-        string calldata key,
-        bytes calldata value
-    ) external onlyListManager(nonce) {
+    function setMetadataValue(uint256 nonce, string calldata key, bytes calldata value)
+        external
+        onlyListManager(nonce)
+    {
         _setMetadataValue(nonce, key, value);
     }
 
@@ -106,7 +105,7 @@ abstract contract ListMetadata is IEFPListMetadata {
      */
     function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external onlyListManager(nonce) {
         uint256 length = records.length;
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i = 0; i < length;) {
             KeyValue calldata record = records[i];
             _setMetadataValue(nonce, record.key, record.value);
             unchecked {
@@ -272,7 +271,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
         }
 
         bytes[] memory ops = new bytes[](end - start);
-        for (uint256 i = start; i < end; ) {
+        for (uint256 i = start; i < end;) {
             ops[i - start] = listOps[nonce][i];
 
             unchecked {
@@ -321,7 +320,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
      */
     function applyListOps(uint256 nonce, bytes[] calldata ops) public onlyListManager(nonce) {
         uint256 len = ops.length;
-        for (uint256 i = 0; i < len; ) {
+        for (uint256 i = 0; i < len;) {
             _applyListOp(nonce, ops[i]);
             unchecked {
                 ++i;
