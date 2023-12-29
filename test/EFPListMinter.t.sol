@@ -41,7 +41,7 @@ pragma solidity ^0.8.20;
 //         minter.mintWithListLocationOnL1AndSetAsDefaultList(NONCE_L1);
 
 //         assertEq(registry.ownerOf(tokenId), address(this));
-//         assertEq(accountMetadata.getValue(address(this), "efp.list.primary"), abi.encodePacked(tokenId));
+//         assertEq(accountMetadata.getValue(address(this), "primary-list"), abi.encodePacked(tokenId));
 //         assertEq(
 //             listMetadata.getValue(uint256(tokenId), "efp.list.location"),
 //             abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L1, address(listRecords), NONCE_L1)
@@ -56,7 +56,7 @@ pragma solidity ^0.8.20;
 //         minter.mintWithListLocationOnL2AndSetAsDefaultList(chainId, addressL2, nonceL2);
 
 //         assertEq(registry.ownerOf(tokenId), address(this));
-//         assertEq(accountMetadata.getValue(address(this), "efp.list.primary"), abi.encodePacked(tokenId));
+//         assertEq(accountMetadata.getValue(address(this), "primary-list"), abi.encodePacked(tokenId));
 //         assertEq(
 //             listMetadata.getValue(uint256(tokenId), "efp.list.location"),
 //             abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L2, chainId, addressL2, nonceL2)

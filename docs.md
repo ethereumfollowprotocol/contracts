@@ -437,9 +437,9 @@ Data is stored by `string` key and `bytes` value, for each account.
 
 This allows for the storage of account-specific EFP configuration or preference data.
 
-## efp.list.primary
+## primary-list
 
-The `efp.list.primary` key is used to store the primary EFP List for an account.
+The `primary-list` key is used to store the primary EFP List for an account.
 
 The primary EFP List is represented as a 32-byte token id.
 
@@ -451,14 +451,14 @@ with example code shown below:
 
 ```solidity
 // set the primary EFP List for the caller's address
-efpAccountMetadata.setValue("efp.list.primary", abi.encodePacked(tokenId));
+efpAccountMetadata.setValue("primary-list", abi.encodePacked(tokenId));
 ```
 
-By reading the `efp.list.primary` key for a given address, a client can determine the primary EFP List for that address.
+By reading the `primary-list` key for a given address, a client can determine the primary EFP List for that address.
 
 ```solidity
 address addr = <address>
-uint primaryEfpListTokenId = abi.decode(efpAccountMetadata.getValue(addr, "efp.list.primary"), (uint));
+uint primaryEfpListTokenId = abi.decode(efpAccountMetadata.getValue(addr, "primary-list"), (uint));
 
 // validate: primary EFP List must exist
 require(primaryEfpListTokenId < efpListRegistry.totalSupply());

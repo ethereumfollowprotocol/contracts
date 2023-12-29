@@ -39,6 +39,6 @@ contract EFPListMinter is Ownable {
     }
 
     function _setDefaultListForAccount(address to, uint256 tokenId) internal {
-        accountMetadata.setValueForAddress(to, "efp.list.primary", abi.encodePacked(tokenId));
+        accountMetadata.setValueForAddress(to, "primary-list", abi.encodePacked(tokenId));
     }
 }
