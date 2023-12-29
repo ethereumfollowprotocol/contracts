@@ -17,3 +17,6 @@ docs/
 node_modules/
 yarn-error.log
 _
+.DS_Store
+generated/actions.ts
+generated/hooks.ts

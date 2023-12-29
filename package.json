@@ -6,7 +6,7 @@
   "scripts": {
     "build": "wagmi generate && cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts",
     "clean": "forge clean",
-    "docs": "forge doc --serve --port 4433",
+    "docs": "forge doc --serve --port 4433 --open",
     "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}",
     "format:sol": "forge fmt",
     "format:ts": "prettier --config .prettierrc --write ./scripts/**/*.ts wagmi.config.ts",
@@ -24,10 +24,11 @@
     "wagmi": "2.0.0-rc.2"
   },
   "devDependencies": {
+    "@types/bun": "^1.0.0",
     "@types/node": "^20.10.5",
     "bun": "^1.0.20",
-    "@types/bun": "^1.0.0",
     "prettier": "^3.1.1",
+    "solc": "^0.8.20",
     "solhint": "^4.0.0",
     "typescript": "^5.3.3"
   },

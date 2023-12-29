@@ -26,5 +26,5 @@
     }
   },
   "include": ["scripts", "generated"],
-  "files": ["./wagmi.config.ts"]
+  "files": ["wagmi.config.ts", "env.d.ts"]
 }
