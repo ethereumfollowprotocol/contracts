@@ -21,7 +21,7 @@ RUN mkdir -p /etc/apt/keyrings \
 # install foundryup
 RUN curl -L https://foundry.paradigm.xyz | bash
 ENV PATH="${PATH}:/root/.foundry/bin"
-RUN foundryup --version nightly-60ec00296f00754bc21ed68fd05ab6b54b50e024
+RUN foundryup --version nightly-6d7cceafdcbdb5e48c128a5b32cb7267498f4674
 
 WORKDIR /usr/src/app
 
