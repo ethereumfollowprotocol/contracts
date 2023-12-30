@@ -79,7 +79,7 @@ abstract contract ListMetadata is IEFPListMetadata {
      */
     function _setMetadataValue(uint256 nonce, string memory key, bytes memory value) internal {
         values[nonce][key] = value;
-        emit NewListMetadataValue(nonce, key, value);
+        emit UpdateListMetadata(nonce, key, value);
     }
 
     /**

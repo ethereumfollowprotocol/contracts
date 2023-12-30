@@ -22,7 +22,7 @@ interface IEFPListRegistry {
     ///////////////////////////////////////////////////////////////////////////
 
     /// @notice Emitted when a list storage location is set
-    event ListStorageLocationChange(uint256 indexed tokenId, bytes listStorageLocation);
+    event UpdateListStorageLocation(uint256 indexed tokenId, bytes listStorageLocation);
 
     ///////////////////////////////////////////////////////////////////////////
     // ListStorageLocation

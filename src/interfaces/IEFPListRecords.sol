@@ -5,7 +5,7 @@ pragma solidity ^0.8.20;
  * @title IEFPListMetadata
  */
 interface IEFPListMetadata {
-    event NewListMetadataValue(uint256 indexed nonce, string key, bytes value);
+    event UpdateListMetadata(uint256 indexed nonce, string key, bytes value);
 
     struct KeyValue {
         string key;

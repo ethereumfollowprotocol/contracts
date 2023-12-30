@@ -127,7 +127,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
      */
     function _setListStorageLocation(uint256 tokenId, bytes calldata listStorageLocation) internal {
         tokenIdToListStorageLocation[tokenId] = listStorageLocation;
-        emit ListStorageLocationChange(tokenId, listStorageLocation);
+        emit UpdateListStorageLocation(tokenId, listStorageLocation);
     }
 
     ///////////////////////////////////////////////////////////////////////////
