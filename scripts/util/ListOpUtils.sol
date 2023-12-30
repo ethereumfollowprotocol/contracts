@@ -15,13 +15,7 @@ library ListOpUtils {
     }
 
     function encode(ListOp memory listOp) internal pure returns (bytes memory) {
-        bytes memory result = new bytes(2 + listOp.data.length);
-        result[0] = bytes1(listOp.version);
-        result[1] = bytes1(listOp.opcode);
-        for (uint256 i = 0; i < listOp.data.length; i++) {
-            result[2 + i] = listOp.data[i];
-        }
-        return result;
+      return abi.encodePacked(listOp.version, listOp.opcode, listOp.data);
     }
 
     function description(ListOp memory listOp) internal pure returns (string memory desc) {

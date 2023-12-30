@@ -12,6 +12,7 @@ import {ContractConfigs} from "./util/ContractConfigs.sol";
 import {Contracts} from "./util/Contracts.sol";
 import {CSVUtils} from "./util/CSVUtils.sol";
 import {Deployer} from "./util/Deployer.sol";
+import {ListOpUtils} from "./util/ListOpUtils.sol";
 import {Logger} from "./util/Logger.sol";
 import {StringUtils} from "./util/StringUtils.sol";
 
@@ -32,6 +33,7 @@ import {ListOpsCsvLoader} from "./util/ListOpsCsvLoader.sol";
  */
 contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     using Strings for uint256;
+    using ListOpUtils for ListOp;
 
     function setUp() public {
         // Any setup needed before deployment
@@ -65,7 +67,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     function listOpsToBytes(ListOp[] memory listOps) public pure returns (bytes[] memory) {
         bytes[] memory asBytes = new bytes[](listOps.length);
         for (uint256 i = 0; i < listOps.length; i++) {
-            asBytes[i] = abi.encodePacked(listOps[i].version, listOps[i].opcode, listOps[i].data);
+            asBytes[i] = listOps[i].encode();
         }
         return asBytes;
     }
@@ -137,6 +139,47 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOps));
     }
 
+    function mintMany(Contracts memory contracts, uint limit) public {
+        uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        uint end = totalSupply + limit;
+        while (totalSupply < end) {
+          uint256 tokenId = totalSupply;
+
+          ListOp[] memory listOps = new ListOp[](totalSupply);
+          for (uint i = 0; i < listOps.length; i++) {
+            ListRecord memory listRecordToFollow = ListRecord({
+                version: 0x01,
+                recordType: 0x01,
+                data: abi.encodePacked(address(uint160(i)))
+            });
+            listOps[i] = ListOp({
+                version: 0x01,
+                opcode: 0x01,
+                data: abi.encodePacked(listRecordToFollow.version, listRecordToFollow.recordType, listRecordToFollow.data)
+            });
+          }
+
+          console.log("minting token id %d with nonce %d", totalSupply, totalSupply);
+          bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
+          EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
+          EFPListRecords(contracts.listRecords).claimListManager(tokenId);
+          EFPListRecords(contracts.listRecords).setMetadataValue(
+              tokenId,
+              "user",
+              abi.encodePacked(loadedListNfts[tokenId].listUser)
+          );
+          totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+          lastTokenId = totalSupply;
+          // IEFPListRecords(contracts.listRecords).claimListManager(totalSupply);
+          // create a single list op to follow the zero address
+
+          console.log("applying %d list op%s to token id %d", listOps.length, listOps.length == 1 ? "" : "s", tokenId);
+          IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOps));
+
+          totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+        }
+    }
+
     function run() public {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
@@ -163,16 +206,21 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         uint256 initialTotalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         if (initialTotalSupply <= lastTokenId) {
             mints(contracts);
+            uint totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
+            Logger.logNFTs(contracts, initialTotalSupply);
+            console.log();
+            Logger.logListOps(contracts, initialTotalSupply, totalSupply - 1);
         } else {
             // mint one more
-            mintOne(contracts);
+            mintMany(contracts, 10);
+            Logger.logNFTs(contracts, initialTotalSupply);
+            console.log();
         }
-        uint totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
 
         // // print all token ids and owners
-        Logger.logNFTs(contracts, initialTotalSupply);
-        console.log();
-        Logger.logListOps(contracts, initialTotalSupply, totalSupply - 1);
+        // Logger.logNFTs(contracts, initialTotalSupply);
+        // console.log();
+        // Logger.logListOps(contracts, initialTotalSupply, totalSupply - 1);
 
         vm.stopBroadcast();
     }
