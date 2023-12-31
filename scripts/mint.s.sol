@@ -34,6 +34,7 @@ import {ListOpsCsvLoader} from "./util/ListOpsCsvLoader.sol";
 contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     using Strings for uint256;
     using ListOpUtils for ListOp;
+    ListOp[] public listOpsToMint;
 
     function setUp() public {
         // Any setup needed before deployment
@@ -72,7 +73,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         return asBytes;
     }
 
-    function getChainId() external view returns (uint256) {
+    function _getChainId() internal view returns (uint256) {
         uint256 id;
         assembly {
             id := chainid()
@@ -80,10 +81,34 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         return id;
     }
 
+        // Generalized function to convert bytes to uint256 with a given offset
+    function _bytesToUint(bytes memory data, uint256 offset) internal pure returns (uint256) {
+        require(data.length >= offset + 32, "Data too short");
+        uint value;
+        assembly {
+            value := mload(add(data, add(32, offset)))
+        }
+        return value;
+    }
+
+    // Helper function to convert bytes to address with a given offset
+    function _bytesToAddress(bytes memory data, uint256 offset) internal pure returns (address addr) {
+        require(data.length >= offset + 20, "Data too short");
+        assembly {
+            // Extract 20 bytes from the specified offset
+            addr := mload(add(add(data, 20), offset))
+            // clear the 12 least significant bits of the address
+            addr := and(addr, 0x000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
+        return addr;
+    }
+
     function makeListStorageLocation(address listRecordsAddress, uint nonce) private view returns (bytes memory) {
+        console.log("listRecordsAddress:                                                 %s", listRecordsAddress);
         uint8 VERSION = 1;
         uint8 LIST_LOCATION_TYPE = 1;
-        return abi.encodePacked(VERSION, LIST_LOCATION_TYPE, this.getChainId(), listRecordsAddress, nonce);
+        bytes memory listStorageLocation = abi.encodePacked(VERSION, LIST_LOCATION_TYPE, _getChainId(), listRecordsAddress, nonce);
+        return listStorageLocation;
     }
 
     function mints(Contracts memory contracts) public {
@@ -93,7 +118,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
             bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, tokenId);
             EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
             // claim list manager
-            EFPListRecords(contracts.listRecords).claimListManager(tokenId);
+            // EFPListRecords(contracts.listRecords).claimListManager(tokenId);
             EFPListRecords(contracts.listRecords).setMetadataValue(
                 tokenId,
                 "user",
@@ -114,7 +139,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         console.log("minting token id %d with nonce %d", totalSupply, totalSupply);
         bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
         EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
-        EFPListRecords(contracts.listRecords).claimListManager(tokenId);
+        // EFPListRecords(contracts.listRecords).claimListManager(tokenId);
         EFPListRecords(contracts.listRecords).setMetadataValue(
             tokenId,
             "user",
@@ -145,36 +170,35 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
         while (totalSupply < end) {
           uint256 tokenId = totalSupply;
 
-          ListOp[] memory listOps = new ListOp[](totalSupply);
-          for (uint i = 0; i < listOps.length; i++) {
+          for (uint i = listOpsToMint.length; i < totalSupply; i++) {
             ListRecord memory listRecordToFollow = ListRecord({
                 version: 0x01,
                 recordType: 0x01,
                 data: abi.encodePacked(address(uint160(i)))
             });
-            listOps[i] = ListOp({
+            listOpsToMint.push(ListOp({
                 version: 0x01,
                 opcode: 0x01,
                 data: abi.encodePacked(listRecordToFollow.version, listRecordToFollow.recordType, listRecordToFollow.data)
-            });
+            }));
           }
 
           console.log("minting token id %d with nonce %d", totalSupply, totalSupply);
           bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
           EFPListMinter(contracts.listMinter).mintAndSetAsDefaultList(listStorageLocation);
-          EFPListRecords(contracts.listRecords).claimListManager(tokenId);
+          // EFPListRecords(contracts.listRecords).claimListManager(tokenId);
           EFPListRecords(contracts.listRecords).setMetadataValue(
               tokenId,
               "user",
-              abi.encodePacked(loadedListNfts[tokenId].listUser)
+              abi.encodePacked(abi.encodePacked(address(uint160(tokenId))))
           );
           totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
           lastTokenId = totalSupply;
           // IEFPListRecords(contracts.listRecords).claimListManager(totalSupply);
           // create a single list op to follow the zero address
 
-          console.log("applying %d list op%s to token id %d", listOps.length, listOps.length == 1 ? "" : "s", tokenId);
-          IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOps));
+          console.log("applying %d list op%s to token id %d", listOpsToMint.length, listOpsToMint.length == 1 ? "" : "s", tokenId);
+          IEFPListRecords(contracts.listRecords).applyListOps(tokenId, listOpsToBytes(listOpsToMint));
 
           totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
         }
@@ -212,7 +236,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
             Logger.logListOps(contracts, initialTotalSupply, totalSupply - 1);
         } else {
             // mint one more
-            mintMany(contracts, 10);
+            mintMany(contracts, 100 - (initialTotalSupply % 100));
             Logger.logNFTs(contracts, initialTotalSupply);
             console.log();
         }
