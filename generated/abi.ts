@@ -8,65 +8,65 @@ export const efpAccountMetadataAbi = [
     type: 'function',
     inputs: [{ name: 'proxy', internalType: 'address', type: 'address' }],
     name: 'addProxy',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'addr', internalType: 'address', type: 'address' },
-      { name: 'key', internalType: 'string', type: 'string' },
+      { name: 'key', internalType: 'string', type: 'string' }
     ],
     name: 'getValue',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'addr', internalType: 'address', type: 'address' },
-      { name: 'keys', internalType: 'string[]', type: 'string[]' },
+      { name: 'keys', internalType: 'string[]', type: 'string[]' }
     ],
     name: 'getValues',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'proxy', internalType: 'address', type: 'address' }],
     name: 'isProxy',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'proxy', internalType: 'address', type: 'address' }],
     name: 'removeProxy',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [],
     name: 'renounceOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'key', internalType: 'string', type: 'string' },
-      { name: 'value', internalType: 'bytes', type: 'bytes' },
+      { name: 'value', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setValue',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -74,10 +74,10 @@ export const efpAccountMetadataAbi = [
     inputs: [
       { name: 'addr', internalType: 'address', type: 'address' },
       { name: 'key', internalType: 'string', type: 'string' },
-      { name: 'value', internalType: 'bytes', type: 'bytes' },
+      { name: 'value', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setValueForAddress',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -89,12 +89,12 @@ export const efpAccountMetadataAbi = [
         type: 'tuple[]',
         components: [
           { name: 'key', internalType: 'string', type: 'string' },
-          { name: 'value', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+          { name: 'value', internalType: 'bytes', type: 'bytes' }
+        ]
+      }
     ],
     name: 'setValues',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -107,19 +107,19 @@ export const efpAccountMetadataAbi = [
         type: 'tuple[]',
         components: [
           { name: 'key', internalType: 'string', type: 'string' },
-          { name: 'value', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+          { name: 'value', internalType: 'bytes', type: 'bytes' }
+        ]
+      }
     ],
     name: 'setValuesForAddress',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -129,16 +129,16 @@ export const efpAccountMetadataAbi = [
         name: 'previousOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'newOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'OwnershipTransferred',
+    name: 'OwnershipTransferred'
   },
   {
     type: 'event',
@@ -148,10 +148,10 @@ export const efpAccountMetadataAbi = [
         name: 'proxy',
         internalType: 'address',
         type: 'address',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'ProxyAdded',
+    name: 'ProxyAdded'
   },
   {
     type: 'event',
@@ -161,10 +161,10 @@ export const efpAccountMetadataAbi = [
         name: 'proxy',
         internalType: 'address',
         type: 'address',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'ProxyRemoved',
+    name: 'ProxyRemoved'
   },
   {
     type: 'event',
@@ -172,10 +172,10 @@ export const efpAccountMetadataAbi = [
     inputs: [
       { name: 'addr', internalType: 'address', type: 'address', indexed: true },
       { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'UpdateAccountMetadata',
-  },
+    name: 'UpdateAccountMetadata'
+  }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,10 +191,10 @@ export const efpListMinterAbi = [
       {
         name: '_accountMetadataAddress',
         internalType: 'address',
-        type: 'address',
+        type: 'address'
       },
-      { name: '_listRecordsL1', internalType: 'address', type: 'address' },
-    ],
+      { name: '_listRecordsL1', internalType: 'address', type: 'address' }
+    ]
   },
   {
     stateMutability: 'view',
@@ -205,44 +205,40 @@ export const efpListMinterAbi = [
       {
         name: '',
         internalType: 'contract IEFPAccountMetadata',
-        type: 'address',
-      },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'listRecordsL1',
-    outputs: [
-      { name: '', internalType: 'contract IEFPListRecords', type: 'address' },
-    ],
+        type: 'address'
+      }
+    ]
   },
   {
     stateMutability: 'payable',
     type: 'function',
-    inputs: [
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'mintAndSetAsDefaultList',
-    outputs: [],
+    inputs: [{ name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }],
+    name: 'easyMint',
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
-    name: 'mintToAndSetAsDefaultList',
-    outputs: [],
+    name: 'easyMintTo',
+    outputs: []
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'listRecordsL1',
+    outputs: [{ name: '', internalType: 'contract IEFPListRecords', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
@@ -253,23 +249,23 @@ export const efpListMinterAbi = [
       {
         name: '',
         internalType: 'contract IEFPListRegistry_ERC721',
-        type: 'address',
-      },
-    ],
+        type: 'address'
+      }
+    ]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [],
     name: 'renounceOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -279,17 +275,17 @@ export const efpListMinterAbi = [
         name: 'previousOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'newOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'OwnershipTransferred',
-  },
+    name: 'OwnershipTransferred'
+  }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,68 +298,68 @@ export const efpListRecordsAbi = [
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'op', internalType: 'bytes', type: 'bytes' },
+      { name: 'op', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'applyListOp',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'ops', internalType: 'bytes[]', type: 'bytes[]' },
+      { name: 'ops', internalType: 'bytes[]', type: 'bytes[]' }
     ],
     name: 'applyListOps',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'claimListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'claimListManagerForAddress',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getAllListOps',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListManager',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'index', internalType: 'uint256', type: 'uint256' },
+      { name: 'index', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'getListOp',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListOpCount',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'view',
@@ -371,81 +367,81 @@ export const efpListRecordsAbi = [
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
       { name: 'start', internalType: 'uint256', type: 'uint256' },
-      { name: 'end', internalType: 'uint256', type: 'uint256' },
+      { name: 'end', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'getListOpsInRange',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListUser',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'key', internalType: 'string', type: 'string' },
+      { name: 'key', internalType: 'string', type: 'string' }
     ],
     name: 'getMetadataValue',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'keys', internalType: 'string[]', type: 'string[]' },
+      { name: 'keys', internalType: 'string[]', type: 'string[]' }
     ],
     name: 'getMetadataValues',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'listOps',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [],
     name: 'renounceOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'setListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' }
     ],
     name: 'setListUser',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -453,10 +449,10 @@ export const efpListRecordsAbi = [
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
-      { name: 'value', internalType: 'bytes', type: 'bytes' },
+      { name: 'value', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setMetadataValue',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -469,19 +465,19 @@ export const efpListRecordsAbi = [
         type: 'tuple[]',
         components: [
           { name: 'key', internalType: 'string', type: 'string' },
-          { name: 'value', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+          { name: 'value', internalType: 'bytes', type: 'bytes' }
+        ]
+      }
     ],
     name: 'setMetadataValues',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -491,11 +487,11 @@ export const efpListRecordsAbi = [
         name: 'nonce',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
-      { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'ListOp',
+    name: 'ListOp'
   },
   {
     type: 'event',
@@ -505,16 +501,16 @@ export const efpListRecordsAbi = [
         name: 'previousOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'newOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'OwnershipTransferred',
+    name: 'OwnershipTransferred'
   },
   {
     type: 'event',
@@ -524,13 +520,21 @@ export const efpListRecordsAbi = [
         name: 'nonce',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'UpdateListMetadata',
+    name: 'UpdateListMetadata'
   },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'manager', internalType: 'address', type: 'address' }
+    ],
+    name: 'NonceAlreadyClaimed'
+  }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -544,38 +548,38 @@ export const efpListRegistryAbi = [
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'approve',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
     name: 'balanceOf',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getApproved',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getListStorageLocation',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'getMaxMintBatchSize',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'view',
@@ -586,90 +590,99 @@ export const efpListRegistryAbi = [
       {
         name: '',
         internalType: 'enum IEFPListRegistry.MintState',
-        type: 'uint8',
-      },
-    ],
+        type: 'uint8'
+      }
+    ]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'getPriceOracle',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'owner', internalType: 'address', type: 'address' },
-      { name: 'operator', internalType: 'address', type: 'address' },
+      { name: 'operator', internalType: 'address', type: 'address' }
     ],
     name: 'isApprovedForAll',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }]
   },
   {
     stateMutability: 'payable',
     type: 'function',
-    inputs: [
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
-    ],
+    inputs: [{ name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }],
     name: 'mint',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [{ name: 'quantity', internalType: 'uint256', type: 'uint256' }],
     name: 'mintBatch',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'quantity', internalType: 'uint256', type: 'uint256' },
+      { name: 'quantity', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'mintBatchTo',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'mintTo',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'name',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ownerOf',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [],
     name: 'renounceOwnership',
-    outputs: [],
+    outputs: []
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [
+      { name: 'from', internalType: 'address', type: 'address' },
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' }
+    ],
+    name: 'safeTransferFrom',
+    outputs: []
   },
   {
     stateMutability: 'payable',
@@ -678,50 +691,37 @@ export const efpListRegistryAbi = [
       { name: 'from', internalType: 'address', type: 'address' },
       { name: 'to', internalType: 'address', type: 'address' },
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: '_data', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'safeTransferFrom',
-    outputs: [],
-  },
-  {
-    stateMutability: 'payable',
-    type: 'function',
-    inputs: [
-      { name: 'from', internalType: 'address', type: 'address' },
-      { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: '_data', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'operator', internalType: 'address', type: 'address' },
-      { name: 'approved', internalType: 'bool', type: 'bool' },
+      { name: 'approved', internalType: 'bool', type: 'bool' }
     ],
     name: 'setApprovalForAll',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setListStorageLocation',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [
-      { name: '_maxMintBatchSize', internalType: 'uint256', type: 'uint256' },
-    ],
+    inputs: [{ name: '_maxMintBatchSize', internalType: 'uint256', type: 'uint256' }],
     name: 'setMaxMintBatchSize',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -730,48 +730,46 @@ export const efpListRegistryAbi = [
       {
         name: '_mintState',
         internalType: 'enum IEFPListRegistry.MintState',
-        type: 'uint8',
-      },
+        type: 'uint8'
+      }
     ],
     name: 'setMintState',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [
-      { name: 'priceOracle_', internalType: 'address', type: 'address' },
-    ],
+    inputs: [{ name: 'priceOracle_', internalType: 'address', type: 'address' }],
     name: 'setPriceOracle',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
     name: 'supportsInterface',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'symbol',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'tokenURI',
-    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    outputs: [{ name: '', internalType: 'string', type: 'string' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'totalSupply',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'payable',
@@ -779,17 +777,17 @@ export const efpListRegistryAbi = [
     inputs: [
       { name: 'from', internalType: 'address', type: 'address' },
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
+      { name: 'tokenId', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'transferFrom',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -799,22 +797,22 @@ export const efpListRegistryAbi = [
         name: 'owner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'approved',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'tokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'Approval',
+    name: 'Approval'
   },
   {
     type: 'event',
@@ -824,17 +822,17 @@ export const efpListRegistryAbi = [
         name: 'owner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'operator',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
-      { name: 'approved', internalType: 'bool', type: 'bool', indexed: false },
+      { name: 'approved', internalType: 'bool', type: 'bool', indexed: false }
     ],
-    name: 'ApprovalForAll',
+    name: 'ApprovalForAll'
   },
   {
     type: 'event',
@@ -844,18 +842,18 @@ export const efpListRegistryAbi = [
         name: 'fromTokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'toTokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: false,
+        indexed: false
       },
       { name: 'from', internalType: 'address', type: 'address', indexed: true },
-      { name: 'to', internalType: 'address', type: 'address', indexed: true },
+      { name: 'to', internalType: 'address', type: 'address', indexed: true }
     ],
-    name: 'ConsecutiveTransfer',
+    name: 'ConsecutiveTransfer'
   },
   {
     type: 'event',
@@ -865,10 +863,10 @@ export const efpListRegistryAbi = [
         name: 'maxMintBatchSize',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'MaxMintBatchSizeChange',
+    name: 'MaxMintBatchSizeChange'
   },
   {
     type: 'event',
@@ -878,10 +876,10 @@ export const efpListRegistryAbi = [
         name: 'mintState',
         internalType: 'enum IEFPListRegistry.MintState',
         type: 'uint8',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'MintStateChange',
+    name: 'MintStateChange'
   },
   {
     type: 'event',
@@ -891,16 +889,16 @@ export const efpListRegistryAbi = [
         name: 'previousOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'newOwner',
         internalType: 'address',
         type: 'address',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'OwnershipTransferred',
+    name: 'OwnershipTransferred'
   },
   {
     type: 'event',
@@ -910,10 +908,10 @@ export const efpListRegistryAbi = [
         name: 'priceOracle',
         internalType: 'address',
         type: 'address',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'PriceOracleChange',
+    name: 'PriceOracleChange'
   },
   {
     type: 'event',
@@ -925,10 +923,10 @@ export const efpListRegistryAbi = [
         name: 'tokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
-      },
+        indexed: true
+      }
     ],
-    name: 'Transfer',
+    name: 'Transfer'
   },
   {
     type: 'event',
@@ -938,16 +936,16 @@ export const efpListRegistryAbi = [
         name: 'tokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'listStorageLocation',
         internalType: 'bytes',
         type: 'bytes',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'UpdateListStorageLocation',
+    name: 'UpdateListStorageLocation'
   },
   { type: 'error', inputs: [], name: 'ApprovalCallerNotOwnerNorApproved' },
   { type: 'error', inputs: [], name: 'ApprovalQueryForNonexistentToken' },
@@ -961,7 +959,7 @@ export const efpListRegistryAbi = [
   { type: 'error', inputs: [], name: 'TransferFromIncorrectOwner' },
   { type: 'error', inputs: [], name: 'TransferToNonERC721ReceiverImplementer' },
   { type: 'error', inputs: [], name: 'TransferToZeroAddress' },
-  { type: 'error', inputs: [], name: 'URIQueryForNonexistentToken' },
+  { type: 'error', inputs: [], name: 'URIQueryForNonexistentToken' }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -974,14 +972,14 @@ export const iefpListRegistryErc721Abi = [
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getListStorageLocation',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'getMaxMintBatchSize',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'view',
@@ -992,71 +990,67 @@ export const iefpListRegistryErc721Abi = [
       {
         name: '',
         internalType: 'enum IEFPListRegistry.MintState',
-        type: 'uint8',
-      },
-    ],
+        type: 'uint8'
+      }
+    ]
   },
   {
     stateMutability: 'payable',
     type: 'function',
-    inputs: [
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
-    ],
+    inputs: [{ name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }],
     name: 'mint',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [{ name: 'quantity', internalType: 'uint256', type: 'uint256' }],
     name: 'mintBatch',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'quantity', internalType: 'uint256', type: 'uint256' },
+      { name: 'quantity', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'mintBatchTo',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'payable',
     type: 'function',
     inputs: [
       { name: 'to', internalType: 'address', type: 'address' },
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'mintTo',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'ownerOf',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setListStorageLocation',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
-    inputs: [
-      { name: '_maxMintBatchSize', internalType: 'uint256', type: 'uint256' },
-    ],
+    inputs: [{ name: '_maxMintBatchSize', internalType: 'uint256', type: 'uint256' }],
     name: 'setMaxMintBatchSize',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -1065,18 +1059,18 @@ export const iefpListRegistryErc721Abi = [
       {
         name: '_mintState',
         internalType: 'enum IEFPListRegistry.MintState',
-        type: 'uint8',
-      },
+        type: 'uint8'
+      }
     ],
     name: 'setMintState',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'totalSupply',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     type: 'event',
@@ -1086,17 +1080,17 @@ export const iefpListRegistryErc721Abi = [
         name: 'tokenId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       {
         name: 'listStorageLocation',
         internalType: 'bytes',
         type: 'bytes',
-        indexed: false,
-      },
+        indexed: false
+      }
     ],
-    name: 'UpdateListStorageLocation',
-  },
+    name: 'UpdateListStorageLocation'
+  }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1109,71 +1103,71 @@ export const listMetadataAbi = [
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'claimListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'claimListManagerForAddress',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListManager',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListUser',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'key', internalType: 'string', type: 'string' },
+      { name: 'key', internalType: 'string', type: 'string' }
     ],
     name: 'getMetadataValue',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'keys', internalType: 'string[]', type: 'string[]' },
+      { name: 'keys', internalType: 'string[]', type: 'string[]' }
     ],
     name: 'getMetadataValues',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'setListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' }
     ],
     name: 'setListUser',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -1181,10 +1175,10 @@ export const listMetadataAbi = [
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
-      { name: 'value', internalType: 'bytes', type: 'bytes' },
+      { name: 'value', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setMetadataValue',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -1197,12 +1191,12 @@ export const listMetadataAbi = [
         type: 'tuple[]',
         components: [
           { name: 'key', internalType: 'string', type: 'string' },
-          { name: 'value', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+          { name: 'value', internalType: 'bytes', type: 'bytes' }
+        ]
+      }
     ],
     name: 'setMetadataValues',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -1212,13 +1206,21 @@ export const listMetadataAbi = [
         name: 'nonce',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'UpdateListMetadata',
+    name: 'UpdateListMetadata'
   },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'manager', internalType: 'address', type: 'address' }
+    ],
+    name: 'NonceAlreadyClaimed'
+  }
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1231,68 +1233,68 @@ export const listRecordsAbi = [
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'op', internalType: 'bytes', type: 'bytes' },
+      { name: 'op', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'applyListOp',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'ops', internalType: 'bytes[]', type: 'bytes[]' },
+      { name: 'ops', internalType: 'bytes[]', type: 'bytes[]' }
     ],
     name: 'applyListOps',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'claimListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'claimListManagerForAddress',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getAllListOps',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListManager',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'index', internalType: 'uint256', type: 'uint256' },
+      { name: 'index', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'getListOp',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListOpCount',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
   },
   {
     stateMutability: 'view',
@@ -1300,67 +1302,67 @@ export const listRecordsAbi = [
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
       { name: 'start', internalType: 'uint256', type: 'uint256' },
-      { name: 'end', internalType: 'uint256', type: 'uint256' },
+      { name: 'end', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'getListOpsInRange',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'nonce', internalType: 'uint256', type: 'uint256' }],
     name: 'getListUser',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'key', internalType: 'string', type: 'string' },
+      { name: 'key', internalType: 'string', type: 'string' }
     ],
     name: 'getMetadataValue',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: 'tokenId', internalType: 'uint256', type: 'uint256' },
-      { name: 'keys', internalType: 'string[]', type: 'string[]' },
+      { name: 'keys', internalType: 'string[]', type: 'string[]' }
     ],
     name: 'getMetadataValues',
-    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }],
+    outputs: [{ name: '', internalType: 'bytes[]', type: 'bytes[]' }]
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [
       { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'listOps',
-    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }],
+    outputs: [{ name: '', internalType: 'bytes', type: 'bytes' }]
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'manager', internalType: 'address', type: 'address' },
+      { name: 'manager', internalType: 'address', type: 'address' }
     ],
     name: 'setListManager',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
-      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' }
     ],
     name: 'setListUser',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -1368,10 +1370,10 @@ export const listRecordsAbi = [
     inputs: [
       { name: 'nonce', internalType: 'uint256', type: 'uint256' },
       { name: 'key', internalType: 'string', type: 'string' },
-      { name: 'value', internalType: 'bytes', type: 'bytes' },
+      { name: 'value', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'setMetadataValue',
-    outputs: [],
+    outputs: []
   },
   {
     stateMutability: 'nonpayable',
@@ -1384,12 +1386,12 @@ export const listRecordsAbi = [
         type: 'tuple[]',
         components: [
           { name: 'key', internalType: 'string', type: 'string' },
-          { name: 'value', internalType: 'bytes', type: 'bytes' },
-        ],
-      },
+          { name: 'value', internalType: 'bytes', type: 'bytes' }
+        ]
+      }
     ],
     name: 'setMetadataValues',
-    outputs: [],
+    outputs: []
   },
   {
     type: 'event',
@@ -1399,11 +1401,11 @@ export const listRecordsAbi = [
         name: 'nonce',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
-      { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'op', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'ListOp',
+    name: 'ListOp'
   },
   {
     type: 'event',
@@ -1413,11 +1415,19 @@ export const listRecordsAbi = [
         name: 'nonce',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: true,
+        indexed: true
       },
       { name: 'key', internalType: 'string', type: 'string', indexed: false },
-      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false },
+      { name: 'value', internalType: 'bytes', type: 'bytes', indexed: false }
     ],
-    name: 'UpdateListMetadata',
+    name: 'UpdateListMetadata'
   },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'nonce', internalType: 'uint256', type: 'uint256' },
+      { name: 'manager', internalType: 'address', type: 'address' }
+    ],
+    name: 'NonceAlreadyClaimed'
+  }
 ] as const
