@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import url from 'node:url'
 import path from 'node:path'
 import { defineConfig, type Plugin } from '@wagmi/cli'
-import { foundry, etherscan, actions, react, type FoundryConfig, type EtherscanConfig } from '@wagmi/cli/plugins'
+import { foundry, etherscan, actions, react, type FoundryConfig } from '@wagmi/cli/plugins'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 

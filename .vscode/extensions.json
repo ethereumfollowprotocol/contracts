@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "mikestead.dotenv",
+    "tamasfe.even-better-toml",
+    "EditorConfig.EditorConfig",
+    "nomicfoundation.hardhat-solidity"
+  ],
+  "unwantedRecommendations": ["juanblanco.solidity"]
+}
