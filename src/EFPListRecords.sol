@@ -12,6 +12,8 @@ import {IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.so
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
  */
 abstract contract ListMetadata is IEFPListMetadata {
+    error NonceAlreadyClaimed(uint256 nonce, address manager);
+
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
     ///////////////////////////////////////////////////////////////////////////
@@ -141,7 +143,13 @@ abstract contract ListMetadata is IEFPListMetadata {
      */
     function _claimListManager(uint256 nonce, address manager) internal {
         bytes memory existing = values[nonce]["manager"];
-        require(existing.length != 20 || bytesToAddress(existing) == manager, "nonce already claimed");
+        // require(existing.length != 20 || bytesToAddress(existing) == manager, "nonce already claimed");
+        if (existing.length == 20) {
+            address existingManager = bytesToAddress(existing);
+            if (existingManager != manager) {
+                revert NonceAlreadyClaimed(nonce, existingManager);
+            }
+        }
         _setMetadataValue(nonce, "manager", abi.encodePacked(manager));
     }
 

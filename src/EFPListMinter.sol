@@ -24,7 +24,11 @@ contract EFPListMinter is Ownable {
         listRecordsL1 = IEFPListRecords(_listRecordsL1);
     }
 
-    function mintAndSetAsDefaultList(bytes calldata listStorageLocation) public payable {
+    function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation, address expectedContractAddress)
+        internal
+        view
+        returns (uint256)
+    {
         // the list storage location is
         // - version (1 byte)
         // - list storate location type (1 byte)
@@ -34,29 +38,41 @@ contract EFPListMinter is Ownable {
         require(listStorageLocation.length == 1 + 1 + 32 + 20 + 32, "EFPListMinter: invalid list storage location");
         require(listStorageLocation[0] == 0x01, "EFPListMinter: invalid list storage location version");
         require(listStorageLocation[1] == 0x01, "EFPListMinter: invalid list storage location type");
-        uint256 listLocationChainId = _bytesToUint(listStorageLocation, 2);
-        require(listLocationChainId == _getChainId(), "EFPListMinter: invalid list storage location chain id");
-        address listLocationContractAddress = _bytesToAddress(listStorageLocation, 34);
-        require(listLocationContractAddress == address(listRecordsL1), "EFPListMinter: invalid list storage location contract address");
+        uint256 chainId = _bytesToUint(listStorageLocation, 2);
+        require(chainId == _getChainId(), "EFPListMinter: invalid list storage location chain id");
+        address contractAddress = _bytesToAddress(listStorageLocation, 34);
+        require(
+            contractAddress == expectedContractAddress, "EFPListMinter: invalid list storage location contract address"
+        );
+        uint256 nonce = _bytesToUint(listStorageLocation, 54);
+        return nonce;
+    }
+
+    function easyMint(bytes calldata listStorageLocation) public payable {
+        // validate the list storage location
+        uint256 nonce = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
 
         uint256 tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
         _setDefaultListForAccount(msg.sender, tokenId);
 
-        uint256 listLocationNonce = _bytesToUint(listStorageLocation, 54);
-        listRecordsL1.claimListManagerForAddress(listLocationNonce, msg.sender);
+        listRecordsL1.claimListManager(nonce);
+        listRecordsL1.setMetadataValue(tokenId, "user", abi.encodePacked(msg.sender));
+        listRecordsL1.setListManager(nonce, msg.sender);
     }
 
-    function mintToAndSetAsDefaultList(address to, bytes calldata listStorageLocation) public payable {
-        require(listStorageLocation.length == 1 + 1 + 32 + 20 + 32, "EFPListMinter: invalid list storage location");
-        require(listStorageLocation[0] == 0x01, "EFPListMinter: invalid list storage location version");
-        require(listStorageLocation[1] == 0x01, "EFPListMinter: invalid list storage location type");
+    function easyMintTo(address to, bytes calldata listStorageLocation) public payable {
+        // validate the list storage location
+        uint256 nonce = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
 
         uint256 tokenId = registry.totalSupply();
         registry.mintTo{value: msg.value}(to, listStorageLocation);
         _setDefaultListForAccount(to, tokenId);
-        // _setListLocationL1(tokenId, address(listRecordsL1), nonceL1);
-        // listRecordsL1.claimListManagerForAddress(nonceL1, to);
+
+        listRecordsL1.claimListManager(nonce);
+        listRecordsL1.setMetadataValue(tokenId, "user", abi.encodePacked(to));
+        // now transfer managership back to msg.sender now that we set the metadata value for user
+        listRecordsL1.setListManager(nonce, msg.sender);
     }
 
     function _setDefaultListForAccount(address to, uint256 tokenId) internal {
@@ -71,10 +87,10 @@ contract EFPListMinter is Ownable {
         return id;
     }
 
-        // Generalized function to convert bytes to uint256 with a given offset
+    // Generalized function to convert bytes to uint256 with a given offset
     function _bytesToUint(bytes memory data, uint256 offset) internal pure returns (uint256) {
         require(data.length >= offset + 32, "Data too short");
-        uint value;
+        uint256 value;
         assembly {
             value := mload(add(data, add(32, offset)))
         }

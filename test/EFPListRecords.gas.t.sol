@@ -46,55 +46,55 @@ contract EFPListRecordsGasTest is Test {
         listRecords = new EFPListRecords();
         listRecords.claimListManager(NONCE);
         for (uint256 i = 0; i < 1000; i++) {
-          bytes memory listOpBytes = encodeListOp(LIST_OP_TYPE_ADD_RECORD);
-          if (i < 1) {
-            listOps__0001.push(listOpBytes);
-          }
-          if (i < 2) {
-            listOps__0002.push(listOpBytes);
-          }
-          if (i < 3) {
-            listOps__0003.push(listOpBytes);
-          }
-          if (i < 4) {
-            listOps__0004.push(listOpBytes);
-          }
-          if (i < 5) {
-            listOps__0005.push(listOpBytes);
-          }
-          if (i < 10) {
-            listOps__0010.push(listOpBytes);
-          }
-          if (i < 20) {
-            listOps__0020.push(listOpBytes);
-          }
-          if (i < 30) {
-            listOps__0030.push(listOpBytes);
-          }
-          if (i < 40) {
-            listOps__0040.push(listOpBytes);
-          }
-          if (i < 50) {
-            listOps__0050.push(listOpBytes);
-          }
-          if (i < 100) {
-            listOps__0100.push(listOpBytes);
-          }
-          if (i < 200) {
-            listOps__0200.push(listOpBytes);
-          }
-          if (i < 300) {
-            listOps__0300.push(listOpBytes);
-          }
-          if (i < 400) {
-            listOps__0400.push(listOpBytes);
-          }
-          if (i < 500) {
-            listOps__0500.push(listOpBytes);
-          }
-          if (i < 1000) {
-            listOps__1000.push(listOpBytes);
-          }
+            bytes memory listOpBytes = encodeListOp(LIST_OP_TYPE_ADD_RECORD);
+            if (i < 1) {
+                listOps__0001.push(listOpBytes);
+            }
+            if (i < 2) {
+                listOps__0002.push(listOpBytes);
+            }
+            if (i < 3) {
+                listOps__0003.push(listOpBytes);
+            }
+            if (i < 4) {
+                listOps__0004.push(listOpBytes);
+            }
+            if (i < 5) {
+                listOps__0005.push(listOpBytes);
+            }
+            if (i < 10) {
+                listOps__0010.push(listOpBytes);
+            }
+            if (i < 20) {
+                listOps__0020.push(listOpBytes);
+            }
+            if (i < 30) {
+                listOps__0030.push(listOpBytes);
+            }
+            if (i < 40) {
+                listOps__0040.push(listOpBytes);
+            }
+            if (i < 50) {
+                listOps__0050.push(listOpBytes);
+            }
+            if (i < 100) {
+                listOps__0100.push(listOpBytes);
+            }
+            if (i < 200) {
+                listOps__0200.push(listOpBytes);
+            }
+            if (i < 300) {
+                listOps__0300.push(listOpBytes);
+            }
+            if (i < 400) {
+                listOps__0400.push(listOpBytes);
+            }
+            if (i < 500) {
+                listOps__0500.push(listOpBytes);
+            }
+            if (i < 1000) {
+                listOps__1000.push(listOpBytes);
+            }
         }
     }
 

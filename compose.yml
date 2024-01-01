@@ -30,6 +30,8 @@ services:
       - ETHEREUM_LOCAL_NODE_URL=${ETHEREUM_LOCAL_NODE_URL:-http://host.docker.internal:8545}
       - ANVIL_ACCOUNT_PRIVATE_KEY=${ANVIL_ACCOUNT_PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
       - PRIVATE_KEY=${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
+      - MINT_INITIAL_TOTAL_SUPPLY=${MINT_INITIAL_TOTAL_SUPPLY:-100}
+      - FORGE_ARGS=${FORGE_ARGS:-}
     network_mode: host
     stdin_open: true
     tty: true

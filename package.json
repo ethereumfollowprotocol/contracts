@@ -7,7 +7,7 @@
     "build": "wagmi generate && cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts",
     "clean": "forge clean",
     "docs": "forge doc --serve --port 4433 --open",
-    "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}",
+    "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS}",
     "format:sol": "forge fmt",
     "format:ts": "prettier --config .prettierrc --write ./scripts/**/*.ts wagmi.config.ts",
     "format": "bun format:ts && bun format:sol",
@@ -16,7 +16,7 @@
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
     "lint:ts": "bun x oxlint@latest --import-plugin --ignore-path='.eslintignore' --fix .",
-    "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY}"
+    "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS}"
   },
   "dependencies": {
     "viem": "2.0.0-rc.3",
