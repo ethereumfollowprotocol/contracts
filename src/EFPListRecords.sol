@@ -13,7 +13,7 @@ import {IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.so
  */
 abstract contract ListMetadata is IEFPListMetadata {
     error NonceAlreadyClaimed(uint256 nonce, address manager);
-    error NotListManager(address manager);
+    // error NotListManager(address manager);
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
@@ -100,13 +100,7 @@ abstract contract ListMetadata is IEFPListMetadata {
         _setMetadataValue(nonce, key, value);
     }
 
-    /**
-     * @dev Sets an array of metadata records for a token ID. Each record is a
-     * key/value pair. Only callable by the list manager.
-     * @param nonce The nonce corresponding to the list to update.
-     * @param records The records to set.
-     */
-    function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external onlyListManager(nonce) {
+    function _setMetadataValues(uint256 nonce, KeyValue[] calldata records) internal {
         uint256 length = records.length;
         for (uint256 i = 0; i < length;) {
             KeyValue calldata record = records[i];
@@ -115,6 +109,16 @@ abstract contract ListMetadata is IEFPListMetadata {
                 ++i;
             }
         }
+    }
+
+    /**
+     * @dev Sets an array of metadata records for a token ID. Each record is a
+     * key/value pair. Only callable by the list manager.
+     * @param nonce The nonce corresponding to the list to update.
+     * @param records The records to set.
+     */
+    function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external onlyListManager(nonce) {
+        _setMetadataValues(nonce, records);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -136,7 +140,7 @@ abstract contract ListMetadata is IEFPListMetadata {
             if (existingManager == address(0)) {
                 _claimListManager(nonce, msg.sender);
             } else {
-                revert NotListManager(existingManager);
+                require(existingManager == msg.sender, "Not list manager");
             }
         }
         _;
@@ -337,7 +341,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
      * @param nonce The list's unique identifier.
      * @param ops An array of operations to be applied.
      */
-    function applyListOps(uint256 nonce, bytes[] calldata ops) public onlyListManager(nonce) {
+    function _applyListOps(uint256 nonce, bytes[] calldata ops) internal {
         uint256 len = ops.length;
         for (uint256 i = 0; i < len;) {
             _applyListOp(nonce, ops[i]);
@@ -345,6 +349,30 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
                 ++i;
             }
         }
+    }
+
+    /**
+     * @notice Allows list managers to apply multiple operations in a single transaction.
+     * @param nonce The list's unique identifier.
+     * @param ops An array of operations to be applied.
+     */
+    function applyListOps(uint256 nonce, bytes[] calldata ops) public onlyListManager(nonce) {
+        _applyListOps(nonce, ops);
+    }
+
+    /**
+     * @notice Allows list managers to set metadata values and apply list ops
+     *        in a single transaction.
+     * @param nonce The list's unique identifier.
+     * @param records An array of key-value pairs to set.
+     * @param ops An array of operations to be applied.
+     */
+    function setMetadataValuesAndApplyListOps(uint256 nonce, KeyValue[] calldata records, bytes[] calldata ops)
+        external
+        onlyListManager(nonce)
+    {
+        _setMetadataValues(nonce, records);
+        _applyListOps(nonce, ops);
     }
 }
 

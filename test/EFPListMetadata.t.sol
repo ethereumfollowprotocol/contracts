@@ -58,7 +58,7 @@ contract EFPListMetadataTest is Test {
         // cannot set value if don't own token
         // try calling from another address
         vm.prank(address(1));
-        vm.expectRevert("not manager");
+        vm.expectRevert("Not list manager");
         listRecords.setMetadataValue(NONCE, "key", "value");
     }
 
@@ -70,7 +70,7 @@ contract EFPListMetadataTest is Test {
         listRecords.claimListManager(NONCE);
 
         vm.prank(address(1));
-        vm.expectRevert("not manager");
+        vm.expectRevert("Not list manager");
         listRecords.setMetadataValues(NONCE, records);
     }
 
@@ -83,7 +83,7 @@ contract EFPListMetadataTest is Test {
     function test_RevertIf_SetListManagerFromNonManager() public {
         listRecords.claimListManager(NONCE);
         vm.prank(address(1));
-        vm.expectRevert("not manager");
+        vm.expectRevert("Not list manager");
         listRecords.setListManager(NONCE, address(1));
     }
 
@@ -96,7 +96,7 @@ contract EFPListMetadataTest is Test {
     function test_RevertIf_SetListUserFromNonManager() public {
         listRecords.claimListManager(NONCE);
         vm.prank(address(1));
-        vm.expectRevert("not manager");
+        vm.expectRevert("Not list manager");
         listRecords.setListUser(NONCE, address(1));
     }
 }

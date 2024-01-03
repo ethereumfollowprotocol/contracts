@@ -45,4 +45,6 @@ interface IEFPListRecords is IEFPListMetadata {
     // List Operation Functions - Write
     function applyListOp(uint256 nonce, bytes calldata op) external;
     function applyListOps(uint256 nonce, bytes[] calldata ops) external;
+    function setMetadataValuesAndApplyListOps(uint256 nonce, KeyValue[] calldata records, bytes[] calldata ops)
+        external;
 }
