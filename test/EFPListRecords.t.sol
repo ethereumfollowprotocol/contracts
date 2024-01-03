@@ -58,7 +58,7 @@ contract EFPListRecordsTest is Test {
     function helper_CanApplyListOp(uint8 opType) internal {
         assertEq(listRecords.getListOpCount(NONCE), 0);
 
-        listRecords.claimListManager(NONCE);
+        // listRecords.claimListManager(NONCE);
 
         bytes memory listOp = encodeListOp(opType);
         listRecords.applyListOp(NONCE, listOp);
@@ -70,7 +70,7 @@ contract EFPListRecordsTest is Test {
     function test_CanApplyMultipleListOpsAtOnce() public {
         assertEq(listRecords.getListOpCount(NONCE), 0);
 
-        listRecords.claimListManager(NONCE);
+        // listRecords.claimListManager(NONCE);
 
         bytes[] memory listOps = new bytes[](2);
         listOps[0] = encodeListOp(LIST_OP_TYPE_ADD_RECORD);

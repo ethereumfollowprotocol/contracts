@@ -54,6 +54,7 @@ contract EFPListMetadataTest is Test {
     }
 
     function test_RevertIf_SetMetadataValueFromNonManager() public {
+        listRecords.claimListManager(NONCE);
         // cannot set value if don't own token
         // try calling from another address
         vm.prank(address(1));
@@ -65,6 +66,8 @@ contract EFPListMetadataTest is Test {
         IEFPListMetadata.KeyValue[] memory records = new IEFPListMetadata.KeyValue[](2);
         records[0] = IEFPListMetadata.KeyValue("key1", "value1");
         records[1] = IEFPListMetadata.KeyValue("key2", "value2");
+
+        listRecords.claimListManager(NONCE);
 
         vm.prank(address(1));
         vm.expectRevert("not manager");

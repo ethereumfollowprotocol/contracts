@@ -44,7 +44,7 @@ contract EFPListRecordsGasTest is Test {
 
     function setUp() public {
         listRecords = new EFPListRecords();
-        listRecords.claimListManager(NONCE);
+        // listRecords.claimListManager(NONCE);
         for (uint256 i = 0; i < 1000; i++) {
             bytes memory listOpBytes = encodeListOp(LIST_OP_TYPE_ADD_RECORD);
             if (i < 1) {

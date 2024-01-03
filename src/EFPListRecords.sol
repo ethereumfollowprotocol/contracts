@@ -13,6 +13,7 @@ import {IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.so
  */
 abstract contract ListMetadata is IEFPListMetadata {
     error NonceAlreadyClaimed(uint256 nonce, address manager);
+    error NotListManager(address manager);
 
     ///////////////////////////////////////////////////////////////////////////
     // Data Structures
@@ -127,7 +128,17 @@ abstract contract ListMetadata is IEFPListMetadata {
      */
     modifier onlyListManager(uint256 nonce) {
         bytes memory existing = values[nonce]["manager"];
-        require(existing.length == 20 && keccak256(existing) == keccak256(abi.encodePacked(msg.sender)), "not manager");
+        // if not set, claim for msg.sender
+        if (existing.length != 20) {
+            _claimListManager(nonce, msg.sender);
+        } else {
+            address existingManager = bytesToAddress(existing);
+            if (existingManager == address(0)) {
+                _claimListManager(nonce, msg.sender);
+            } else {
+                revert NotListManager(existingManager);
+            }
+        }
         _;
     }
 
