@@ -19,14 +19,14 @@
     "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS}"
   },
   "dependencies": {
-    "viem": "2.0.0-rc.4",
-    "@wagmi/cli": "2.0.0-rc.2",
-    "wagmi": "2.0.0-rc.2"
+    "viem":"^2.0.2",
+    "@wagmi/cli": "^2.0.2",
+    "wagmi": "^2.0.3"
   },
   "devDependencies": {
     "@types/bun": "^1.0.0",
     "@types/node": "^20.10.6",
-    "bun": "^1.0.20",
+    "bun": "^1.0.21",
     "prettier": "^3.1.1",
     "solc": "^0.8.20",
     "solhint": "^4.0.0",
