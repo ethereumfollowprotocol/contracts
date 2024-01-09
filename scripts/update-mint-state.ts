@@ -5,7 +5,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 
 /**
  * cli usage
- * node scripts/enable-mint.ts --public-mint|--public-batch|--owner-only|--disabled
+ * bun scripts/enable-mint.ts --public-mint|--public-batch|--owner-only|--disabled
  */
 
 const mintStateRecord = {

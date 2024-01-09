@@ -4,7 +4,7 @@
   "repository": "github:ethereumfollowprotocol/beta-contractst",
   "type": "module",
   "scripts": {
-    "build": "wagmi generate && bun format:ts && cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts",
+    "build": "wagmi generate && bun format:ts && (cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts || true)",
     "clean": "forge clean",
     "docs": "forge doc --serve --port 4433 --open",
     "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS} && bun enable-public-mint",
@@ -20,7 +20,7 @@
     "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS}"
   },
   "dependencies": {
-    "viem": "^2.0.2",
+    "viem": "^2.0.3",
     "@wagmi/cli": "^2.0.2",
     "wagmi": "^2.0.3"
   },

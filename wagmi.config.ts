@@ -33,24 +33,11 @@ export default defineConfig([
   },
   {
     out: outDir ? path.join(outDir, 'actions.ts') : path.join(__dirname, 'generated', 'actions.ts'),
-    plugins: [
-      foundryPlugin(),
-      actions({
-        overridePackageName: 'wagmi',
-        getActionName: (options) => {
-          console.log(JSON.stringify(options, undefined, 2))
-          return `${options.contractName}_${options.type}_${options.itemName}`
-        }
-      })
-    ]
+    plugins: [foundryPlugin(), actions()]
   },
   {
     out: outDir ? path.join(outDir, 'react.ts') : path.join(__dirname, 'generated', 'hooks.ts'),
-    plugins: [
-      //
-      foundryPlugin(),
-      react({})
-    ]
+    plugins: [foundryPlugin(), react()]
   }
 ])
 
