@@ -17,7 +17,7 @@
     "lint": "bun lint:ts && bun lint:sol",
     "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
     "lint:ts": "bun x oxlint@latest --import-plugin --ignore-path='.eslintignore' --fix .",
-    "mint:localhost": "forge script scripts/mint.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS}"
+    "mint:localhost": "./scripts/mint.sh"
   },
   "dependencies": {
     "viem": "^2.0.3",
