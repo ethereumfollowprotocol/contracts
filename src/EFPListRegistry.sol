@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {ERC721A} from "lib/ERC721A/contracts/ERC721A.sol";
+import {ERC721AQueryable} from "lib/ERC721A/contracts/extensions/ERC721AQueryable.sol";
 import {IEFPListRegistry} from "./interfaces/IEFPListRegistry.sol";
 import {IEFPListPriceOracle} from "./interfaces/IEFPListPriceOracle.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
@@ -10,7 +11,7 @@ import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
  * @title EFPListRegistry
  * @notice A registry connecting token IDs with data such as managers, users, and list locations.
  */
-contract EFPListRegistry is IEFPListRegistry, ERC721A, Ownable {
+contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, Ownable {
     ///////////////////////////////////////////////////////////////////////////
     // Events
     ///////////////////////////////////////////////////////////////////////////

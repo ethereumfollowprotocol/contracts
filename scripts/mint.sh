@@ -15,7 +15,7 @@ function mint() {
 }
 
 # change to 1000 for large mint test
-for i in {0..100..50}
+for i in {0..150..50}
 do
   if [ $i -ne 0 ]; then
     mint $i
