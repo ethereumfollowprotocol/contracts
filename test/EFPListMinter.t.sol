@@ -51,15 +51,15 @@ pragma solidity ^0.8.23;
 //     function test_CanMintWithListLocationOnL2AndSetAsDefaultList() public {
 //         uint256 chainId = 2222;
 //         address addressL2 = address(0x4444444);
-//         uint256 nonceL2 = 3333;
+//         uint256 slotL2 = 3333;
 //         uint256 tokenId = registry.totalSupply();
-//         minter.mintWithListLocationOnL2AndSetAsDefaultList(chainId, addressL2, nonceL2);
+//         minter.mintWithListLocationOnL2AndSetAsDefaultList(chainId, addressL2, slotL2);
 
 //         assertEq(registry.ownerOf(tokenId), address(this));
 //         assertEq(accountMetadata.getValue(address(this), "primary-list"), abi.encodePacked(tokenId));
 //         assertEq(
 //             listMetadata.getValue(uint256(tokenId), "efp.list.location"),
-//             abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L2, chainId, addressL2, nonceL2)
+//             abi.encodePacked(LIST_LOCATION_VERSION, LIST_LOCATION_TYPE_L2, chainId, addressL2, slotL2)
 //         );
 //     }
 // }

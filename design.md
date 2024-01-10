@@ -1,12 +1,12 @@
 # Lists
 
-Multiple lists are stored in the `EFPListRecords` contract. Each list has a nonce.
+Multiple lists are stored in the `EFPListRecords` contract, disambiguated by a "slot".
 
-## Nonce
+## Slot
 
-Nonces are claimed on a first-come-first-serve basis. The nonce is used to identify the list.
+Storage slots are claimed on a first-come-first-serve basis. The slot is used to identify the list.
 
-Since the `EFPListRecords` contract can be deployed on multiple chains, the nonce allows users to claim a list and then reference it as the list location for their EFP NFT on mainnet Ethereum. Clients can read the nonce from the list location from the EFP NFT on Ethereum, and then use that nonce to find the list on the other chains.
+Since the `EFPListRecords` contract can be deployed on multiple chains, the slot allows users to claim a list and then reference it as the list location for their EFP NFT on mainnet Ethereum. Clients can read the slot from the list location from the EFP NFT on Ethereum, and then use that slot to find the list on the other chains.
 
 ## Basic requirements
 
@@ -88,9 +88,9 @@ The chosen design is to store an array of list operations for each list.
 Rather than try to index the records and tags, we simply store the operations that were performed on the list. Each list operation is encoded as a `bytes` type so it can be packed tightly for cheap storage.
 
 ```Solidity
-function applyListOp(uint nonce, bytes calldata op) public onlyListManager(nonce) {
-    listOps[nonce].push(op);
-    emit ListOp(nonce, op);
+function applyListOp(uint slot, bytes calldata op) public onlyListManager(slot) {
+    listOps[slot].push(op);
+    emit ListOp(slot, op);
 }
 ```
 

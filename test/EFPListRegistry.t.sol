@@ -25,12 +25,12 @@ contract EFPListRegistryTest is Test {
   function _bytesToStructOfUintAddressUint(bytes memory data)
     private
     pure
-    returns (uint256 chainId, address contractAddress, uint256 nonce)
+    returns (uint256 chainId, address contractAddress, uint256 slot)
   {
     assembly {
       chainId := mload(add(data, 32))
       contractAddress := mload(add(data, 52))
-      nonce := mload(add(data, 84))
+      slot := mload(add(data, 84))
     }
   }
 
@@ -42,8 +42,8 @@ contract EFPListRegistryTest is Test {
     return id;
   }
 
-  function makeListStorageLocation(uint256 nonce) private view returns (bytes memory) {
-    return abi.encodePacked(VERSION, LIST_LOCATION_TYPE, this.getChainId(), MOCK_LIST_ADDRESS, nonce);
+  function makeListStorageLocation(uint256 slot) private view returns (bytes memory) {
+    return abi.encodePacked(VERSION, LIST_LOCATION_TYPE, this.getChainId(), MOCK_LIST_ADDRESS, slot);
   }
 
   function test_CanSetMintState() public {

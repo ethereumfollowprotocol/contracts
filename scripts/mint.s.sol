@@ -103,7 +103,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     return addr;
   }
 
-  function makeListStorageLocation(address listRecordsAddress, uint nonce) private view returns (bytes memory) {
+  function makeListStorageLocation(address listRecordsAddress, uint slot) private view returns (bytes memory) {
     console.log('listRecordsAddress:                                                 %s', listRecordsAddress);
     uint8 VERSION = 1;
     uint8 LIST_LOCATION_TYPE = 1;
@@ -112,7 +112,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
       LIST_LOCATION_TYPE,
       _getChainId(),
       listRecordsAddress,
-      nonce
+      slot
     );
     return listStorageLocation;
   }
@@ -120,7 +120,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
   function mints(Contracts memory contracts) public {
     uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
     for (uint256 tokenId = totalSupply; tokenId <= lastTokenId; tokenId++) {
-      console.log('minting token id %d with nonce %d', tokenId, tokenId);
+      console.log('minting token id %d with slot %d', tokenId, tokenId);
       bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, tokenId);
       EFPListMinter(contracts.listMinter).easyMintTo(loadedListNfts[tokenId].listUser, listStorageLocation);
       // claim list manager
@@ -142,7 +142,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
   function mintOne(Contracts memory contracts) public {
     uint256 totalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
     uint tokenId = totalSupply;
-    console.log('minting token id %d with nonce %d', totalSupply, totalSupply);
+    console.log('minting token id %d with slot %d', totalSupply, totalSupply);
     bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
     EFPListMinter(contracts.listMinter).easyMint(listStorageLocation);
     // EFPListRecords(contracts.listRecords).claimListManager(tokenId);
@@ -196,7 +196,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
       }
 
       bytes memory listStorageLocation = makeListStorageLocation(contracts.listRecords, totalSupply);
-      console.log('easyMintTo token id %d with nonce %d', totalSupply, totalSupply);
+      console.log('easyMintTo token id %d with slot %d', totalSupply, totalSupply);
       EFPListMinter(contracts.listMinter).easyMintTo(listUser, listStorageLocation);
       // EFPListRecords(contracts.listRecords).claimListManager(tokenId);
       // EFPListRecords(contracts.listRecords).setMetadataValue(

@@ -5,34 +5,34 @@ pragma solidity ^0.8.23;
  * @title IEFPListMetadata
  */
 interface IEFPListMetadata {
-  event UpdateListMetadata(uint256 indexed nonce, string key, bytes value);
+  event UpdateListMetadata(uint256 indexed slot, string key, bytes value);
 
   struct KeyValue {
     string key;
     bytes value;
   }
 
-  function getMetadataValue(uint256 nonce, string calldata key) external view returns (bytes memory);
+  function getMetadataValue(uint256 slot, string calldata key) external view returns (bytes memory);
 
-  function getMetadataValues(uint256 nonce, string[] calldata keys) external view returns (bytes[] memory);
+  function getMetadataValues(uint256 slot, string[] calldata keys) external view returns (bytes[] memory);
 
-  function setMetadataValue(uint256 nonce, string calldata key, bytes calldata value) external;
+  function setMetadataValue(uint256 slot, string calldata key, bytes calldata value) external;
 
-  function setMetadataValues(uint256 nonce, KeyValue[] calldata records) external;
+  function setMetadataValues(uint256 slot, KeyValue[] calldata records) external;
 
   // List Manager Functions
-  function claimListManager(uint256 nonce) external;
+  function claimListManager(uint256 slot) external;
 
-  function claimListManagerForAddress(uint256 nonce, address manager) external;
+  function claimListManagerForAddress(uint256 slot, address manager) external;
 
-  function getListManager(uint256 nonce) external view returns (address);
+  function getListManager(uint256 slot) external view returns (address);
 
-  function setListManager(uint256 nonce, address manager) external;
+  function setListManager(uint256 slot, address manager) external;
 
   // List User Functions
-  function getListUser(uint256 nonce) external view returns (address);
+  function getListUser(uint256 slot) external view returns (address);
 
-  function setListUser(uint256 nonce, address user) external;
+  function setListUser(uint256 slot, address user) external;
 }
 
 /**
@@ -41,21 +41,21 @@ interface IEFPListMetadata {
  */
 interface IEFPListRecords is IEFPListMetadata {
   // Events
-  event ListOp(uint256 indexed nonce, bytes op);
+  event ListOp(uint256 indexed slot, bytes op);
 
   // List Operation Functions - Read
-  function getListOpCount(uint256 nonce) external view returns (uint256);
+  function getListOpCount(uint256 slot) external view returns (uint256);
 
-  function getListOp(uint256 nonce, uint256 index) external view returns (bytes memory);
+  function getListOp(uint256 slot, uint256 index) external view returns (bytes memory);
 
-  function getListOpsInRange(uint256 nonce, uint256 start, uint256 end) external view returns (bytes[] memory);
+  function getListOpsInRange(uint256 slot, uint256 start, uint256 end) external view returns (bytes[] memory);
 
-  function getAllListOps(uint256 nonce) external view returns (bytes[] memory);
+  function getAllListOps(uint256 slot) external view returns (bytes[] memory);
 
   // List Operation Functions - Write
-  function applyListOp(uint256 nonce, bytes calldata op) external;
+  function applyListOp(uint256 slot, bytes calldata op) external;
 
-  function applyListOps(uint256 nonce, bytes[] calldata ops) external;
+  function applyListOps(uint256 slot, bytes[] calldata ops) external;
 
-  function setMetadataValuesAndApplyListOps(uint256 nonce, KeyValue[] calldata records, bytes[] calldata ops) external;
+  function setMetadataValuesAndApplyListOps(uint256 slot, KeyValue[] calldata records, bytes[] calldata ops) external;
 }

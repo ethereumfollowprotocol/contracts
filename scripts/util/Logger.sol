@@ -127,8 +127,8 @@ library Logger {
       // load next 20 bytes as an address type, bytes 34-53
       address listStorageLocationAddress = BytesUtils.toAddress(listStorageLocation, 34);
       require(contracts.listRecords == listStorageLocationAddress, 'Logger: invalid list address');
-      // now retrieve the 32-byte nonce at bytes 54-85
-      uint256 nonce = BytesUtils.toUint256(listStorageLocation, 54);
+      // now retrieve the 32-byte slot at bytes 54-85
+      uint256 slot = BytesUtils.toUint256(listStorageLocation, 54);
 
       // now we determine how many list ops are in the list
       uint256 listOpCount = IEFPListRecords(contracts.listRecords).getListOpCount(tokenId);
@@ -136,7 +136,7 @@ library Logger {
       for (uint256 i = 0; i < listOpCount; i++) {
         bytes memory listOpBytes = IEFPListRecords(contracts.listRecords).getListOp(tokenId, i);
         ListOp memory listOp = ListOpUtils.decode(listOpBytes);
-        logListOpTableRow(nonce, i, listOp);
+        logListOpTableRow(slot, i, listOp);
       }
 
       console.log(
@@ -145,8 +145,8 @@ library Logger {
     }
   }
 
-  function logListOpTableRow(uint256 nonce, uint256 index, ListOp memory listOp) internal view {
-    string memory line = string.concat('|      #', Strings.toString(nonce), '    ', (nonce < 10 ? ' |' : '|'));
+  function logListOpTableRow(uint256 slot, uint256 index, ListOp memory listOp) internal view {
+    string memory line = string.concat('|      #', Strings.toString(slot), '    ', (slot < 10 ? ' |' : '|'));
 
     // index
     line = string.concat(line, '   ', Strings.toString(index), '  ', (index < 10 ? ' |' : '|'));

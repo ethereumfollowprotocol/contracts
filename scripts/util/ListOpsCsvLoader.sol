@@ -20,7 +20,7 @@ contract ListOpsCsvLoader {
         continue;
       }
       string[] memory values = CSVUtils.split(lines[i], ',');
-      uint256 nonce = StringUtils.stringToUint(values[0]);
+      uint256 slot = StringUtils.stringToUint(values[0]);
       string memory listOpHex = values[1];
 
       bytes memory listOpBytes = StringUtils.hexStringToBytes(listOpHex);
@@ -29,7 +29,7 @@ contract ListOpsCsvLoader {
       bytes memory listOpData = BytesUtils.slice(listOpBytes, 2, listOpBytes.length - 2);
       ListOp memory listOp = ListOp({version: listOpVersion, opcode: listOpCode, data: listOpData});
 
-      loadedListOpsMapping[nonce].push(listOp);
+      loadedListOpsMapping[slot].push(listOp);
     }
   }
 }
