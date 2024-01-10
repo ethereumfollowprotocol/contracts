@@ -602,7 +602,7 @@ export const efpListRecordsAbi = [
       { name: 'slot', internalType: 'uint256', type: 'uint256' },
       { name: 'manager', internalType: 'address', type: 'address' }
     ],
-    name: 'NonceAlreadyClaimed'
+    name: 'SlotAlreadyClaimed'
   }
 ] as const
 
@@ -1360,7 +1360,7 @@ export const listMetadataAbi = [
       { name: 'slot', internalType: 'uint256', type: 'uint256' },
       { name: 'manager', internalType: 'address', type: 'address' }
     ],
-    name: 'NonceAlreadyClaimed'
+    name: 'SlotAlreadyClaimed'
   }
 ] as const
 
@@ -1578,6 +1578,6 @@ export const listRecordsAbi = [
       { name: 'slot', internalType: 'uint256', type: 'uint256' },
       { name: 'manager', internalType: 'address', type: 'address' }
     ],
-    name: 'NonceAlreadyClaimed'
+    name: 'SlotAlreadyClaimed'
   }
 ] as const

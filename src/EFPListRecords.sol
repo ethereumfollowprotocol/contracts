@@ -13,7 +13,7 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
  */
 abstract contract ListMetadata is IEFPListMetadata {
-  error NonceAlreadyClaimed(uint256 slot, address manager);
+  error SlotAlreadyClaimed(uint256 slot, address manager);
   // error NotListManager(address manager);
 
   ///////////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ abstract contract ListMetadata is IEFPListMetadata {
     if (existing.length == 20) {
       address existingManager = bytesToAddress(existing);
       if (existingManager != manager) {
-        revert NonceAlreadyClaimed(slot, existingManager);
+        revert SlotAlreadyClaimed(slot, existingManager);
       }
     }
     _setMetadataValue(slot, 'manager', abi.encodePacked(manager));
