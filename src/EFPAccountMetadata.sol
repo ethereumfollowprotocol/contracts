@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import {IERC721} from "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IEFPAccountMetadata} from "./interfaces/IEFPAccountMetadata.sol";
+import {ENSReverseClaimer} from "./lib/ENSReverseClaimer.sol";
 
 /**
  * @title EFPListMetadata
@@ -11,7 +12,7 @@ import {IEFPAccountMetadata} from "./interfaces/IEFPAccountMetadata.sol";
  * @notice This contract stores records as key/value pairs, by 32-byte
  * EFP List Token ID.
  */
-contract EFPAccountMetadata is IEFPAccountMetadata, Ownable {
+contract EFPAccountMetadata is IEFPAccountMetadata, ENSReverseClaimer {
     event ProxyAdded(address proxy);
 
     event ProxyRemoved(address proxy);

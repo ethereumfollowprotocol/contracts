@@ -7,13 +7,14 @@ import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IEFPAccountMetadata} from "./interfaces/IEFPAccountMetadata.sol";
 import {IEFPListRegistry} from "./interfaces/IEFPListRegistry.sol";
 import {IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
+import {ENSReverseClaimer} from "./lib/ENSReverseClaimer.sol";
 
 interface IEFPListRegistry_ERC721 is IEFPListRegistry {
     function ownerOf(uint256 tokenId) external view returns (address);
     function totalSupply() external view returns (uint256);
 }
 
-contract EFPListMinter is Ownable {
+contract EFPListMinter is ENSReverseClaimer {
     IEFPListRegistry_ERC721 public registry;
     IEFPAccountMetadata public accountMetadata;
     IEFPListRecords public listRecordsL1;

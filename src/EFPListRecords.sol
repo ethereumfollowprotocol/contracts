@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "forge-std/console.sol";
 import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IEFPListMetadata, IEFPListRecords} from "./interfaces/IEFPListRecords.sol";
+import {ENSReverseClaimer} from "./lib/ENSReverseClaimer.sol";
 
 /**
  * @title ListMetadata
@@ -376,4 +377,4 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
     }
 }
 
-contract EFPListRecords is IEFPListRecords, ListRecords, Ownable {}
+contract EFPListRecords is IEFPListRecords, ListRecords, ENSReverseClaimer {}
