@@ -59,7 +59,7 @@ abstract contract ListMetadata is IEFPListMetadata {
   function getMetadataValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
     uint256 length = keys.length;
     bytes[] memory result = new bytes[](length);
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       string calldata key = keys[i];
       result[i] = values[tokenId][key];
       unchecked {
@@ -100,7 +100,7 @@ abstract contract ListMetadata is IEFPListMetadata {
 
   function _setMetadataValues(uint256 nonce, KeyValue[] calldata records) internal {
     uint256 length = records.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       KeyValue calldata record = records[i];
       _setMetadataValue(nonce, record.key, record.value);
       unchecked {
@@ -292,7 +292,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
     }
 
     bytes[] memory ops = new bytes[](end - start);
-    for (uint256 i = start; i < end; ) {
+    for (uint256 i = start; i < end;) {
       ops[i - start] = listOps[nonce][i];
 
       unchecked {
@@ -341,7 +341,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    */
   function _applyListOps(uint256 nonce, bytes[] calldata ops) internal {
     uint256 len = ops.length;
-    for (uint256 i = 0; i < len; ) {
+    for (uint256 i = 0; i < len;) {
       _applyListOp(nonce, ops[i]);
       unchecked {
         ++i;
@@ -365,11 +365,10 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    * @param records An array of key-value pairs to set.
    * @param ops An array of operations to be applied.
    */
-  function setMetadataValuesAndApplyListOps(
-    uint256 nonce,
-    KeyValue[] calldata records,
-    bytes[] calldata ops
-  ) external onlyListManager(nonce) {
+  function setMetadataValuesAndApplyListOps(uint256 nonce, KeyValue[] calldata records, bytes[] calldata ops)
+    external
+    onlyListManager(nonce)
+  {
     _setMetadataValues(nonce, records);
     _applyListOps(nonce, ops);
   }

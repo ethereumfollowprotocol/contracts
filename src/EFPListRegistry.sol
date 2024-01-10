@@ -114,10 +114,11 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param tokenId The ID of the token.
    * @param listStorageLocation The list storage location to be associated with the token.
    */
-  function setListStorageLocation(
-    uint256 tokenId,
-    bytes calldata listStorageLocation
-  ) external override onlyTokenOwner(tokenId) {
+  function setListStorageLocation(uint256 tokenId, bytes calldata listStorageLocation)
+    external
+    override
+    onlyTokenOwner(tokenId)
+  {
     _setListStorageLocation(tokenId, listStorageLocation);
   }
 

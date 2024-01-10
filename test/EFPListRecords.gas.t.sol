@@ -18,14 +18,13 @@ contract EFPListRecordsGasTest is Test {
   address ADDRESS_3 = 0x0000000000000000000000000000000000789AbC;
   uint256 constant NONCE = 0x1234567890ABCDEF;
 
-  bytes public listOp =
-    abi.encodePacked(
-      LIST_OP_VERSION, // Version for ListOp
-      LIST_OP_TYPE_ADD_RECORD, // Operation type for ListOp (Add Record)
-      LIST_RECORD_VERSION, // Version for ListRecord
-      LIST_RECORD_TYPE_RAW_ADDRESS, // Record type for ListRecord (Raw Address)
-      ADDRESS_1 // Raw address (20 bytes)
-    );
+  bytes public listOp = abi.encodePacked(
+    LIST_OP_VERSION, // Version for ListOp
+    LIST_OP_TYPE_ADD_RECORD, // Operation type for ListOp (Add Record)
+    LIST_RECORD_VERSION, // Version for ListRecord
+    LIST_RECORD_TYPE_RAW_ADDRESS, // Record type for ListRecord (Raw Address)
+    ADDRESS_1 // Raw address (20 bytes)
+  );
   bytes[] public listOps__0001;
   bytes[] public listOps__0002;
   bytes[] public listOps__0003;

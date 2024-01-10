@@ -26,10 +26,11 @@ contract EFPListMinter is ENSReverseClaimer {
     listRecordsL1 = IEFPListRecords(_listRecordsL1);
   }
 
-  function decodeL1ListStorageLocationNone(
-    bytes calldata listStorageLocation,
-    address expectedContractAddress
-  ) internal view returns (uint256) {
+  function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation, address expectedContractAddress)
+    internal
+    view
+    returns (uint256)
+  {
     // the list storage location is
     // - version (1 byte)
     // - list storate location type (1 byte)
@@ -42,10 +43,7 @@ contract EFPListMinter is ENSReverseClaimer {
     uint256 chainId = _bytesToUint(listStorageLocation, 2);
     require(chainId == _getChainId(), 'EFPListMinter: invalid list storage location chain id');
     address contractAddress = _bytesToAddress(listStorageLocation, 34);
-    require(
-      contractAddress == expectedContractAddress,
-      'EFPListMinter: invalid list storage location contract address'
-    );
+    require(contractAddress == expectedContractAddress, 'EFPListMinter: invalid list storage location contract address');
     uint256 nonce = _bytesToUint(listStorageLocation, 54);
     return nonce;
   }

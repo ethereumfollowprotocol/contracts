@@ -20,13 +20,13 @@
     "mint:localhost": "./scripts/mint.sh"
   },
   "dependencies": {
-    "viem": "^2.0.3",
+    "viem": "^2.0.5",
     "@wagmi/cli": "^2.0.2",
     "wagmi": "^2.0.3"
   },
   "devDependencies": {
     "@types/bun": "^1.0.0",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.10.8",
     "bun": "^1.0.21",
     "prettier": "^3.1.1",
     "solc": "^0.8.23",

@@ -1,6 +1,7 @@
 [profile.default]
 src = 'src'                                                 # the source directory
 test = 'test'                                               # the test directory
+scripts = 'scripts'                                         # the scripts directory
 out = 'out'                                                 # the output directory (for artifacts)
 libs = ['lib']                                              # a list of library directories
 cache = true                                                # whether to cache builds or not
@@ -9,4 +10,8 @@ force = false                                               # whether to ignore 
 fs_permissions = [{ access = "read", path = "./" }]
 solc_version = '0.8.23'                                     # override for the solc version
 evm_version = 'paris'                                    # set the EVM target version
-# See more config options https://github.com/foundry-rs/foundry/tree/master/config
+[fmt]
+line_length = 120
+tab_width = 2
+quote_style = 'single'
+# See more config options https://github.com/foundry-rs/foundry/tree/master/crates/config#configuration
