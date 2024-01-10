@@ -11,6 +11,16 @@ export const efpAccountMetadataAbi = [
     outputs: []
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'claimant', internalType: 'address', type: 'address' }
+    ],
+    name: 'claimReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [
@@ -57,6 +67,16 @@ export const efpAccountMetadataAbi = [
     inputs: [],
     name: 'renounceOwnership',
     outputs: []
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'name', internalType: 'string', type: 'string' }
+    ],
+    name: 'setReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
   },
   {
     stateMutability: 'nonpayable',
@@ -210,6 +230,16 @@ export const efpListMinterAbi = [
     ]
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'claimant', internalType: 'address', type: 'address' }
+    ],
+    name: 'claimReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
+  },
+  {
     stateMutability: 'payable',
     type: 'function',
     inputs: [{ name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }],
@@ -259,6 +289,16 @@ export const efpListMinterAbi = [
     inputs: [],
     name: 'renounceOwnership',
     outputs: []
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'name', internalType: 'string', type: 'string' }
+    ],
+    name: 'setReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
   },
   {
     stateMutability: 'nonpayable',
@@ -329,6 +369,16 @@ export const efpListRecordsAbi = [
     ],
     name: 'claimListManagerForAddress',
     outputs: []
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'claimant', internalType: 'address', type: 'address' }
+    ],
+    name: 'claimReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
   },
   {
     stateMutability: 'view',
@@ -494,6 +544,16 @@ export const efpListRecordsAbi = [
   {
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'name', internalType: 'string', type: 'string' }
+    ],
+    name: 'setReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
     outputs: []
@@ -578,6 +638,54 @@ export const efpListRegistryAbi = [
     inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
     name: 'balanceOf',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }]
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'claimant', internalType: 'address', type: 'address' }
+    ],
+    name: 'claimReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
+    name: 'explicitOwnershipOf',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct IERC721A.TokenOwnership',
+        type: 'tuple',
+        components: [
+          { name: 'addr', internalType: 'address', type: 'address' },
+          { name: 'startTimestamp', internalType: 'uint64', type: 'uint64' },
+          { name: 'burned', internalType: 'bool', type: 'bool' },
+          { name: 'extraData', internalType: 'uint24', type: 'uint24' }
+        ]
+      }
+    ]
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'tokenIds', internalType: 'uint256[]', type: 'uint256[]' }],
+    name: 'explicitOwnershipsOf',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct IERC721A.TokenOwnership[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'addr', internalType: 'address', type: 'address' },
+          { name: 'startTimestamp', internalType: 'uint64', type: 'uint64' },
+          { name: 'burned', internalType: 'bool', type: 'bool' },
+          { name: 'extraData', internalType: 'uint24', type: 'uint24' }
+        ]
+      }
+    ]
   },
   {
     stateMutability: 'view',
@@ -763,6 +871,16 @@ export const efpListRegistryAbi = [
     outputs: []
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'ens', internalType: 'contract ENS', type: 'address' },
+      { name: 'name', internalType: 'string', type: 'string' }
+    ],
+    name: 'setReverseENS',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
@@ -782,6 +900,24 @@ export const efpListRegistryAbi = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'tokenURI',
     outputs: [{ name: '', internalType: 'string', type: 'string' }]
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'tokensOfOwner',
+    outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }]
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: 'owner', internalType: 'address', type: 'address' },
+      { name: 'start', internalType: 'uint256', type: 'uint256' },
+      { name: 'stop', internalType: 'uint256', type: 'uint256' }
+    ],
+    name: 'tokensOfOwnerIn',
+    outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }]
   },
   {
     stateMutability: 'view',
@@ -969,6 +1105,7 @@ export const efpListRegistryAbi = [
   { type: 'error', inputs: [], name: 'ApprovalCallerNotOwnerNorApproved' },
   { type: 'error', inputs: [], name: 'ApprovalQueryForNonexistentToken' },
   { type: 'error', inputs: [], name: 'BalanceQueryForZeroAddress' },
+  { type: 'error', inputs: [], name: 'InvalidQueryRange' },
   { type: 'error', inputs: [], name: 'MintERC2309QuantityExceedsLimit' },
   { type: 'error', inputs: [], name: 'MintToZeroAddress' },
   { type: 'error', inputs: [], name: 'MintZeroQuantity' },

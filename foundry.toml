@@ -7,6 +7,6 @@ cache = true                                                # whether to cache b
 cache_path = 'cache'                                        # where the cache is stored if enabled
 force = false                                               # whether to ignore the cache (clean build)
 fs_permissions = [{ access = "read", path = "./" }]
-solc_version = '0.8.20'                                     # override for the solc version
-evm_version = 'shanghai'                                    # set the EVM target version
+solc_version = '0.8.23'                                     # override for the solc version
+evm_version = 'paris'                                    # set the EVM target version
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

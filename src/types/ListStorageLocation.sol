@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 /**
  * @title ListStorageLocation
@@ -12,17 +12,17 @@ pragma solidity ^0.8.20;
  *      foundry or other Solidity tooling
  */
 struct ListStorageLocation {
-    /**
-     * @dev The version byte allows for:
-     * 1. Differentiating between record formats for upgradability.
-     * 2. Ensuring backward compatibility with older versions.
-     * 3. Identifying the record's schema or processing logic.
-     */
-    uint8 version;
-    /// @dev type of list location
-    uint8 locationType;
-    /// @notice The data associated with the list storage location.
-    /// @dev Contains the actual content or information of the list storage
-    ///location.
-    bytes data;
+  /**
+   * @dev The version byte allows for:
+   * 1. Differentiating between record formats for upgradability.
+   * 2. Ensuring backward compatibility with older versions.
+   * 3. Identifying the record's schema or processing logic.
+   */
+  uint8 version;
+  /// @dev type of list location
+  uint8 locationType;
+  /// @notice The data associated with the list storage location.
+  /// @dev Contains the actual content or information of the list storage
+  ///location.
+  bytes data;
 }

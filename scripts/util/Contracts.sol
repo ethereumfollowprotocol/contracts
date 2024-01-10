@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 struct Contracts {
-    address accountMetadata;
-    address listRegistry;
-    // address listMetadata;
-    address listRecords;
-    address listMinter;
+  address accountMetadata;
+  address listRegistry;
+  // address listMetadata;
+  address listRecords;
+  address listMinter;
 }
