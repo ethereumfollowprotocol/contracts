@@ -218,7 +218,7 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
       bytes[] memory listOpsToMintBytes = listOpsToBytes(listOpsToMint);
       // call applyListOps but restrict to a max size of 500 per batch
       uint256 maxBatchSize = 100;
-      uint256 batchCount = listOpsToMintBytes.length / maxBatchSize;
+      uint256 batchCount = listOpsToMintBytes.length / maxBatchSize + 1;
       for (uint256 batch = 0; batch < batchCount; batch++) {
         // slice batch
         uint startIndex = batch * maxBatchSize;

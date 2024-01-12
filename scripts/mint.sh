@@ -16,7 +16,7 @@ function mint() {
 
 start=50
 end=${MINT_INITIAL_TOTAL_SUPPLY:-50}
-step=50
+step=${MINT_BATCH_SIZE:-50}
 
 # we will pass this to the forge script ourselves
 unset MINT_INITIAL_TOTAL_SUPPLY
