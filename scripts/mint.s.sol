@@ -236,17 +236,17 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     }
   }
 
-  function getMintInitialTotalSupply() public view returns (uint256) {
-    uint mintInitialTotalSupply = vm.envUint('MINT_INITIAL_TOTAL_SUPPLY');
-    if (mintInitialTotalSupply == 0) {
-      revert('MINT_INITIAL_TOTAL_SUPPLY must be greater than 0');
+  function getMintTotalSupply() public view returns (uint256) {
+    uint mintTotalSupply = vm.envUint('MINT_TOTAL_SUPPLY');
+    if (mintTotalSupply == 0) {
+      revert('MINT_TOTAL_SUPPLY must be greater than 0');
     }
-    return mintInitialTotalSupply;
+    return mintTotalSupply;
   }
 
   function run() public {
     vm.startBroadcast(vm.envUint('PRIVATE_KEY'));
-    uint mintInitialTotalSupply = getMintInitialTotalSupply();
+    uint mintTotalSupply = getMintTotalSupply();
 
     // msg.sender will be set to the address derived from the private key
     // you're using for the transaction, specified in the
@@ -278,9 +278,9 @@ contract MintScript is Script, ListNFTsCsvLoader, ListOpsCsvLoader, Deployer {
     }
     uint postCsvMintsTotalSupply = IERC721Enumerable(contracts.listRegistry).totalSupply();
 
-    if (postCsvMintsTotalSupply < mintInitialTotalSupply) {
+    if (postCsvMintsTotalSupply < mintTotalSupply) {
       // mint one more
-      mintMany(contracts, mintInitialTotalSupply - postCsvMintsTotalSupply);
+      mintMany(contracts, mintTotalSupply - postCsvMintsTotalSupply);
     }
     Logger.logNFTs(contracts, postCsvMintsTotalSupply);
     console.log();
