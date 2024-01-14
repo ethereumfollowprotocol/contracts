@@ -4,15 +4,18 @@ pragma solidity ^0.8.23;
 import {ERC721A} from 'lib/ERC721A/contracts/ERC721A.sol';
 import {ERC721AQueryable} from 'lib/ERC721A/contracts/extensions/ERC721AQueryable.sol';
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
+import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPListRegistry} from './interfaces/IEFPListRegistry.sol';
 import {IEFPListPriceOracle} from './interfaces/IEFPListPriceOracle.sol';
 import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
  * @title EFPListRegistry
- * @notice A registry connecting token IDs with data such as managers, users, and list locations.
+ * @notice The EPF List Registry is an ERC721A contract representing ownership
+ * of an EFP List. EFP List NFT owners may set the List Storage Location
+ * associated with their EFP List by calling setListStorageLocation.
  */
-contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReverseClaimer {
+contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReverseClaimer, Pausable {
   ///////////////////////////////////////////////////////////////////////////
   // Events
   ///////////////////////////////////////////////////////////////////////////
@@ -50,6 +53,24 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   /// @notice Constructs a new ListRegistry and sets its name and symbol.
   constructor() ERC721A('EFP', 'EFP') {}
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Pausable
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @dev Pauses the contract. Can only be called by the contract owner.
+   */
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  /**
+   * @dev Unpauses the contract. Can only be called by the contract owner.
+   */
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   // price oracle getter/setter
   ///////////////////////////////////////////////////////////////////////////
@@ -63,9 +84,16 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @notice Sets the price oracle.
    * @param priceOracle_ The new price oracle.
    */
-  function setPriceOracle(address priceOracle_) external onlyOwner {
+  function setPriceOracle(address priceOracle_) external whenNotPaused onlyOwner {
     priceOracle = IEFPListPriceOracle(priceOracle_);
     emit PriceOracleChange(priceOracle_);
+  }
+
+  /**
+   * @notice Fetches the price of minting a token.
+   */
+  function _getPrice(uint256 tokenId, uint256 quantity) internal view returns (uint256) {
+    return (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, quantity) : 0;
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -117,6 +145,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   function setListStorageLocation(uint256 tokenId, bytes calldata listStorageLocation)
     external
     override
+    whenNotPaused
     onlyTokenOwner(tokenId)
   {
     _setListStorageLocation(tokenId, listStorageLocation);
@@ -143,7 +172,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
 
   /// @notice Sets the mint state.
   /// @param _mintState The new mint state.
-  function setMintState(MintState _mintState) external onlyOwner {
+  function setMintState(MintState _mintState) external whenNotPaused onlyOwner {
     mintState = _mintState;
     emit MintStateChange(_mintState);
   }
@@ -155,7 +184,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
 
   /// @notice Sets the max mint batch size.
   /// @param _maxMintBatchSize The new max mint batch size.
-  function setMaxMintBatchSize(uint256 _maxMintBatchSize) external onlyOwner {
+  function setMaxMintBatchSize(uint256 _maxMintBatchSize) external whenNotPaused onlyOwner {
     maxMintBatchSize = _maxMintBatchSize;
     emit MaxMintBatchSizeChange(_maxMintBatchSize);
   }
@@ -164,9 +193,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @notice Mints a new token.
    * @param listStorageLocation The list storage location to be associated with the token.
    */
-  function mint(bytes calldata listStorageLocation) public payable mintAllowed {
+  function mint(bytes calldata listStorageLocation) external payable whenNotPaused mintAllowed {
     uint256 tokenId = totalSupply();
-    uint256 price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
+    uint256 price = _getPrice(tokenId, 1);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(msg.sender, 1);
@@ -178,9 +207,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param to The address to mint the token to.
    * @param listStorageLocation The list storage location to be associated with the token.
    */
-  function mintTo(address to, bytes calldata listStorageLocation) public payable mintAllowed {
+  function mintTo(address to, bytes calldata listStorageLocation) external payable whenNotPaused mintAllowed {
     uint256 tokenId = totalSupply();
-    uint256 price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, 1) : 0;
+    uint256 price = _getPrice(tokenId, 1);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(to, 1);
@@ -189,10 +218,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
 
   /// @notice Mints a batch of new tokens.
   /// @param quantity The number of tokens to mint.
-  function mintBatch(uint256 quantity) public payable mintBatchAllowed {
+  function mintBatch(uint256 quantity) external payable whenNotPaused mintBatchAllowed {
     require(quantity <= maxMintBatchSize, 'batch size too big');
 
-    uint256 price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
+    uint256 price = _getPrice(totalSupply(), quantity);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(msg.sender, quantity);
@@ -202,10 +231,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   /// @notice Mints a batch of new tokens.
   /// @param to The address to mint the tokens to.
   /// @param quantity The number of tokens to mint.
-  function mintBatchTo(address to, uint256 quantity) public payable mintBatchAllowed {
+  function mintBatchTo(address to, uint256 quantity) external payable whenNotPaused mintBatchAllowed {
     require(quantity <= maxMintBatchSize, 'batch size too big');
 
-    uint256 price = (address(priceOracle) != address(0)) ? priceOracle.getPrice(totalSupply(), quantity) : 0;
+    uint256 price = _getPrice(totalSupply(), quantity);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(to, quantity);

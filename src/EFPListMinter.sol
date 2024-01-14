@@ -4,6 +4,7 @@ pragma solidity ^0.8.23;
 import 'forge-std/console.sol';
 
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
+import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPAccountMetadata} from './interfaces/IEFPAccountMetadata.sol';
 import {IEFPListRegistry} from './interfaces/IEFPListRegistry.sol';
 import {IEFPListRecords} from './interfaces/IEFPListRecords.sol';
@@ -15,7 +16,7 @@ interface IEFPListRegistry_ERC721 is IEFPListRegistry {
   function totalSupply() external view returns (uint256);
 }
 
-contract EFPListMinter is ENSReverseClaimer {
+contract EFPListMinter is ENSReverseClaimer, Pausable {
   IEFPListRegistry_ERC721 public registry;
   IEFPAccountMetadata public accountMetadata;
   IEFPListRecords public listRecordsL1;
@@ -25,6 +26,28 @@ contract EFPListMinter is ENSReverseClaimer {
     accountMetadata = IEFPAccountMetadata(_accountMetadataAddress);
     listRecordsL1 = IEFPListRecords(_listRecordsL1);
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Pausable
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @dev Pauses the contract. Can only be called by the contract owner.
+   */
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  /**
+   * @dev Unpauses the contract. Can only be called by the contract owner.
+   */
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // minting
+  /////////////////////////////////////////////////////////////////////////////
 
   function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation, address expectedContractAddress)
     internal
@@ -48,7 +71,7 @@ contract EFPListMinter is ENSReverseClaimer {
     return slot;
   }
 
-  function easyMint(bytes calldata listStorageLocation) public payable {
+  function easyMint(bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
     uint256 slot = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
 
@@ -61,7 +84,7 @@ contract EFPListMinter is ENSReverseClaimer {
     listRecordsL1.setListManager(slot, msg.sender);
   }
 
-  function easyMintTo(address to, bytes calldata listStorageLocation) public payable {
+  function easyMintTo(address to, bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
     uint256 slot = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
 

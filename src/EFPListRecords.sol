@@ -3,6 +3,7 @@ pragma solidity ^0.8.23;
 
 import 'forge-std/console.sol';
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
+import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPListMetadata, IEFPListRecords} from './interfaces/IEFPListRecords.sol';
 import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
@@ -12,7 +13,7 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
  * @notice Manages key-value pairs associated with EFP List NFTs.
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
  */
-abstract contract ListMetadata is IEFPListMetadata {
+abstract contract ListMetadata is IEFPListMetadata, Pausable, Ownable {
   error SlotAlreadyClaimed(uint256 slot, address manager);
   // error NotListManager(address manager);
 
@@ -22,6 +23,24 @@ abstract contract ListMetadata is IEFPListMetadata {
 
   /// @dev The key-value set for each token ID
   mapping(uint256 => mapping(string => bytes)) private values;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Pausable
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @dev Pauses the contract. Can only be called by the contract owner.
+   */
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  /**
+   * @dev Unpauses the contract. Can only be called by the contract owner.
+   */
+  function unpause() public onlyOwner {
+    _unpause();
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   // Helpers
@@ -94,7 +113,11 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @param key The key to set.
    * @param value The value to set.
    */
-  function setMetadataValue(uint256 slot, string calldata key, bytes calldata value) external onlyListManager(slot) {
+  function setMetadataValue(uint256 slot, string calldata key, bytes calldata value)
+    external
+    whenNotPaused
+    onlyListManager(slot)
+  {
     _setMetadataValue(slot, key, value);
   }
 
@@ -115,7 +138,7 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @param slot The slot corresponding to the list to update.
    * @param records The records to set.
    */
-  function setMetadataValues(uint256 slot, KeyValue[] calldata records) external onlyListManager(slot) {
+  function setMetadataValues(uint256 slot, KeyValue[] calldata records) external whenNotPaused onlyListManager(slot) {
     _setMetadataValues(slot, records);
   }
 
@@ -170,7 +193,7 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @notice Allows the sender to claim management of an unclaimed list slot.
    * @param slot The slot that the sender wishes to claim.
    */
-  function claimListManager(uint256 slot) external {
+  function claimListManager(uint256 slot) external whenNotPaused {
     _claimListManager(slot, msg.sender);
   }
 
@@ -179,7 +202,7 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @param slot The list's unique identifier.
    * @param manager The address to be set as the new manager.
    */
-  function claimListManagerForAddress(uint256 slot, address manager) external {
+  function claimListManagerForAddress(uint256 slot, address manager) external whenNotPaused {
     _claimListManager(slot, manager);
   }
 
@@ -207,7 +230,7 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @param manager The address to be set as the new manager.
    * @dev Only the current manager can transfer their management role.
    */
-  function setListManager(uint256 slot, address manager) external onlyListManager(slot) {
+  function setListManager(uint256 slot, address manager) external whenNotPaused onlyListManager(slot) {
     _setMetadataValue(slot, 'manager', abi.encodePacked(manager));
   }
 
@@ -237,7 +260,7 @@ abstract contract ListMetadata is IEFPListMetadata {
    * @param user The address to be set as the new list user.
    * @dev Only the current manager can change the list user.
    */
-  function setListUser(uint256 slot, address user) external onlyListManager(slot) {
+  function setListUser(uint256 slot, address user) external whenNotPaused onlyListManager(slot) {
     _setMetadataValue(slot, 'user', abi.encodePacked(user));
   }
 }
@@ -330,7 +353,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    * @param slot The list's unique identifier.
    * @param op The operation to be applied.
    */
-  function applyListOp(uint256 slot, bytes calldata op) public onlyListManager(slot) {
+  function applyListOp(uint256 slot, bytes calldata op) external whenNotPaused onlyListManager(slot) {
     _applyListOp(slot, op);
   }
 
@@ -354,7 +377,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    * @param slot The list's unique identifier.
    * @param ops An array of operations to be applied.
    */
-  function applyListOps(uint256 slot, bytes[] calldata ops) public onlyListManager(slot) {
+  function applyListOps(uint256 slot, bytes[] calldata ops) external whenNotPaused onlyListManager(slot) {
     _applyListOps(slot, ops);
   }
 
@@ -367,6 +390,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    */
   function setMetadataValuesAndApplyListOps(uint256 slot, KeyValue[] calldata records, bytes[] calldata ops)
     external
+    whenNotPaused
     onlyListManager(slot)
   {
     _setMetadataValues(slot, records);

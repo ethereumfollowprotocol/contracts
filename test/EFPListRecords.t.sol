@@ -22,67 +22,15 @@ contract EFPListRecordsTest is Test {
     listRecords = new EFPListRecords();
   }
 
-  function test_CanClaimListManager() public {
-    vm.prank(ADDRESS_1);
-    listRecords.claimListManager(NONCE);
-
-    assertEq(listRecords.getListManager(NONCE), ADDRESS_1, 'Manager1 should be the manager of list 1');
+  // Helper function to compare bytes
+  function _assertBytesEqual(bytes memory a, bytes memory b) internal pure {
+    assert(a.length == b.length);
+    for (uint256 i = 0; i < a.length; i++) {
+      assert(a[i] == b[i]);
+    }
   }
 
-  function test_CanSetListManager() public {
-    vm.prank(ADDRESS_1);
-    listRecords.claimListManager(NONCE);
-
-    vm.prank(ADDRESS_1);
-    listRecords.setListManager(NONCE, ADDRESS_2);
-
-    assertEq(listRecords.getListManager(NONCE), ADDRESS_2, 'Manager2 should now be the manager of list 1');
-  }
-
-  function test_CanApplyListOpToAddRecord() public {
-    helper_CanApplyListOp(LIST_OP_TYPE_ADD_RECORD);
-  }
-
-  function test_CanApplyListOpToRemoveRecord() public {
-    helper_CanApplyListOp(LIST_OP_TYPE_REMOVE_RECORD);
-  }
-
-  function test_CanApplyListOpToAddTag() public {
-    helper_CanApplyListOp(LIST_OP_TYPE_ADD_TAG);
-  }
-
-  function test_CanApplyListOpToRemoveTag() public {
-    helper_CanApplyListOp(LIST_OP_TYPE_REMOVE_TAG);
-  }
-
-  function helper_CanApplyListOp(uint8 opType) internal {
-    assertEq(listRecords.getListOpCount(NONCE), 0);
-
-    // listRecords.claimListManager(NONCE);
-
-    bytes memory listOp = encodeListOp(opType);
-    listRecords.applyListOp(NONCE, listOp);
-
-    assertEq(listRecords.getListOpCount(NONCE), 1);
-    assertBytesEqual(listRecords.getListOp(NONCE, 0), listOp);
-  }
-
-  function test_CanApplyMultipleListOpsAtOnce() public {
-    assertEq(listRecords.getListOpCount(NONCE), 0);
-
-    // listRecords.claimListManager(NONCE);
-
-    bytes[] memory listOps = new bytes[](2);
-    listOps[0] = encodeListOp(LIST_OP_TYPE_ADD_RECORD);
-    listOps[1] = encodeListOp(LIST_OP_TYPE_REMOVE_RECORD);
-    listRecords.applyListOps(NONCE, listOps);
-
-    assertEq(listRecords.getListOpCount(NONCE), 2);
-    assertBytesEqual(listRecords.getListOp(NONCE, 0), listOps[0]);
-    assertBytesEqual(listRecords.getListOp(NONCE, 1), listOps[1]);
-  }
-
-  function encodeListOp(uint8 opType) internal view returns (bytes memory) {
+  function _encodeListOp(uint8 opType) internal view returns (bytes memory) {
     bytes memory result = abi.encodePacked(
       LIST_OP_VERSION, // Version for ListOp
       opType, // Operation type for ListOp (Add Record)
@@ -96,11 +44,137 @@ contract EFPListRecordsTest is Test {
     return result;
   }
 
-  // Helper function to compare bytes
-  function assertBytesEqual(bytes memory a, bytes memory b) internal pure {
-    assert(a.length == b.length);
-    for (uint256 i = 0; i < a.length; i++) {
-      assert(a[i] == b[i]);
-    }
+  /////////////////////////////////////////////////////////////////////////////
+  // pause
+  /////////////////////////////////////////////////////////////////////////////
+
+  function test_CanPause() public {
+    assertEq(listRecords.paused(), false);
+    listRecords.pause();
+    assertEq(listRecords.paused(), true);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // unpause
+  /////////////////////////////////////////////////////////////////////////////
+
+  function test_CanUnpause() public {
+    listRecords.pause();
+    listRecords.unpause();
+    assertEq(listRecords.paused(), false);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // claimListManager
+  /////////////////////////////////////////////////////////////////////////////
+
+  function test_CanClaimListManager() public {
+    listRecords.claimListManager(NONCE);
+    assertEq(listRecords.getListManager(NONCE), address(this));
+  }
+
+  function test_RevertIf_ClaimListManagerWhenPaused() public {
+    listRecords.pause();
+    vm.expectRevert('Pausable: paused');
+    listRecords.claimListManager(NONCE);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // setListManager
+  /////////////////////////////////////////////////////////////////////////////
+
+  function test_CanSetListManager() public {
+    listRecords.claimListManager(NONCE);
+    listRecords.setListManager(NONCE, address(1));
+    assertEq(listRecords.getListManager(NONCE), address(1));
+  }
+
+  function test_RevertIf_SetListManagerWhenPaused() public {
+    listRecords.claimListManager(NONCE);
+    listRecords.pause();
+    vm.expectRevert('Pausable: paused');
+    listRecords.setListManager(NONCE, address(1));
+  }
+
+  function test_RevertIf_SetListManagerFromNonManager() public {
+    listRecords.claimListManager(NONCE);
+    vm.prank(address(1));
+    vm.expectRevert('Not list manager');
+    listRecords.setListManager(NONCE, address(1));
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // applyListOp
+  /////////////////////////////////////////////////////////////////////////////
+
+  function _CanApplyListOp(uint8 opType) internal {
+    assertEq(listRecords.getListOpCount(NONCE), 0);
+
+    // listRecords.claimListManager(NONCE);
+
+    bytes memory listOp = _encodeListOp(opType);
+    listRecords.applyListOp(NONCE, listOp);
+
+    assertEq(listRecords.getListOpCount(NONCE), 1);
+    _assertBytesEqual(listRecords.getListOp(NONCE, 0), listOp);
+  }
+
+  function test_CanApplyListOpToAddRecord() public {
+    _CanApplyListOp(LIST_OP_TYPE_ADD_RECORD);
+  }
+
+  function test_CanApplyListOpToRemoveRecord() public {
+    _CanApplyListOp(LIST_OP_TYPE_REMOVE_RECORD);
+  }
+
+  function test_CanApplyListOpToAddTag() public {
+    _CanApplyListOp(LIST_OP_TYPE_ADD_TAG);
+  }
+
+  function test_CanApplyListOpToRemoveTag() public {
+    _CanApplyListOp(LIST_OP_TYPE_REMOVE_TAG);
+  }
+
+  function test_RevertIf_ApplyListOpWhenPaused() public {
+    listRecords.pause();
+    vm.expectRevert('Pausable: paused');
+    listRecords.applyListOp(NONCE, _encodeListOp(LIST_OP_TYPE_ADD_RECORD));
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // applyListOps
+  /////////////////////////////////////////////////////////////////////////////
+
+  function test_CanApplyListOpsSingular() public {
+    assertEq(listRecords.getListOpCount(NONCE), 0);
+
+    bytes[] memory listOps = new bytes[](1);
+    listOps[0] = _encodeListOp(LIST_OP_TYPE_ADD_RECORD);
+    listRecords.applyListOps(NONCE, listOps);
+
+    assertEq(listRecords.getListOpCount(NONCE), 1);
+    _assertBytesEqual(listRecords.getListOp(NONCE, 0), listOps[0]);
+  }
+
+  function test_CanApplyListOpsMultiple() public {
+    assertEq(listRecords.getListOpCount(NONCE), 0);
+
+    bytes[] memory listOps = new bytes[](2);
+    listOps[0] = _encodeListOp(LIST_OP_TYPE_ADD_RECORD);
+    listOps[1] = _encodeListOp(LIST_OP_TYPE_REMOVE_RECORD);
+    listRecords.applyListOps(NONCE, listOps);
+
+    assertEq(listRecords.getListOpCount(NONCE), 2);
+    _assertBytesEqual(listRecords.getListOp(NONCE, 0), listOps[0]);
+    _assertBytesEqual(listRecords.getListOp(NONCE, 1), listOps[1]);
+  }
+
+  function test_RevertIf_applyListOpsWhenPaused() public {
+    listRecords.pause();
+    vm.expectRevert('Pausable: paused');
+    bytes[] memory listOps = new bytes[](2);
+    listOps[0] = _encodeListOp(LIST_OP_TYPE_ADD_RECORD);
+    listOps[1] = _encodeListOp(LIST_OP_TYPE_REMOVE_RECORD);
+    listRecords.applyListOps(NONCE, listOps);
   }
 }
