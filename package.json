@@ -20,17 +20,17 @@
     "mint:localhost": "./scripts/mint.sh"
   },
   "dependencies": {
-    "viem": "^2.0.5",
-    "@wagmi/cli": "^2.0.2",
-    "wagmi": "^2.0.3"
+    "viem": "^2.1.1",
+    "@wagmi/cli": "^2.0.3",
+    "wagmi": "^2.2.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.0.0",
-    "@types/node": "^20.10.8",
-    "bun": "^1.0.21",
-    "prettier": "^3.1.1",
+    "@types/bun": "^1.0.2",
+    "@types/node": "^20.11.4",
+    "bun": "^1.0.23",
+    "prettier": "^3.2.2",
     "solc": "^0.8.23",
-    "solhint": "^4.0.0",
+    "solhint": "^4.1.1",
     "typescript": "^5.3.3"
   },
   "license": "UNLICENSED"
