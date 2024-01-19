@@ -26,9 +26,11 @@ contract EFPListRegistryTest is Test {
     }
   }
 
-  function _bytesToStructOfUintAddressUint(
-    bytes memory data
-  ) private pure returns (uint256 chainId, address contractAddress, uint256 slot) {
+  function _bytesToStructOfUintAddressUint(bytes memory data)
+    private
+    pure
+    returns (uint256 chainId, address contractAddress, uint256 slot)
+  {
     assembly {
       chainId := mload(add(data, 32))
       contractAddress := mload(add(data, 52))
