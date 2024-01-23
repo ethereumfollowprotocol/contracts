@@ -1026,6 +1026,13 @@ export const efpListRegistryAbi = [
     outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }]
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: 'tokenURIProvider_', internalType: 'address', type: 'address' }],
+    name: 'setTokenURIProvider',
+    outputs: []
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: 'interfaceId', internalType: 'bytes4', type: 'bytes4' }],
@@ -1045,6 +1052,13 @@ export const efpListRegistryAbi = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'tokenURI',
     outputs: [{ name: '', internalType: 'string', type: 'string' }]
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'tokenURIProvider',
+    outputs: [{ name: '', internalType: 'contract ITokenURIProvider', type: 'address' }]
   },
   {
     stateMutability: 'view',
@@ -1242,6 +1256,19 @@ export const efpListRegistryAbi = [
       }
     ],
     name: 'PriceOracleChange'
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'tokenURIProvider',
+        internalType: 'address',
+        type: 'address',
+        indexed: false
+      }
+    ],
+    name: 'TokenURIProviderChange'
   },
   {
     type: 'event',

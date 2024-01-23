@@ -3,10 +3,12 @@ pragma solidity ^0.8.23;
 
 import {ERC721A} from 'lib/ERC721A/contracts/ERC721A.sol';
 import {ERC721AQueryable} from 'lib/ERC721A/contracts/extensions/ERC721AQueryable.sol';
+import {IERC721A} from 'lib/ERC721A/contracts/interfaces/IERC721A.sol';
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPListRegistry} from './interfaces/IEFPListRegistry.sol';
 import {IEFPListNFTPriceOracle} from './interfaces/IEFPListNFTPriceOracle.sol';
+import {ITokenURIProvider} from './interfaces/ITokenURIProvider.sol';
 import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
@@ -29,6 +31,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   /// @notice Emitted when the price oracle is changed.
   event PriceOracleChange(address priceOracle);
 
+  /// @notice Emitted when the token URI provider is changed.
+  event TokenURIProviderChange(address tokenURIProvider);
+
   ///////////////////////////////////////////////////////////////////////////
   // Data Structures
   ///////////////////////////////////////////////////////////////////////////
@@ -42,6 +47,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   /// @notice The price oracle. If set, the price oracle is used to determine
   /// the price of minting.
   IEFPListNFTPriceOracle private priceOracle;
+
+  /// @notice The token URI provider.
+  ITokenURIProvider public tokenURIProvider;
 
   /// @notice The list storage location associated with a token.
   mapping(uint256 => bytes) private tokenIdToListStorageLocation;
@@ -69,6 +77,31 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    */
   function unpause() public onlyOwner {
     _unpause();
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // token uri provider getter/setter
+  ///////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @notice Sets the token URI provider.
+   * @param tokenURIProvider_ The new token URI provider.
+   */
+  function setTokenURIProvider(address tokenURIProvider_) external onlyOwner {
+    tokenURIProvider = ITokenURIProvider(tokenURIProvider_);
+    emit TokenURIProviderChange(tokenURIProvider_);
+  }
+
+  /**
+   * @dev Overrides the tokenURI function to delegate the call to the
+   * TokenURIProvider contract. This allows the tokenURI logic to be
+   * upgradeable.
+   * @param tokenId The token ID for which the URI is requested.
+   * @return A string representing the token URI.
+   */
+  function tokenURI(uint256 tokenId) public view override(IERC721A, ERC721A) returns (string memory) {
+    require(address(tokenURIProvider) != address(0), 'TokenURI provider is not set');
+    return tokenURIProvider.tokenURI(tokenId);
   }
 
   ///////////////////////////////////////////////////////////////////////////
