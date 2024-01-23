@@ -887,7 +887,7 @@ export const efpListRegistryAbi = [
     stateMutability: 'payable',
     type: 'function',
     inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'recipient', internalType: 'address', type: 'address' },
       { name: 'quantity', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'mintBatchTo',
@@ -897,7 +897,7 @@ export const efpListRegistryAbi = [
     stateMutability: 'payable',
     type: 'function',
     inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'recipient', internalType: 'address', type: 'address' },
       { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'mintTo',
@@ -1356,7 +1356,7 @@ export const iefpListRegistryErc721Abi = [
     stateMutability: 'payable',
     type: 'function',
     inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'recipient', internalType: 'address', type: 'address' },
       { name: 'quantity', internalType: 'uint256', type: 'uint256' }
     ],
     name: 'mintBatchTo',
@@ -1366,7 +1366,7 @@ export const iefpListRegistryErc721Abi = [
     stateMutability: 'payable',
     type: 'function',
     inputs: [
-      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'recipient', internalType: 'address', type: 'address' },
       { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
     ],
     name: 'mintTo',

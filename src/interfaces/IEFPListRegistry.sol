@@ -55,13 +55,13 @@ interface IEFPListRegistry {
 
   /**
    * @notice Mints a new token to the given address.
-   * @param to The address to mint the token to.
+   * @param recipient The address to mint the token to.
    */
-  function mintTo(address to, bytes calldata listStorageLocation) external payable;
+  function mintTo(address recipient, bytes calldata listStorageLocation) external payable;
 
   /// @notice Mints a new token to the given address.
   function mintBatch(uint256 quantity) external payable;
 
   /// @notice Mints a new token to the given address.
-  function mintBatchTo(address to, uint256 quantity) external payable;
+  function mintBatchTo(address recipient, uint256 quantity) external payable;
 }

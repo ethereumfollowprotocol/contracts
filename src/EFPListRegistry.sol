@@ -6,7 +6,7 @@ import {ERC721AQueryable} from 'lib/ERC721A/contracts/extensions/ERC721AQueryabl
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPListRegistry} from './interfaces/IEFPListRegistry.sol';
-import {IEFPListPriceOracle} from './interfaces/IEFPListPriceOracle.sol';
+import {IEFPListNFTPriceOracle} from './interfaces/IEFPListNFTPriceOracle.sol';
 import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
@@ -41,7 +41,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
 
   /// @notice The price oracle. If set, the price oracle is used to determine
   /// the price of minting.
-  IEFPListPriceOracle private priceOracle;
+  IEFPListNFTPriceOracle private priceOracle;
 
   /// @notice The list storage location associated with a token.
   mapping(uint256 => bytes) private tokenIdToListStorageLocation;
@@ -85,15 +85,17 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param priceOracle_ The new price oracle.
    */
   function setPriceOracle(address priceOracle_) external whenNotPaused onlyOwner {
-    priceOracle = IEFPListPriceOracle(priceOracle_);
+    priceOracle = IEFPListNFTPriceOracle(priceOracle_);
     emit PriceOracleChange(priceOracle_);
   }
 
   /**
    * @notice Fetches the price of minting a token.
    */
-  function _getPrice(uint256 tokenId, uint256 quantity) internal view returns (uint256) {
-    return (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, quantity) : 0;
+  function _getPrice(uint256 quantity) internal view returns (uint256) {
+    return (address(priceOracle) != address(0))
+      ? quantity == 1 ? priceOracle.getPrice() : priceOracle.getBatchPrice(quantity)
+      : 0;
   }
 
   /**
@@ -209,7 +211,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    */
   function mint(bytes calldata listStorageLocation) external payable whenNotPaused mintAllowed {
     uint256 tokenId = totalSupply();
-    uint256 price = _getPrice(tokenId, 1);
+    uint256 price = _getPrice(1);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(msg.sender, 1);
@@ -218,15 +220,15 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
 
   /**
    * @notice Mints a new token to the given address.
-   * @param to The address to mint the token to.
+   * @param recipient The address to mint the token to.
    * @param listStorageLocation The list storage location to be associated with the token.
    */
-  function mintTo(address to, bytes calldata listStorageLocation) external payable whenNotPaused mintAllowed {
+  function mintTo(address recipient, bytes calldata listStorageLocation) external payable whenNotPaused mintAllowed {
     uint256 tokenId = totalSupply();
-    uint256 price = _getPrice(tokenId, 1);
+    uint256 price = _getPrice(1);
     require(msg.value >= price, 'insufficient funds');
 
-    _safeMint(to, 1);
+    _safeMint(recipient, 1);
     _setListStorageLocation(tokenId, listStorageLocation);
   }
 
@@ -235,7 +237,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   function mintBatch(uint256 quantity) external payable whenNotPaused mintBatchAllowed {
     require(quantity <= maxMintBatchSize, 'batch size too big');
 
-    uint256 price = _getPrice(totalSupply(), quantity);
+    uint256 price = _getPrice(quantity);
     require(msg.value >= price, 'insufficient funds');
 
     _safeMint(msg.sender, quantity);
@@ -243,15 +245,15 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
   }
 
   /// @notice Mints a batch of new tokens.
-  /// @param to The address to mint the tokens to.
+  /// @param recipient The address to mint the tokens to.
   /// @param quantity The number of tokens to mint.
-  function mintBatchTo(address to, uint256 quantity) external payable whenNotPaused mintBatchAllowed {
+  function mintBatchTo(address recipient, uint256 quantity) external payable whenNotPaused mintBatchAllowed {
     require(quantity <= maxMintBatchSize, 'batch size too big');
 
-    uint256 price = _getPrice(totalSupply(), quantity);
+    uint256 price = _getPrice(quantity);
     require(msg.value >= price, 'insufficient funds');
 
-    _safeMint(to, quantity);
+    _safeMint(recipient, quantity);
     // leave tokenIdToListStorageLocation unset for these tokens
   }
 }
