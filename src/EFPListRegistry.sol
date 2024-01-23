@@ -13,6 +13,8 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
  * @title EFPListRegistry
+ * @author Cory Gabrielsen (cory.eth)
+ *
  * @notice The EPF List Registry is an ERC721A contract representing ownership
  * of an EFP List. EFP List NFT owners may set the List Storage Location
  * associated with their EFP List by calling setListStorageLocation.

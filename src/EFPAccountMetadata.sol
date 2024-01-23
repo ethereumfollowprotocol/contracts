@@ -9,6 +9,7 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
  * @title EFPListMetadata
+ * @author Cory Gabrielsen (cory.eth)
  *
  * @notice This contract stores records as key/value pairs, by 32-byte
  * EFP List Token ID.

@@ -9,6 +9,7 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
  * @title ListMetadata
+ * @author Cory Gabrielsen (cory.eth)
  *
  * @notice Manages key-value pairs associated with EFP List NFTs.
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
