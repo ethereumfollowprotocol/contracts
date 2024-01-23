@@ -96,6 +96,20 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
     return (address(priceOracle) != address(0)) ? priceOracle.getPrice(tokenId, quantity) : 0;
   }
 
+  /**
+   * @notice Withdraws Ether from the contract.
+   *
+   * @param recipient The address to send the Ether to.
+   * @param amount The amount of Ether to send.
+   * @return Whether the transfer succeeded.
+   */
+  function withdraw(address payable recipient, uint256 amount) public returns (bool) {
+    require(amount <= address(this).balance, 'Insufficient balance');
+    (bool sent,) = recipient.call{value: amount}('');
+    require(sent, 'Failed to send Ether');
+    return sent;
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   // Modifiers
   ///////////////////////////////////////////////////////////////////////////

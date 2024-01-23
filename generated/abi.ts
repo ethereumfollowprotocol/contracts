@@ -1097,6 +1097,16 @@ export const efpListRegistryAbi = [
     outputs: []
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'recipient', internalType: 'address payable', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' }
+    ],
+    name: 'withdraw',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }]
+  },
+  {
     type: 'event',
     anonymous: false,
     inputs: [
