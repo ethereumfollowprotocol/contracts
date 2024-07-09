@@ -49,9 +49,7 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
   // minting
   /////////////////////////////////////////////////////////////////////////////
 
-  function decodeL1ListStorageLocationNone(
-    bytes calldata listStorageLocation
-  ) internal pure returns (uint256, address) {
+  function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation) internal pure returns (uint256, address) {
     // the list storage location is
     // - version (1 byte)
     // - list storate location type (1 byte)
