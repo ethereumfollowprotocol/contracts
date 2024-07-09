@@ -1,37 +1,37 @@
 {
-  "name": "beta-contracts",
-  "version": "1.0.0",
-  "repository": "github:ethereumfollowprotocol/beta-contractst",
-  "type": "module",
-  "scripts": {
-    "build": "wagmi generate && bun format:ts && (cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts || true)",
-    "clean": "forge clean",
-    "docs": "forge doc --serve --port 4433 --open",
-    "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url ${ETHEREUM_LOCAL_NODE_URL:-http://localhost:8545} --broadcast --private-key ${PRIVATE_KEY} ${FORGE_ARGS} && bun enable-public-mint",
-    "enable-public-mint": "bun ./scripts/update-mint-state.ts --public-batch",
-    "format:sol": "forge fmt",
-    "format:ts": "prettier --config .prettierrc --write ./generated/**/*.ts ./scripts/**/*.ts wagmi.config.ts",
-    "format": "bun format:ts && bun format:sol",
-    "geiger": "forge geiger --check",
-    "launch:localhost": "bun deploy:localhost && bun mint:localhost",
-    "lint": "bun lint:ts && bun lint:sol",
-    "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
-    "lint:ts": "bun x oxlint@latest --import-plugin --ignore-path='.eslintignore' --fix .",
-    "mint:localhost": "./scripts/mint.sh"
-  },
-  "dependencies": {
-    "viem": "^2.4.0",
-    "@wagmi/cli": "^2.0.4",
-    "wagmi": "^2.3.1"
-  },
-  "devDependencies": {
-    "@types/bun": "^1.0.2",
-    "@types/node": "^20.11.5",
-    "bun": "^1.0.24",
-    "prettier": "^3.2.4",
-    "solc": "^0.8.23",
-    "solhint": "^4.1.1",
-    "typescript": "^5.3.3"
-  },
-  "license": "UNLICENSED"
+    "name": "beta-contracts",
+    "version": "1.0.0",
+    "repository": "github:ethereumfollowprotocol/beta-contractst",
+    "type": "module",
+    "scripts": {
+        "build": "wagmi generate && bun format:ts && (cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts || true)",
+        "clean": "forge clean",
+        "docs": "forge doc --serve --port 4433 --open",
+        "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url https://eth-sepolia.g.alchemy.com/v2/[ALCHEMY_ID] --broadcast --private-key [PRIVATE_KEY] && bun enable-public-mint",
+        "enable-public-mint": "bun ./scripts/update-mint-state.ts --public-batch",
+        "format:sol": "forge fmt",
+        "format:ts": "prettier --config .prettierrc --write ./generated/**/*.ts ./scripts/**/*.ts wagmi.config.ts",
+        "format": "bun format:ts && bun format:sol",
+        "geiger": "forge geiger --check",
+        "launch:localhost": "bun deploy:localhost && bun mint:localhost",
+        "lint": "bun lint:ts && bun lint:sol",
+        "lint:sol": "solhint 'scripts/**/*.sol' 'src/**/*.sol'",
+        "lint:ts": "bun x oxlint@latest --import-plugin --ignore-path='.eslintignore' --fix .",
+        "mint:localhost": "./scripts/mint.sh"
+    },
+    "dependencies": {
+        "@wagmi/cli": "^2.0.4",
+        "viem": "^2.9.29",
+        "wagmi": "^2.3.1"
+    },
+    "devDependencies": {
+        "@types/bun": "^1.0.2",
+        "@types/node": "^20.11.5",
+        "bun": "^1.0.24",
+        "prettier": "^3.2.4",
+        "solc": "^0.8.23",
+        "solhint": "^4.1.1",
+        "typescript": "^5.3.3"
+    },
+    "license": "UNLICENSED"
 }

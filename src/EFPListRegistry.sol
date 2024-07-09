@@ -128,9 +128,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @notice Fetches the price of minting a token.
    */
   function _getPrice(uint256 quantity) internal view returns (uint256) {
-    return (address(priceOracle) != address(0))
-      ? quantity == 1 ? priceOracle.getPrice() : priceOracle.getBatchPrice(quantity)
-      : 0;
+    return
+      (address(priceOracle) != address(0))
+        ? quantity == 1 ? priceOracle.getPrice() : priceOracle.getBatchPrice(quantity)
+        : 0;
   }
 
   /**
@@ -140,9 +141,9 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param amount The amount of Ether to send.
    * @return Whether the transfer succeeded.
    */
-  function withdraw(address payable recipient, uint256 amount) public returns (bool) {
+  function withdraw(address payable recipient, uint256 amount) public onlyOwner returns (bool) {
     require(amount <= address(this).balance, 'Insufficient balance');
-    (bool sent,) = recipient.call{value: amount}('');
+    (bool sent, ) = recipient.call{value: amount}('');
     require(sent, 'Failed to send Ether');
     return sent;
   }
@@ -193,12 +194,10 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param tokenId The ID of the token.
    * @param listStorageLocation The list storage location to be associated with the token.
    */
-  function setListStorageLocation(uint256 tokenId, bytes calldata listStorageLocation)
-    external
-    override
-    whenNotPaused
-    onlyTokenOwner(tokenId)
-  {
+  function setListStorageLocation(
+    uint256 tokenId,
+    bytes calldata listStorageLocation
+  ) external override whenNotPaused onlyTokenOwner(tokenId) {
     _setListStorageLocation(tokenId, listStorageLocation);
   }
 

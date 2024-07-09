@@ -5,6 +5,9 @@ out/
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
+/broadcast/*/84532/
+/broadcast/*/11155111/
+/broadcast/*/11155420/
 /broadcast/**/dry-run/
 
 # Docs

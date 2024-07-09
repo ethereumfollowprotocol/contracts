@@ -49,11 +49,9 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
   // minting
   /////////////////////////////////////////////////////////////////////////////
 
-  function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation, address expectedContractAddress)
-    internal
-    view
-    returns (uint256)
-  {
+  function decodeL1ListStorageLocationNone(
+    bytes calldata listStorageLocation
+  ) internal pure returns (uint256, address) {
     // the list storage location is
     // - version (1 byte)
     // - list storate location type (1 byte)
@@ -63,39 +61,50 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
     require(listStorageLocation.length == 1 + 1 + 32 + 20 + 32, 'EFPListMinter: invalid list storage location');
     require(listStorageLocation[0] == 0x01, 'EFPListMinter: invalid list storage location version');
     require(listStorageLocation[1] == 0x01, 'EFPListMinter: invalid list storage location type');
-    uint256 chainId = _bytesToUint(listStorageLocation, 2);
-    require(chainId == _getChainId(), 'EFPListMinter: invalid list storage location chain id');
     address contractAddress = _bytesToAddress(listStorageLocation, 34);
-    require(contractAddress == expectedContractAddress, 'EFPListMinter: invalid list storage location contract address');
+
     uint256 slot = _bytesToUint(listStorageLocation, 54);
-    return slot;
+    return (slot, contractAddress);
   }
 
   function easyMint(bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    uint256 slot = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
+    (uint256 slot, address recordsContract) = decodeL1ListStorageLocationNone(listStorageLocation);
 
     uint256 tokenId = registry.totalSupply();
     registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
     _setDefaultListForAccount(msg.sender, tokenId);
-
-    listRecordsL1.claimListManager(slot);
-    listRecordsL1.setMetadataValue(tokenId, 'user', abi.encodePacked(msg.sender));
-    listRecordsL1.setListManager(slot, msg.sender);
+    if (recordsContract == address(listRecordsL1)) {
+      listRecordsL1.setListUser(slot, msg.sender);
+      listRecordsL1.setListManager(slot, msg.sender);
+    }
   }
 
   function easyMintTo(address to, bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    uint256 slot = decodeL1ListStorageLocationNone(listStorageLocation, address(listRecordsL1));
+    (uint256 slot, address recordsContract) = decodeL1ListStorageLocationNone(listStorageLocation);
 
     uint256 tokenId = registry.totalSupply();
     registry.mintTo{value: msg.value}(to, listStorageLocation);
     _setDefaultListForAccount(to, tokenId);
+    if (recordsContract == address(listRecordsL1)) {
+      listRecordsL1.setListUser(slot, msg.sender);
+      listRecordsL1.setListManager(slot, msg.sender);
+    }
+  }
 
-    listRecordsL1.claimListManager(slot);
-    listRecordsL1.setMetadataValue(tokenId, 'user', abi.encodePacked(to));
-    // now transfer managership back to msg.sender now that we set the metadata value for user
-    listRecordsL1.setListManager(slot, msg.sender);
+  function mintNoMeta(bytes calldata listStorageLocation) public payable whenNotPaused {
+    // validate the list storage location
+    decodeL1ListStorageLocationNone(listStorageLocation);
+
+    registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
+  }
+
+  function mintToNoMeta(address to, bytes calldata listStorageLocation) public payable whenNotPaused {
+    // validate the list storage location
+    decodeL1ListStorageLocationNone(listStorageLocation);
+
+    registry.mintTo{value: msg.value}(to, listStorageLocation);
   }
 
   function _setDefaultListForAccount(address to, uint256 tokenId) internal {
