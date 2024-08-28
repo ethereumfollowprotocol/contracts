@@ -29,10 +29,10 @@ main()
   })
 
 async function main() {
-  return clients.localhostAnvil().writeContract({
+  return clients.sepolia().writeContract({
     abi: abi.efpListRegistryAbi,
     functionName: 'setMintState',
-    address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    address: '0xdD1706b888b33712eaCe4973834508AA85946b32',
     account: privateKeyToAccount(Bun.env.ANVIL_ACCOUNT_PRIVATE_KEY),
     args: [mintStateRecord[command]]
   })

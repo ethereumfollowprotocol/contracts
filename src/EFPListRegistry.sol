@@ -140,7 +140,7 @@ contract EFPListRegistry is IEFPListRegistry, ERC721A, ERC721AQueryable, ENSReve
    * @param amount The amount of Ether to send.
    * @return Whether the transfer succeeded.
    */
-  function withdraw(address payable recipient, uint256 amount) public returns (bool) {
+  function withdraw(address payable recipient, uint256 amount) public onlyOwner returns (bool) {
     require(amount <= address(this).balance, 'Insufficient balance');
     (bool sent,) = recipient.call{value: amount}('');
     require(sent, 'Failed to send Ether');

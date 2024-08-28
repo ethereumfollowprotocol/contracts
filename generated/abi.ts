@@ -311,6 +311,23 @@ export const efpListMinterAbi = [
     outputs: [{ name: '', internalType: 'contract IEFPListRecords', type: 'address' }]
   },
   {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [{ name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }],
+    name: 'mintNoMeta',
+    outputs: []
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [
+      { name: 'to', internalType: 'address', type: 'address' },
+      { name: 'listStorageLocation', internalType: 'bytes', type: 'bytes' }
+    ],
+    name: 'mintToNoMeta',
+    outputs: []
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
