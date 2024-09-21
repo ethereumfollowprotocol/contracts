@@ -106,7 +106,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, ENSReverseClaimer, Pausable 
   function getValues(address addr, string[] calldata keys) external view returns (bytes[] memory) {
     uint256 length = keys.length;
     bytes[] memory result = new bytes[](length);
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       string calldata key = keys[i];
       result[i] = values[addr][key];
       unchecked {
@@ -154,11 +154,11 @@ contract EFPAccountMetadata is IEFPAccountMetadata, ENSReverseClaimer, Pausable 
    * @param key The key to set.
    * @param value The value to set.
    */
-  function setValueForAddress(
-    address addr,
-    string calldata key,
-    bytes calldata value
-  ) external onlyCallerOrProxy(addr) whenNotPaused {
+  function setValueForAddress(address addr, string calldata key, bytes calldata value)
+    external
+    onlyCallerOrProxy(addr)
+    whenNotPaused
+  {
     _setValue(addr, key, value);
   }
 
@@ -169,7 +169,7 @@ contract EFPAccountMetadata is IEFPAccountMetadata, ENSReverseClaimer, Pausable 
    */
   function setValues(KeyValue[] calldata records) external whenNotPaused {
     uint256 length = records.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       KeyValue calldata record = records[i];
       _setValue(msg.sender, record.key, record.value);
       unchecked {
@@ -184,12 +184,13 @@ contract EFPAccountMetadata is IEFPAccountMetadata, ENSReverseClaimer, Pausable 
    * @param addr The address to update.
    * @param records The records to set.
    */
-  function setValuesForAddress(
-    address addr,
-    KeyValue[] calldata records
-  ) external whenNotPaused onlyCallerOrProxy(addr) {
+  function setValuesForAddress(address addr, KeyValue[] calldata records)
+    external
+    whenNotPaused
+    onlyCallerOrProxy(addr)
+  {
     uint256 length = records.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       KeyValue calldata record = records[i];
       _setValue(addr, record.key, record.value);
       unchecked {

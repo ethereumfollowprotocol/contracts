@@ -80,7 +80,7 @@ abstract contract ListMetadata is IEFPListMetadata, Pausable, Ownable {
   function getMetadataValues(uint256 tokenId, string[] calldata keys) external view returns (bytes[] memory) {
     uint256 length = keys.length;
     bytes[] memory result = new bytes[](length);
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       string calldata key = keys[i];
       result[i] = values[tokenId][key];
       unchecked {
@@ -115,11 +115,11 @@ abstract contract ListMetadata is IEFPListMetadata, Pausable, Ownable {
    * @param key The key to set.
    * @param value The value to set.
    */
-  function setMetadataValue(
-    uint256 slot,
-    string calldata key,
-    bytes calldata value
-  ) external whenNotPaused onlyListManager(slot) {
+  function setMetadataValue(uint256 slot, string calldata key, bytes calldata value)
+    external
+    whenNotPaused
+    onlyListManager(slot)
+  {
     _setMetadataValue(slot, key, value);
   }
 
@@ -131,7 +131,7 @@ abstract contract ListMetadata is IEFPListMetadata, Pausable, Ownable {
    */
   function _setMetadataValues(uint256 slot, KeyValue[] calldata records) internal {
     uint256 length = records.length;
-    for (uint256 i = 0; i < length; ) {
+    for (uint256 i = 0; i < length;) {
       KeyValue calldata record = records[i];
       _setMetadataValue(slot, record.key, record.value);
       unchecked {
@@ -323,7 +323,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
     }
 
     bytes[] memory ops = new bytes[](end - start);
-    for (uint256 i = start; i < end; ) {
+    for (uint256 i = start; i < end;) {
       ops[i - start] = listOps[slot][i];
 
       unchecked {
@@ -372,7 +372,7 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    */
   function _applyListOps(uint256 slot, bytes[] calldata ops) internal {
     uint256 len = ops.length;
-    for (uint256 i = 0; i < len; ) {
+    for (uint256 i = 0; i < len;) {
       _applyListOp(slot, ops[i]);
       unchecked {
         ++i;
@@ -396,11 +396,11 @@ abstract contract ListRecords is IEFPListRecords, ListMetadata {
    * @param records An array of key-value pairs to set.
    * @param ops An array of operations to be applied.
    */
-  function setMetadataValuesAndApplyListOps(
-    uint256 slot,
-    KeyValue[] calldata records,
-    bytes[] calldata ops
-  ) external whenNotPaused onlyListManager(slot) {
+  function setMetadataValuesAndApplyListOps(uint256 slot, KeyValue[] calldata records, bytes[] calldata ops)
+    external
+    whenNotPaused
+    onlyListManager(slot)
+  {
     _setMetadataValues(slot, records);
     _applyListOps(slot, ops);
   }

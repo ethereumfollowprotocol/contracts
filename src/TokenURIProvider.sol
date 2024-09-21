@@ -13,7 +13,6 @@ import {ITokenURIProvider} from './interfaces/ITokenURIProvider.sol';
  * returns the token URI for a given token ID.  Separating this functionality allows
  * the logic for generating token URIs to be upgradable.
  */
-
 contract TokenURIProvider is ITokenURIProvider, Ownable {
   string private _baseURI;
 
