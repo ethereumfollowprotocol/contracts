@@ -2,6 +2,7 @@
 pragma solidity ^0.8.23;
 
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
+import {Strings} from 'lib/openzeppelin-contracts/contracts/utils/Strings.sol';
 import {ITokenURIProvider} from './interfaces/ITokenURIProvider.sol';
 
 /**
@@ -15,6 +16,8 @@ import {ITokenURIProvider} from './interfaces/ITokenURIProvider.sol';
  */
 contract TokenURIProvider is ITokenURIProvider, Ownable {
   string private _baseURI;
+
+  using Strings for uint256;
 
   /**
    * @dev Constructor
@@ -30,7 +33,7 @@ contract TokenURIProvider is ITokenURIProvider, Ownable {
    * @return The token URI
    */
   function tokenURI(uint256 tokenId) external view override returns (string memory) {
-    return string(abi.encodePacked(_baseURI, tokenId));
+    return string(abi.encodePacked(_baseURI, tokenId.toString()));
   }
 
   /**

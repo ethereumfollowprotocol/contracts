@@ -12,9 +12,11 @@ import {EFPAccountMetadata} from '../../src/EFPAccountMetadata.sol';
 import {EFPListMinter} from '../../src/EFPListMinter.sol';
 import {EFPListRegistry} from '../../src/EFPListRegistry.sol';
 import {EFPListRecords} from '../../src/EFPListRecords.sol';
+import {TokenURIProvider} from '../../src/TokenURIProvider.sol';
 import {IEFPAccountMetadata} from '../../src/interfaces/IEFPAccountMetadata.sol';
 import {IEFPListRegistry} from '../../src/interfaces/IEFPListRegistry.sol';
 import {IEFPListRecords} from '../../src/interfaces/IEFPListRecords.sol';
+import {ITokenURIProvider} from '../../src/interfaces/ITokenURIProvider.sol';
 
 contract Deployer {
   /*
@@ -82,6 +84,16 @@ contract Deployer {
       console.log(Colors.GREEN, 'EFPListMinter      :', address(listMinter), Colors.ENDC);
     }
 
+    // TokenURIProvider
+    ITokenURIProvider tokenURIProvider;
+    if (isContract(ContractConfigs.TOKEN_URI_PROVIDER)) {
+      tokenURIProvider = TokenURIProvider(ContractConfigs.TOKEN_URI_PROVIDER);
+      console.log(' TokenURIProvider   :', address(tokenURIProvider));
+    } else {
+      tokenURIProvider = new TokenURIProvider(ContractConfigs.TOKEN_BASE_URI);
+      console.log(Colors.GREEN, 'TokenURIProvider   :', address(tokenURIProvider), Colors.ENDC);
+    }
+
     console.log();
     return
       Contracts({
@@ -89,7 +101,8 @@ contract Deployer {
         listRegistry: address(listRegistry),
         // listMetadata: address(listMetadata),
         listRecords: address(listRecords),
-        listMinter: address(listMinter)
+        listMinter: address(listMinter),
+        tokenURIProvider: address(tokenURIProvider)
       });
   }
 
@@ -103,6 +116,13 @@ contract Deployer {
       IEFPAccountMetadata(contracts.accountMetadata).addProxy(contracts.listMinter);
     } else {
       console.log(' EFPListMinter address already a proxy for EFPAccountMetadata');
+    }
+
+    if (EFPListRegistry(contracts.listRegistry).tokenURIProvider() != ITokenURIProvider(contracts.tokenURIProvider)) {
+      console.log(Colors.GREEN, 'Setting TokenURIProvider on EFPListRegistry', Colors.ENDC);
+      EFPListRegistry(contracts.listRegistry).setTokenURIProvider(contracts.tokenURIProvider);
+    } else {
+      console.log(' TokenURIProvider already set on EFPListRegistry');
     }
   }
 
@@ -143,6 +163,14 @@ contract Deployer {
       console.log(Colors.BLUE, 'EFPListMinter      :', contracts.listMinter, Colors.ENDC);
     } else {
       revert('EFPListMinter not deployed');
+    }
+
+    // Load TokenURIProvider
+    if (isContract(ContractConfigs.TOKEN_URI_PROVIDER)) {
+      contracts.tokenURIProvider = ContractConfigs.TOKEN_URI_PROVIDER;
+      console.log(Colors.BLUE, 'TokenURIProvider   :', contracts.tokenURIProvider, Colors.ENDC);
+    } else {
+      revert('TokenURIProvider not deployed');
     }
 
     console.log();

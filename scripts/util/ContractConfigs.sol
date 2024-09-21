@@ -6,6 +6,7 @@ library ContractConfigs {
   address public constant EFP_LIST_REGISTRY = 0x0000000000000000000000000000000000000000;
   address public constant EFP_LIST_RECORDS = 0x0000000000000000000000000000000000000000;
   address public constant EFP_LIST_MINTER = 0x0000000000000000000000000000000000000000;
-
+  address public constant TOKEN_URI_PROVIDER = 0x0000000000000000000000000000000000000000;
+  string public constant TOKEN_BASE_URI = 'https://api.ethfollow.xyz/api/v1/token/metadata/';
   // 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
 }
