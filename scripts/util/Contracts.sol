@@ -7,4 +7,5 @@ struct Contracts {
   // address listMetadata;
   address listRecords;
   address listMinter;
+  address tokenURIProvider;
 }

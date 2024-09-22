@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.23;
 
-import 'forge-std/console.sol';
-
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPAccountMetadata} from './interfaces/IEFPAccountMetadata.sol';
@@ -16,6 +14,15 @@ interface IEFPListRegistry_ERC721 is IEFPListRegistry {
   function totalSupply() external view returns (uint256);
 }
 
+/**
+ * @title EFPListMetadata
+ * @author Cory Gabrielsen (cory.eth)
+ * @custom:contributor throw; (0xthrpw.eth)
+ * @custom:benediction DEVS BENEDICAT ET PROTEGAT CONTRACTVS MEAM
+ *
+ * @notice This contract mints and assigns primary lists to users, and sets
+ * EFP List metadata.
+ */
 contract EFPListMinter is ENSReverseClaimer, Pausable {
   IEFPListRegistry_ERC721 public registry;
   IEFPAccountMetadata public accountMetadata;
@@ -49,7 +56,13 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
   // minting
   /////////////////////////////////////////////////////////////////////////////
 
-  function decodeL1ListStorageLocationNone(bytes calldata listStorageLocation) internal pure returns (uint256, address) {
+  /**
+   * @dev Decode a list storage location with no metadata.
+   * @param listStorageLocation The storage location of the list.
+   * @return slot The slot of the list.
+   * @return contractAddress The contract address of the list.
+   */
+  function decodeL1ListStorageLocation(bytes calldata listStorageLocation) internal pure returns (uint256, address) {
     // the list storage location is
     // - version (1 byte)
     // - list storate location type (1 byte)
@@ -65,9 +78,13 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
     return (slot, contractAddress);
   }
 
+  /**
+   * @dev Mint a primary list.
+   * @param listStorageLocation The storage location of the list.
+   */
   function easyMint(bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    (uint256 slot, address recordsContract) = decodeL1ListStorageLocationNone(listStorageLocation);
+    (uint256 slot, address recordsContract) = decodeL1ListStorageLocation(listStorageLocation);
 
     uint256 tokenId = registry.totalSupply();
     registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
@@ -78,9 +95,14 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
     }
   }
 
+  /**
+   * @dev Mint a primary list to a specific address.
+   * @param to The address to mint the list to.
+   * @param listStorageLocation The storage location of the list.
+   */
   function easyMintTo(address to, bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    (uint256 slot, address recordsContract) = decodeL1ListStorageLocationNone(listStorageLocation);
+    (uint256 slot, address recordsContract) = decodeL1ListStorageLocation(listStorageLocation);
 
     uint256 tokenId = registry.totalSupply();
     registry.mintTo{value: msg.value}(to, listStorageLocation);
@@ -91,20 +113,46 @@ contract EFPListMinter is ENSReverseClaimer, Pausable {
     }
   }
 
+  /**
+   * @dev Mint a primary list without metadata.
+   * @param listStorageLocation The storage location of the list.
+   */
+  function mintPrimaryListNoMeta(bytes calldata listStorageLocation) public payable whenNotPaused {
+    // validate the list storage location
+    decodeL1ListStorageLocation(listStorageLocation);
+    uint256 tokenId = registry.totalSupply();
+    _setDefaultListForAccount(msg.sender, tokenId);
+    registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
+  }
+
+  /**
+   * @dev Mint a primary list without metadata to a specific address.
+   * @param listStorageLocation The storage location of the list.
+   */
   function mintNoMeta(bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    decodeL1ListStorageLocationNone(listStorageLocation);
+    decodeL1ListStorageLocation(listStorageLocation);
 
     registry.mintTo{value: msg.value}(msg.sender, listStorageLocation);
   }
 
+  /**
+   * @dev Mint a primary list without metadata to a specific address.
+   * @param to The address to mint the list to.
+   * @param listStorageLocation The storage location of the list.
+   */
   function mintToNoMeta(address to, bytes calldata listStorageLocation) public payable whenNotPaused {
     // validate the list storage location
-    decodeL1ListStorageLocationNone(listStorageLocation);
+    decodeL1ListStorageLocation(listStorageLocation);
 
     registry.mintTo{value: msg.value}(to, listStorageLocation);
   }
 
+  /**
+   * @dev Set the default list for an account.
+   * @param to The address to set the default list for.
+   * @param tokenId The token ID of the list.
+   */
   function _setDefaultListForAccount(address to, uint256 tokenId) internal {
     accountMetadata.setValueForAddress(to, 'primary-list', abi.encodePacked(tokenId));
   }

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.23;
 
-import 'forge-std/console.sol';
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
 import {IEFPListMetadata, IEFPListRecords} from './interfaces/IEFPListRecords.sol';
@@ -10,6 +9,8 @@ import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 /**
  * @title ListMetadata
  * @author Cory Gabrielsen (cory.eth)
+ * @custom:contributor throw; (0xthrpw.eth)
+ * @custom:benediction DEVS BENEDICAT ET PROTEGAT CONTRACTVS MEAM
  *
  * @notice Manages key-value pairs associated with EFP List NFTs.
  *         Provides functionalities for list managers to set and retrieve metadata for their lists.
@@ -122,6 +123,12 @@ abstract contract ListMetadata is IEFPListMetadata, Pausable, Ownable {
     _setMetadataValue(slot, key, value);
   }
 
+  /**
+   * @dev Sets an array of metadata records for a token ID. Each record is a
+   * key/value pair.
+   * @param slot The slot corresponding to the list to update.
+   * @param records The records to set.
+   */
   function _setMetadataValues(uint256 slot, KeyValue[] calldata records) internal {
     uint256 length = records.length;
     for (uint256 i = 0; i < length;) {

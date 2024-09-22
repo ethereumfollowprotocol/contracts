@@ -3,13 +3,14 @@ pragma solidity ^0.8.23;
 
 import {Ownable} from 'lib/openzeppelin-contracts/contracts/access/Ownable.sol';
 import {Pausable} from 'lib/openzeppelin-contracts/contracts/security/Pausable.sol';
-import {IERC721} from 'lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol';
 import {IEFPAccountMetadata} from './interfaces/IEFPAccountMetadata.sol';
 import {ENSReverseClaimer} from './lib/ENSReverseClaimer.sol';
 
 /**
  * @title EFPListMetadata
  * @author Cory Gabrielsen (cory.eth)
+ * @custom:contributor throw; (0xthrpw.eth)
+ * @custom:benediction DEVS BENEDICAT ET PROTEGAT CONTRACTVS MEAM
  *
  * @notice This contract stores records as key/value pairs, by 32-byte
  * EFP List Token ID.
