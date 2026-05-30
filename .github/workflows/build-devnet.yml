@@ -10,6 +10,8 @@ on:
       - 'lib/**'
       - 'generated/**'
       - 'Dockerfile.devnet'
+      - 'compose.yml'
+      - 'compose.attach.yml'
       - 'foundry.toml'
       - 'package.json'
       - 'bun.lockb'
