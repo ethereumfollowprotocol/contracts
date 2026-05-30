@@ -23,7 +23,6 @@ export function registerShutdownHandlers() {
     await shutdown('uncaughtException', 1)
   })
 }
-}
 
 export async function keepAlive() {
   await new Promise<void>(() => {})
