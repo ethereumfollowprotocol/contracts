@@ -3,6 +3,7 @@
 # except for
 !.gitmodules
 !bun.lockb
+!bun.lock
 !foundry.toml
 !package.json
 !solhint.json
