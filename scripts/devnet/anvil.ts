@@ -6,24 +6,29 @@ export async function startAnvil({
   port,
   chainId,
   host,
-  autoMine,
+  blockTime,
   procLog
 }: {
   port: number
   chainId: number
   host: string
-  autoMine: boolean
+  /** Interval mining period in seconds. `0` keeps Anvil's default instant automining. */
+  blockTime: number
   procLog: boolean
 }): Promise<AnvilHandle> {
   // NOTE: do not pass `silent: true` — prool resolves `start()` by waiting for
   // anvil's "Listening on" stdout message, which `silent` would suppress.
+  //
+  // `blockTime > 0` => interval mining (a block every N seconds).
+  // `blockTime === 0` => omit the flag, leaving Anvil's default instant
+  // automining (mine immediately on each transaction).
   const instance = Instance.anvil({
     port,
     chainId,
     host,
     mnemonic: DEVNET_MNEMONIC,
     accounts: 10,
-    ...(autoMine ? { blockTime: 1 } : {})
+    ...(blockTime > 0 ? { blockTime } : {})
   })
 
   if (procLog) {
