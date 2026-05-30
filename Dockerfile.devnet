@@ -2,11 +2,11 @@ FROM oven/bun:1.2.13
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    build-essential \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+  curl \
+  git \
+  build-essential \
+  ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install Foundry
 RUN curl -L https://foundry.paradigm.xyz | bash
@@ -16,7 +16,7 @@ RUN foundryup
 WORKDIR /app
 
 # Install dependencies
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 # Copy source and build contracts
