@@ -9,5 +9,22 @@ indent_size = 2
 insert_final_newline = true
 max_line_length = 120
 trim_trailing_whitespace = true
-use_tabs = false
-use_single_quotes = true
+
+[*.json]
+indent_size = 2
+
+[package.json]
+indent_size = 4
+
+[funding.json]
+indent_size = 4
+
+[env.d.ts]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.sol]
+indent_size = 2
+max_line_length = 120
