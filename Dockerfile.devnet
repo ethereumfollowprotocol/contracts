@@ -1,0 +1,36 @@
+FROM oven/bun:1.2.13
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Foundry
+RUN curl -L https://foundry.paradigm.xyz | bash
+ENV PATH="/root/.foundry/bin:${PATH}"
+RUN foundryup
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
+
+# Copy source and build contracts
+COPY . .
+RUN forge install && forge build
+
+EXPOSE 8545 8000
+
+ENV FOUNDRY_DISABLE_NIGHTLY_WARNING=true
+# Bind to all interfaces inside the container; everything else is env-driven:
+#   DEVNET_RPC_URL     attach to an existing node (e.g. http://devnet:8545) instead of spawning anvil
+#   DEVNET_SCENARIO    composable scenario to seed (empty | minimal | demoGraph)
+#   DEVNET_CHAIN_ID    chain id when spawning a node (default 31337)
+ENV DEVNET_HOST=0.0.0.0
+ENV DEVNET_SCENARIO=demoGraph
+
+CMD ["bun", "scripts/runDevnet.ts"]

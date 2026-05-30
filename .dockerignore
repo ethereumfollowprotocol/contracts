@@ -10,6 +10,9 @@
 !generated/
 !lib/
 !scripts/
+!scripts/devnet/
+!deployments/
+!Dockerfile.devnet
 !src/
 
 # needed for forge
