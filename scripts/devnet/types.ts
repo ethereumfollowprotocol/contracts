@@ -66,8 +66,11 @@ export type SetupDevnetOptions = {
   chainId?: number
   /** Host to bind when spawning a node. @default 127.0.0.1 */
   host?: string
-  /** Interval-mine every second when spawning a node. @default true */
-  autoMine?: boolean
+  /**
+   * Interval mining period in seconds when spawning a node. `0` keeps Anvil's
+   * default instant automining (mine on each transaction). @default 1
+   */
+  blockTime?: number
   /** Forward anvil stdout/stderr to the console. @default false */
   procLog?: boolean
   /** Persist `deployments/devnet-<chainId>.json` for downstream consumers. @default false */
