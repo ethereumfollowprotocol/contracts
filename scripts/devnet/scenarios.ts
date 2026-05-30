@@ -113,4 +113,3 @@ export type ScenarioName = keyof typeof scenarios
 export function isScenarioName(value: string): value is ScenarioName {
   return Object.hasOwn(scenarios, value)
 }
-}
