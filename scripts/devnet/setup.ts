@@ -39,7 +39,7 @@ export async function setupDevnet(options: SetupDevnetOptions = {}): Promise<Dev
     port = 8545,
     chainId: requestedChainId = 31337,
     host = '127.0.0.1',
-    autoMine = true,
+    blockTime = 1,
     procLog = false,
     saveDeployments: persist = false,
     quiet = true
@@ -56,7 +56,7 @@ export async function setupDevnet(options: SetupDevnetOptions = {}): Promise<Dev
     wsUrl = wsFromHttp(externalRpcUrl)
     chainId = await waitForNode(rpcUrl)
   } else {
-    anvil = await startAnvil({ port, chainId: requestedChainId, host, autoMine, procLog })
+    anvil = await startAnvil({ port, chainId: requestedChainId, host, blockTime, procLog })
     rpcUrl = anvil.rpcUrl
     wsUrl = anvil.wsUrl
     chainId = await waitForNode(rpcUrl)
