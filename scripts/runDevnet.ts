@@ -17,7 +17,7 @@ const args = parseArgs({
     host: { type: 'string', default: process.env.DEVNET_HOST ?? '127.0.0.1' },
     scenario: { type: 'string', default: process.env.DEVNET_SCENARIO ?? 'empty' },
     'save-deployments': { type: 'boolean', default: process.env.DEVNET_SAVE_DEPLOYMENTS !== 'false' },
-    'no-auto-mine': { type: 'boolean', default: false },
+    'block-time': { type: 'string', default: process.env.DEVNET_BLOCK_TIME ?? '1' },
     'proc-log': { type: 'boolean', default: false },
     'health-port': { type: 'string', default: process.env.DEVNET_HEALTH_PORT ?? '8000' }
   },
@@ -41,7 +41,7 @@ const env = await setupDevnet({
   port: Number(args.values.port),
   chainId: Number(args.values['chain-id']),
   host,
-  autoMine: !args.values['no-auto-mine'],
+  blockTime: Number(args.values['block-time']),
   procLog: args.values['proc-log'] ?? false,
   saveDeployments: args.values['save-deployments'] ?? true,
   quiet: !(args.values['proc-log'] ?? false)
