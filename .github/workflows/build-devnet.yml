@@ -14,7 +14,7 @@ on:
       - 'compose.attach.yml'
       - 'foundry.toml'
       - 'package.json'
-      - 'bun.lockb'
+      - 'bun.lock'
       - '.github/workflows/build-devnet.yml'
   workflow_dispatch:
 
