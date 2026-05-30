@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths:
       - 'src/**'
       - 'scripts/**'
       - 'lib/**'
       - 'generated/**'
       - 'Dockerfile.devnet'
+      - '.dockerignore'
       - 'compose.yml'
       - 'compose.attach.yml'
       - 'foundry.toml'

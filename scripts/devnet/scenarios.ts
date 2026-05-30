@@ -111,5 +111,6 @@ export const scenarios = { empty, minimal, demoGraph } satisfies Record<string, 
 export type ScenarioName = keyof typeof scenarios
 
 export function isScenarioName(value: string): value is ScenarioName {
-  return value in scenarios
+  return Object.hasOwn(scenarios, value)
+}
 }
