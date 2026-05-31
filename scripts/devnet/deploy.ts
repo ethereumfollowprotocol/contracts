@@ -35,29 +35,19 @@ export async function deployContracts({
   privateKey: Hex
   quiet?: boolean
 }): Promise<Deployments> {
-  const proc = Bun.spawn(
-    [
-      'forge',
-      'script',
-      'scripts/deploy.s.sol',
-      '--rpc-url',
-      rpcUrl,
-      '--broadcast',
-      '--private-key',
-      privateKey,
-      '--slow'
-    ],
-    {
-      cwd: process.cwd(),
-      stdout: quiet ? 'ignore' : 'inherit',
-      stderr: 'inherit',
-      env: {
-        ...process.env,
-        PRIVATE_KEY: privateKey,
-        FOUNDRY_DISABLE_NIGHTLY_WARNING: 'true'
-      }
+  // deploy.s.sol broadcasts with `vm.startBroadcast(vm.envUint('PRIVATE_KEY'))`,
+  // so the key is passed via the env var only — never as a CLI arg, which would
+  // otherwise be visible to other users via `ps`/`/proc/<pid>/cmdline`.
+  const proc = Bun.spawn(['forge', 'script', 'scripts/deploy.s.sol', '--rpc-url', rpcUrl, '--broadcast', '--slow'], {
+    cwd: process.cwd(),
+    stdout: quiet ? 'ignore' : 'inherit',
+    stderr: 'inherit',
+    env: {
+      ...process.env,
+      PRIVATE_KEY: privateKey,
+      FOUNDRY_DISABLE_NIGHTLY_WARNING: 'true'
     }
-  )
+  })
 
   const exitCode = await proc.exited
   if (exitCode !== 0) {
