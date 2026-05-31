@@ -8,10 +8,11 @@ RUN apt-get update && apt-get install -y \
   ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-# Install Foundry
-RUN curl -L https://foundry.paradigm.xyz | bash
+# Install Foundry, pinned to a specific release for reproducible builds.
+# Override at build time with: --build-arg FOUNDRY_VERSION=v1.7.0
+ARG FOUNDRY_VERSION=v1.7.1
 ENV PATH="/root/.foundry/bin:${PATH}"
-RUN foundryup
+RUN curl -L https://foundry.paradigm.xyz | bash && foundryup --install "${FOUNDRY_VERSION}"
 
 WORKDIR /app
 
