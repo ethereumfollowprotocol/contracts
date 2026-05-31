@@ -22,6 +22,10 @@ export function registerShutdownHandlers() {
     console.error(error)
     await shutdown('uncaughtException', 1)
   })
+  process.once('unhandledRejection', async (reason) => {
+    console.error(reason)
+    await shutdown('unhandledRejection', 1)
+  })
 }
 
 export async function keepAlive() {

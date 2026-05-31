@@ -16,7 +16,8 @@ const args = parseArgs({
     'chain-id': { type: 'string', default: process.env.DEVNET_CHAIN_ID ?? '31337' },
     host: { type: 'string', default: process.env.DEVNET_HOST ?? '127.0.0.1' },
     scenario: { type: 'string', default: process.env.DEVNET_SCENARIO ?? 'empty' },
-    'save-deployments': { type: 'boolean', default: process.env.DEVNET_SAVE_DEPLOYMENTS !== 'false' },
+    'save-deployments': { type: 'boolean' },
+    'no-save-deployments': { type: 'boolean' },
     'block-time': { type: 'string', default: process.env.DEVNET_BLOCK_TIME ?? '1' },
     'proc-log': { type: 'boolean', default: false },
     'health-port': { type: 'string', default: process.env.DEVNET_HEALTH_PORT ?? '8000' }
@@ -33,6 +34,12 @@ if (!isScenarioName(scenarioName)) {
 const host = args.values.host!
 const healthPort = Number(args.values['health-port'])
 
+// Node's parseArgs has no native `--no-*` negation, so resolve precedence
+// explicitly: --no-save-deployments > --save-deployments > env default (on).
+const saveDeployments = args.values['no-save-deployments']
+  ? false
+  : (args.values['save-deployments'] ?? process.env.DEVNET_SAVE_DEPLOYMENTS !== 'false')
+
 registerShutdownHandlers()
 
 console.log('Starting EFP devnet...')
@@ -43,7 +50,7 @@ const env = await setupDevnet({
   host,
   blockTime: Number(args.values['block-time']),
   procLog: args.values['proc-log'] ?? false,
-  saveDeployments: args.values['save-deployments'] ?? true,
+  saveDeployments,
   quiet: !(args.values['proc-log'] ?? false)
 })
 onShutdown(() => env.shutdown())
