@@ -43,7 +43,6 @@ export async function startAnvil({
     wsUrl: `ws://${rpcHost}:${port}`,
     chainId,
     stop: async () => {
-      await instance.stop()
       await stopFn()
     }
   }
