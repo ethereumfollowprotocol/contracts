@@ -1,11 +1,15 @@
 {
     "name": "beta-contracts",
     "version": "1.0.0",
-    "repository": "github:ethereumfollowprotocol/beta-contractst",
+    "repository": "github:ethereumfollowprotocol/contracts",
     "type": "module",
     "scripts": {
         "build": "wagmi generate && bun format:ts && (cp ./generated/abi.ts ../indexer/src/abi/generated/index.ts || true)",
         "clean": "forge clean",
+        "devnet": "bun scripts/runDevnet.ts",
+        "devnet:seed": "bun scripts/runDevnet.ts --scenario demoGraph",
+        "devnet:attach": "bun scripts/runDevnet.ts --rpc-url http://127.0.0.1:8545 --scenario demoGraph",
+        "devnet:test": "bun test --timeout 120000 scripts/devnet",
         "docs": "forge doc --serve --port 4433 --open",
         "deploy:localhost": "forge script scripts/deploy.s.sol --fork-url https://eth-sepolia.g.alchemy.com/v2/[ALCHEMY_ID] --broadcast --private-key [PRIVATE_KEY] && bun enable-public-mint",
         "enable-public-mint": "bun ./scripts/update-mint-state.ts --public-batch",
@@ -21,17 +25,17 @@
     },
     "dependencies": {
         "@wagmi/cli": "^2.0.4",
+        "prool": "^0.2.4",
         "viem": "^2.9.29",
         "wagmi": "^2.3.1"
     },
     "devDependencies": {
         "@types/bun": "^1.0.2",
         "@types/node": "^20.11.5",
-        "bun": "^1.0.24",
         "prettier": "^3.2.4",
         "solc": "^0.8.23",
         "solhint": "^4.1.1",
         "typescript": "^5.3.3"
     },
-    "license": "UNLICENSED"
+    "license": "MIT"
 }

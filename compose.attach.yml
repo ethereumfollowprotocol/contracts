@@ -1,0 +1,57 @@
+name: efp-ens-devnet
+
+# Runs the EFP devnet ALONGSIDE the ENS devnet, deploying the EFP contracts onto
+# the same anvil node that ENS uses. This mirrors the ENS devnet service from
+# https://github.com/namehash/ensnode/blob/main/docker/services/devnet.yml
+#
+#   docker compose -f compose.attach.yml up
+#
+# Result: one chain (id 31337) with both ENS v2 and EFP contracts deployed,
+# reachable at devnet:8545. EFP addresses are written to the shared
+# `efp-deployments` volume as /deployments/devnet-31337.json.
+services:
+  # The ENS devnet (prebuilt image), exactly as ensnode runs it.
+  devnet:
+    container_name: devnet
+    image: ghcr.io/ensdomains/contracts-v2:main-5677359
+    command: ./script/runDevnet.ts
+    pull_policy: always
+    ports:
+      - '8545:8545'
+    environment:
+      ANVIL_IP_ADDR: '0.0.0.0'
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '-s', 'http://localhost:8000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      start_interval: 1s
+
+  # Deploys + seeds EFP onto the ENS devnet node, then serves its own health.
+  efp-devnet:
+    container_name: efp-devnet
+    build:
+      context: .
+      dockerfile: Dockerfile.devnet
+    depends_on:
+      devnet:
+        condition: service_healthy
+    ports:
+      - '8001:8000'
+    environment:
+      DEVNET_HOST: 0.0.0.0
+      DEVNET_RPC_URL: http://devnet:8545
+      DEVNET_SCENARIO: ${DEVNET_SCENARIO:-demoGraph}
+    volumes:
+      - efp-deployments:/app/deployments
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '-s', 'http://localhost:8000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+      start_interval: 1s
+
+volumes:
+  efp-deployments:

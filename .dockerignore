@@ -3,6 +3,7 @@
 # except for
 !.gitmodules
 !bun.lockb
+!bun.lock
 !foundry.toml
 !package.json
 !solhint.json
@@ -10,6 +11,9 @@
 !generated/
 !lib/
 !scripts/
+!scripts/devnet/
+!deployments/
+!Dockerfile.devnet
 !src/
 
 # needed for forge

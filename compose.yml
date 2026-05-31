@@ -1,37 +1,27 @@
-version: '3.8'
-
 name: efp-contracts
 
-networks:
-  default:
-    driver: bridge
-
+# Standalone EFP devnet: spawns its own anvil, deploys the EFP contracts, and
+# seeds a scenario. RPC on :8545, healthcheck on :8000.
+#
+# To run EFP alongside (and on top of) the ENS devnet instead, see
+# compose.attach.yml.
 services:
-  anvil:
-    container_name: efp-contracts-anvil
-    image: ghcr.io/foundry-rs/foundry:latest
-    command: anvil
-    tty: true
-    environment:
-      - ANVIL_IP_ADDR=0.0.0.0
-    ports:
-      - 8545:8545
-    networks:
-      - default
-
-  contracts:
-    container_name: efp-contracts
-    restart: no
+  efp-devnet:
+    container_name: efp-devnet
     build:
       context: .
-      dockerfile: Dockerfile
-    command: bun launch:localhost
+      dockerfile: Dockerfile.devnet
+    ports:
+      - '8545:8545'
+      - '8000:8000'
     environment:
-      - ETHEREUM_LOCAL_NODE_URL=${ETHEREUM_LOCAL_NODE_URL:-http://host.docker.internal:8545}
-      - ANVIL_ACCOUNT_PRIVATE_KEY=${ANVIL_ACCOUNT_PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
-      - PRIVATE_KEY=${PRIVATE_KEY:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}
-      - MINT_TOTAL_SUPPLY=${MINT_TOTAL_SUPPLY:-100}
-      - FORGE_ARGS=${FORGE_ARGS:-}
-    network_mode: host
-    stdin_open: true
-    tty: true
+      DEVNET_HOST: 0.0.0.0
+      DEVNET_CHAIN_ID: ${DEVNET_CHAIN_ID:-31337}
+      DEVNET_SCENARIO: ${DEVNET_SCENARIO:-demoGraph}
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '-s', 'http://localhost:8000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+      start_interval: 1s

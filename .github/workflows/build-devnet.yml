@@ -1,0 +1,104 @@
+name: build-devnet
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'lib/**'
+      - 'generated/**'
+      - 'Dockerfile.devnet'
+      - '.dockerignore'
+      - 'compose.yml'
+      - 'compose.attach.yml'
+      - 'foundry.toml'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/build-devnet.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ghcr.io/${{ github.repository }}/devnet
+
+concurrency:
+  group: build-devnet-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & publish devnet image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,format=long
+            type=sha,format=short,prefix=${{ github.ref_name }}-,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.devnet
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test (deploy + seed + health)
+        env:
+          IMAGE_REF: ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
+        run: |
+          docker run -d --name efp-devnet -p 8545:8545 -p 8000:8000 "$IMAGE_REF"
+          for i in $(seq 1 90); do
+            if curl -fsS http://localhost:8000/health >/dev/null; then
+              echo "Healthy after ${i}s"
+              exit 0
+            fi
+            if [ -z "$(docker ps -q -f name=efp-devnet -f status=running)" ]; then
+              echo "::error::container exited early"
+              docker logs efp-devnet
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "::error::devnet did not become healthy"
+          docker logs efp-devnet
+          exit 1
+
+      - name: Tear down smoke test
+        if: always()
+        run: docker rm -f efp-devnet || true
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        run: docker push --all-tags "${IMAGE}"
