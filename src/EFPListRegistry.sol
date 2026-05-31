@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.23;
 
 import {ERC721A} from 'lib/ERC721A/contracts/ERC721A.sol';
