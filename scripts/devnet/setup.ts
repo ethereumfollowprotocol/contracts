@@ -62,39 +62,44 @@ export async function setupDevnet(options: SetupDevnetOptions = {}): Promise<Dev
     chainId = await waitForNode(rpcUrl)
   }
 
-  const accounts = getNamedAccounts()
-  const chain = defineDevnetChain(chainId, rpcUrl, wsUrl)
-  const client = createDevnetClient({ chain, rpcUrl, account: accounts.deployer })
+  try {
+    const accounts = getNamedAccounts()
+    const chain = defineDevnetChain(chainId, rpcUrl, wsUrl)
+    const client = createDevnetClient({ chain, rpcUrl, account: accounts.deployer })
 
-  const deployments = await deployContracts({
-    rpcUrl,
-    chainId,
-    privateKey: DEPLOYER_PRIVATE_KEY as Hex,
-    quiet
-  })
+    const deployments = await deployContracts({
+      rpcUrl,
+      chainId,
+      privateKey: DEPLOYER_PRIVATE_KEY as Hex,
+      quiet
+    })
 
-  if (persist) {
-    const file = await saveDeployments(deployments)
-    if (!quiet) console.log('Saved deployments to', file)
-  }
-
-  const contracts = getContracts(client, deployments)
-
-  return {
-    rpcUrl,
-    wsUrl,
-    chainId,
-    external,
-    client,
-    accounts,
-    deployer: accounts.deployer,
-    deployments,
-    contracts,
-    snapshot: () => client.snapshot(),
-    revert: (id) => client.revert({ id }),
-    mine: (blocks = 1) => client.mine({ blocks }),
-    shutdown: async () => {
-      if (anvil) await anvil.stop()
+    if (persist) {
+      const file = await saveDeployments(deployments)
+      if (!quiet) console.log('Saved deployments to', file)
     }
+
+    const contracts = getContracts(client, deployments)
+
+    return {
+      rpcUrl,
+      wsUrl,
+      chainId,
+      external,
+      client,
+      accounts,
+      deployer: accounts.deployer,
+      deployments,
+      contracts,
+      snapshot: () => client.snapshot(),
+      revert: (id) => client.revert({ id }),
+      mine: (blocks = 1) => client.mine({ blocks }),
+      shutdown: async () => {
+        if (anvil) await anvil.stop()
+      }
+    }
+  } catch (error) {
+    if (anvil) await anvil.stop()
+    throw error
   }
 }
